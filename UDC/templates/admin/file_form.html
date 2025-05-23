@@ -1,0 +1,31 @@
+{% extends 'base.html' %}  
+{% block title %}Subir Archivo{% endblock %}  
+{% block content %}  
+<div class="container py-4">  
+    <h2>Subir Archivo Institucional</h2>  
+    <form method="post" enctype="multipart/form-data">  
+        <div class="mb-3">  
+            <label for="title" class="form-label">Título</label>  
+            <input type="text" class="form-control" name="title" required>  
+        </div>  
+        <div class="mb-3">  
+            <label for="description" class="form-label">Descripción</label>  
+            <textarea class="form-control" name="description" rows="3" required></textarea>  
+        </div>  
+        <div class="mb-3">  
+            <label for="category" class="form-label">Categoría</label>  
+            <select class="form-select" name="category" required>  
+                <option value="academic">Académico</option>  
+                <option value="administrative">Administrativo</option>  
+                <option value="general">General</option>  
+            </select>  
+        </div>  
+        <div class="mb-3">  
+            <label for="file" class="form-label">Archivo</label>  
+            <input type="file" class="form-control" name="file" required>  
+        </div>  
+        <button type="submit" class="btn btn-primary">Subir Archivo</button>  
+        <a href="{{ url_for('admin.files') }}" class="btn btn-secondary">Cancelar</a>  
+    </form>  
+</div>  
+{% endblock %}

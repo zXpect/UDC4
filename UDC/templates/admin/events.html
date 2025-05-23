@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Eventos - NetSchool UDC{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Gestión de Eventos</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="list-group">
+            <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <a href="{{ url_for('admin.events') }}" class="list-group-item list-group-item-action active">
+                <i class="fas fa-calendar-alt me-2"></i>Eventos
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <i class="fas fa-file-alt me-2"></i>Archivos Institucionales
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <i class="fas fa-info-circle me-2"></i>Información Institucional
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <i class="fas fa-users me-2"></i>Usuarios
+            </a>
+            <a href="{{ url_for('public.index') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-sign-out-alt me-2"></i>Salir
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Lista de Eventos</h5>
+                <a href="{{ url_for('admin.add_event') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Nuevo Evento
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Ubicación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if events %}
+                                {% for event in events %}
+                                    <tr>
+                                        <td>{{ event.id }}</td>
+                                        <td>{{ event.title }}</td>
+                                        <td>{{ event.date }}</td>
+                                        <td>{{ event.time }}</td>
+                                        <td>{{ event.location }}</td>
+                                        <td>
+                                            <a href="{{ url_for('admin.edit_event', event_id=event._id) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin.delete_event', event_id=event._id) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este evento?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No hay eventos registrados</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

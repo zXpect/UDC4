@@ -1,0 +1,748 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de Administración - NetSchool UDC{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="fas fa-graduation-cap"></i>
+                <span>NetSchool UDC</span>
+            </div>
+            <button class="sidebar-toggle d-md-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile">
+            <div class="profile-avatar">
+                <img src="{{ current_user.avatar_url if current_user.avatar_url else url_for('static', filename='img/default-avatar.png') }}"
+                    alt="Avatar">
+                <span class="status-badge online"></span>
+            </div>
+            <div class="profile-info">
+                <h6 class="profile-name">{{ current_user.first_name }} {{ current_user.last_name }}</h6>
+                <p class="profile-role">Administrador</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <h6 class="nav-group-title">Principal</h6>
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a href="{{ url_for('admin.dashboard') }}" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.files') }}" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Archivos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.users') }}" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Usuarios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.institutional_info') }}" class="nav-link">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Info Institucional</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <h6 class="nav-group-title">Gestión</h6>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Estudiantes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Profesores</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-book"></i>
+                            <span>Cursos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <h6 class="nav-group-title">Configuración</h6>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Ajustes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.profile') }}" class="nav-link">
+                            <i class="fas fa-user-cog"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link text-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="sidebar-toggle d-none d-md-flex" id="sidebarCollapseBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-title">
+                    <h4>Dashboard</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar...">
+                    <i class="fas fa-search"></i>
+                </div>
+
+                <div class="header-actions">
+                    <button class="theme-toggle" aria-label="Cambiar tema">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="notification-btn" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge">5</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <div class="dropdown-header">
+                                <h6>Notificaciones</h6>
+                                <a href="#">Marcar como leídas</a>
+                            </div>
+                            <div class="notification-list">
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>Nuevo usuario registrado</p>
+                                        <span>Hace 10 minutos</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>Nuevo evento creado</p>
+                                        <span>Hace 1 hora</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>Alerta de sistema</p>
+                                        <span>Hace 2 horas</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">Ver todas</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="profile-btn" data-bs-toggle="dropdown">
+                            <img src="{{ current_user.avatar_url if current_user.avatar_url else url_for('static', filename='img/default-avatar.png') }}"
+                                alt="Avatar">
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a href="{{ url_for('auth.profile') }}" class="dropdown-item">
+                                <i class="fas fa-user"></i> Mi Perfil
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i> Configuración
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="admin-content">
+            <!-- Stats Cards -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value">{{ stats.users_count|default(0) }}</h3>
+                            <p class="stat-label">Usuarios</p>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i> 12% desde el mes pasado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value">{{ stats.events_count|default(0) }}</h3>
+                            <p class="stat-label">Eventos</p>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i> 5% desde el mes pasado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value">{{ stats.files_count|default(5) }}</h3>
+                            <p class="stat-label">Archivos</p>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i> 8% desde el mes pasado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value">{{ stats.tasks_count|default(8) }}</h3>
+                            <p class="stat-label">Tareas</p>
+                            <div class="stat-trend negative">
+                                <i class="fas fa-arrow-down"></i> 3% desde el mes pasado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+
+                </div>
+            </div>
+
+            <!-- Events & Tasks Row -->
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Eventos Recientes</h5>
+                            <div class="card-actions">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addEventModal">
+                                    <i class="fas fa-plus me-1"></i>Nuevo Evento
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Título</th>
+                                            <th>Fecha</th>
+                                            <th>Ubicación</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for event in events|default([
+                                        {'title': 'Reunión de Padres', 'date': '2025-05-15', 'location': 'Auditorio
+                                        Principal', 'status': 'Programado'},
+                                        {'title': 'Día del Maestro', 'date': '2025-05-20', 'location': 'Patio Central',
+                                        'status': 'Confirmado'},
+                                        {'title': 'Feria de Ciencias', 'date': '2025-06-10', 'location': 'Laboratorios',
+                                        'status': 'Pendiente'},
+                                        {'title': 'Graduación', 'date': '2025-07-05', 'location': 'Auditorio Principal',
+                                        'status': 'Programado'}
+                                        ]) %}
+                                        <tr>
+                                            <td>
+                                                <div class="event-item">
+                                                    <div class="event-icon 
+                                                        {% if event.status == 'Confirmado' %}bg-success
+                                                        {% elif event.status == 'Programado' %}bg-primary
+                                                        {% elif event.status == 'Pendiente' %}bg-warning
+                                                        {% else %}bg-secondary{% endif %}
+                                                    ">
+                                                        <i class="fas fa-calendar-day"></i>
+                                                    </div>
+                                                    <span>{{ event.title }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ event.date }}</td>
+                                            <td>{{ event.location }}</td>
+                                            <td>
+                                                <span class="status-badge 
+                                                    {% if event.status == 'Confirmado' %}success
+                                                    {% elif event.status == 'Programado' %}primary
+                                                    {% elif event.status == 'Pendiente' %}warning
+                                                    {% else %}secondary{% endif %}
+                                                ">
+                                                    {{ event.status }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="table-actions">
+                                                    <button class="action-btn edit" data-bs-toggle="tooltip"
+                                                        title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="action-btn delete" data-bs-toggle="tooltip"
+                                                        title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    <button class="action-btn view" data-bs-toggle="tooltip"
+                                                        title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="btn-link">Ver todos los eventos</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Tareas Pendientes</h5>
+                            <div class="card-actions">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-plus me-1"></i>Nueva
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="task-list">
+                                <li class="task-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="task1">
+                                        <label class="form-check-label" for="task1">
+                                            Revisar solicitudes de inscripción
+                                        </label>
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="priority high">Alta</span>
+                                        <span class="task-date">Hoy</span>
+                                    </div>
+                                </li>
+                                <li class="task-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="task2">
+                                        <label class="form-check-label" for="task2">
+                                            Actualizar información institucional
+                                        </label>
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="priority medium">Media</span>
+                                        <span class="task-date">Mañana</span>
+                                    </div>
+                                </li>
+                                <li class="task-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="task3">
+                                        <label class="form-check-label" for="task3">
+                                            Preparar informe mensual
+                                        </label>
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="priority low">Normal</span>
+                                        <span class="task-date">28/05</span>
+                                    </div>
+                                </li>
+                                <li class="task-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="task4">
+                                        <label class="form-check-label" for="task4">
+                                            Revisar presupuesto para eventos
+                                        </label>
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="priority medium">Media</span>
+                                        <span class="task-date">30/05</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="btn-link">Ver todas las tareas</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access Row -->
+            <div class="row">
+                <div class="col-lg-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Acceso Rápido</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3 col-sm-6">
+                                    <a href="#" class="quick-access-item">
+                                        <div class="quick-access-icon bg-primary">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </div>
+                                        <span>Crear Evento</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <a href="#" class="quick-access-item">
+                                        <div class="quick-access-icon bg-success">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                        <span>Añadir Usuario</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <a href="#" class="quick-access-item">
+                                        <div class="quick-access-icon bg-info">
+                                            <i class="fas fa-file-upload"></i>
+                                        </div>
+                                        <span>Subir Archivo</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <a href="#" class="quick-access-item">
+                                        <div class="quick-access-icon bg-warning">
+                                            <i class="fas fa-bell"></i>
+                                        </div>
+                                        <span>Enviar Notificación</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div>© 2025 NetSchool UDC. Todos los derechos reservados.</div>
+            <div>v2.5.0</div>
+        </footer>
+    </main>
+</div>
+
+<!-- Add Event Modal -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Agregar Nuevo Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEventForm" method="POST" action="{{ url_for('admin.add_event_ajax') }}">
+                    <div class="mb-3">
+                        <label for="eventTitle" class="form-label">Título del Evento</label>
+                        <input type="text" class="form-control" id="eventTitle" name="eventTitle"
+                            placeholder="Ingrese el título del evento" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="eventDate" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="eventTime" class="form-label">Hora</label>
+                            <input type="time" class="form-control" id="eventTime" name="eventTime" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventLocation" class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="eventLocation" name="eventLocation"
+                            placeholder="Ingrese la ubicación" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDescription" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3"
+                            placeholder="Ingrese la descripción del evento" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="addEventForm" class="btn btn-primary">Guardar Evento</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Toggle sidebar
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn');
+        const adminContainer = document.querySelector('.admin-container');
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function () {
+                document.body.classList.toggle('sidebar-mobile-open');
+            });
+        }
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            adminContainer.classList.add('sidebar-collapsed');
+        }
+
+        if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.addEventListener('click', function () {
+                adminContainer.classList.toggle('sidebar-collapsed');
+            });
+        }
+        if (adminContainer.classList.contains('sidebar-collapsed')) {
+            localStorage.setItem('sidebarCollapsed', 'true');
+        } else {
+            localStorage.setItem('sidebarCollapsed', 'false');
+        }
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // User Stats Chart
+        const userStatsCtx = document.getElementById('userStatsChart');
+        if (userStatsCtx) {
+            new Chart(userStatsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    datasets: [
+                        {
+                            label: 'Estudiantes',
+                            data: [65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120],
+                            borderColor: 'var(--primary)',
+                            backgroundColor: 'rgba(var(--primary-rgb), 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Profesores',
+                            data: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+                            borderColor: 'var(--success)',
+                            backgroundColor: 'rgba(var(--success-rgb), 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // User Distribution Chart
+        const userDistributionCtx = document.getElementById('userDistributionChart');
+        if (userDistributionCtx) {
+            new Chart(userDistributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Estudiantes', 'Profesores', 'Administradores'],
+                    datasets: [{
+                        data: [120, 26, 7],
+                        backgroundColor: [
+                            'var(--primary)',
+                            'var(--success)',
+                            'var(--warning)'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                boxWidth: 12
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Task checkboxes
+        const taskCheckboxes = document.querySelectorAll('.task-item .form-check-input');
+        taskCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const taskItem = this.closest('.task-item');
+                if (this.checked) {
+                    taskItem.classList.add('completed');
+                } else {
+                    taskItem.classList.remove('completed');
+                }
+            });
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const addEventForm = document.getElementById('addEventForm');
+        const addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
+
+        addEventForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(addEventForm);
+
+            fetch('{{ url_for("admin.add_event_ajax") }}', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cerrar modal  
+                        addEventModal.hide();
+
+                        // Mostrar mensaje de éxito  
+                        showAlert('success', data.message);
+
+                        // Recargar la página para mostrar el nuevo evento  
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showAlert('error', data.message);
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error de conexión');
+                });
+        });
+
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+            alertDiv.innerHTML = `  
+            ${message}  
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>  
+        `;
+
+            const container = document.querySelector('.container-fluid');
+            container.insertBefore(alertDiv, container.firstChild);
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    });  
+    function showAlert(type, message) {  
+    const alertDiv = document.createElement('div');  
+    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;  
+    alertDiv.innerHTML = `  
+        ${message}  
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>  
+    `;  
+      
+    const container = document.querySelector('.admin-content') || document.querySelector('.container-fluid');  
+    container.insertBefore(alertDiv, container.firstChild);  
+      
+    setTimeout(() => {  
+        alertDiv.remove();  
+    }, 5000);  
+}
+</script>
+{% endblock %}

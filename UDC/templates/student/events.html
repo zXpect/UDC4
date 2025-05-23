@@ -1,0 +1,24 @@
+{% extends 'base.html' %}  
+{% block title %}Eventos - Estudiante{% endblock %}  
+{% block content %}  
+<div class="container py-4">  
+    <h2>Calendario de Eventos</h2>  
+    <div class="row">  
+        {% for event in events %}  
+            <div class="col-md-4 mb-3">  
+                <div class="card">  
+                    <div class="card-header">  
+                        <h5>{{ event.title }}</h5>  
+                    </div>  
+                    <div class="card-body">  
+                        <p><strong>Fecha:</strong> {{ event.date }}</p>  
+                        <p><strong>Hora:</strong> {{ event.time }}</p>  
+                        <p><strong>Lugar:</strong> {{ event.location }}</p>  
+                        <p>{{ event.description }}</p>  
+                    </div>  
+                </div>  
+            </div>  
+        {% endfor %}  
+    </div>  
+</div>  
+{% endblock %}

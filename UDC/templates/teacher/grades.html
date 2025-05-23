@@ -1,0 +1,50 @@
+{% extends 'base.html' %}  
+{% block title %}Gestión de Notas{% endblock %}  
+{% block content %}  
+<div class="container py-4">  
+    <h2>Registrar Notas</h2>  
+    <div class="row">  
+        <div class="col-md-6">  
+            <form method="post">  
+                <div class="mb-3">  
+                    <label for="student_id" class="form-label">Estudiante</label>  
+                    <select class="form-select" name="student_id" required>  
+                        <option value="">Seleccionar estudiante</option>  
+                        {% for student in students %}  
+                            <option value="{{ student._id }}">{{ student.first_name }} {{ student.last_name }}</option>  
+                        {% endfor %}  
+                    </select>  
+                </div>  
+                <div class="mb-3">  
+                    <label for="course_id" class="form-label">Materia</label>  
+                    <select class="form-select" name="course_id" required>  
+                        <option value="">Seleccionar materia</option>  
+                        {% for course in courses %}  
+                            <option value="{{ course._id }}">{{ course.name }}</option>  
+                        {% endfor %}  
+                    </select>  
+                </div>  
+                <div class="mb-3">  
+                    <label for="grade_value" class="form-label">Nota</label>  
+                    <input type="number" class="form-control" name="grade_value" min="0" max="5" step="0.1" required>  
+                </div>  
+                <div class="mb-3">  
+                    <label for="grade_type" class="form-label">Tipo de Evaluación</label>  
+                    <select class="form-select" name="grade_type" required>  
+                        <option value="">Seleccionar tipo</option>  
+                        <option value="parcial">Parcial</option>  
+                        <option value="quiz">Quiz</option>  
+                        <option value="tarea">Tarea</option>  
+                        <option value="proyecto">Proyecto</option>  
+                    </select>  
+                </div>  
+                <div class="mb-3">  
+                    <label for="description" class="form-label">Observaciones</label>  
+                    <textarea class="form-control" name="description" rows="3"></textarea>  
+                </div>  
+                <button type="submit" class="btn btn-primary">Registrar Nota</button>  
+            </form>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}

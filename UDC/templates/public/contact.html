@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Contacto - NetSchool UDC{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="section-title">Contacto</h2>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Información de Contacto</h3>
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-map-marker-alt me-3 mt-1 text-primary"></i>
+                        <div>
+                            <strong>Dirección:</strong><br>
+                            Calle Principal #123, Ciudad
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-phone me-3 mt-1 text-primary"></i>
+                        <div>
+                            <strong>Teléfono:</strong><br>
+                            (123) 456-7890
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-envelope me-3 mt-1 text-primary"></i>
+                        <div>
+                            <strong>Email:</strong><br>
+                            contacto@colegioudc.edu.co
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-4">
+                        <i class="fas fa-clock me-3 mt-1 text-primary"></i>
+                        <div>
+                            <strong>Horario de Atención:</strong><br>
+                            Lunes a Viernes: 7:00 AM - 5:00 PM<br>
+                            Sábados: 8:00 AM - 12:00 PM
+                        </div>
+                    </div>
+                    
+                    <h3 class="card-title mt-4">Redes Sociales</h3>
+                    <div class="d-flex mt-3">
+                        <a href="#" class="btn btn-outline-primary me-2">
+                            <i class="fab fa-facebook-f me-2"></i>Facebook
+                        </a>
+                        <a href="#" class="btn btn-outline-info me-2">
+                            <i class="fab fa-twitter me-2"></i>Twitter
+                        </a>
+                        <a href="#" class="btn btn-outline-danger">
+                            <i class="fab fa-instagram me-2"></i>Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Envíanos un Mensaje</h3>
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Asunto</label>
+                            <input type="text" class="form-control" id="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Mensaje</label>
+                            <textarea class="form-control" id="message" rows="5" required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">  
+        <div class="col-12">  
+            <div class="card">  
+                <div class="card-body">  
+                    <h3 class="card-title">Ubicación</h3>  
+                    <div class="ratio ratio-16x9">  
+                        <div id="map" style="width: 100%; height: 100%;"></div>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>
+{% endblock %}  
+  
+{% block extra_js %}  
+<script>  
+function initMap() {  
+    const location = { lat: 5.309346, lng: -73.8177795 };  
+      
+    const map = new google.maps.Map(document.getElementById("map"), {  
+        zoom: 15,  
+        center: location,  
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [
+            {
+                "featureType": "administrative",
+                "elementType": "labels.text.fill",
+                "stylers": [{"color": "#444444"}]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "all",
+                "stylers": [{"color": "#f2f2f2"}]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "all",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                "featureType": "road",
+                "elementType": "all",
+                "stylers": [{"saturation": -100}, {"lightness": 45}]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "all",
+                "stylers": [{"visibility": "simplified"}]
+            },
+            {
+                "featureType": "road.arterial",
+                "elementType": "labels.icon",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "all",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [{"color": "#0f172a"}, {"visibility": "on"}]
+            }
+        ]
+    });  
+      
+    const marker = new google.maps.Marker({  
+        position: location,  
+        map: map,  
+        title: "Colegio UDC",  
+        animation: google.maps.Animation.DROP  
+    });  
+      
+    const infoWindow = new google.maps.InfoWindow({  
+        content: `  
+            <div style="padding: 10px; max-width: 200px;">  
+                <h6 style="margin-top: 0; font-weight: bold;">Colegio UDC</h6>  
+                <p style="margin-bottom: 5px;">Calle Principal #123<br>  
+                Teléfono: (123) 456-7890</p>
+                <a href="https://maps.google.com/maps?daddr=5.309346,-73.8177795" target="_blank" style="color: #3b82f6; text-decoration: none;">Cómo llegar</a>
+            </div>  
+        `  
+    });  
+      
+    marker.addListener("click", () => {  
+        infoWindow.open(map, marker);  
+    });
+
+    // Abrir InfoWindow por defecto
+    infoWindow.open(map, marker);
+}  
+</script>  
+<script async defer   
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap">  
+</script>  
+{% endblock %}

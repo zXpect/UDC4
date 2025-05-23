@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de Gestión de Contenidos del Colegio UDC">
+    <meta name="theme-color" content="#0f172a">
+    <title>{% block title %}UDC - Colegio UDC{% endblock %}</title>
+    
+    <!-- Preconexiones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') if url_for else '#' }}">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="navbar-container">
+            <!-- Brand -->
+            <a class="navbar-brand" href="{{ url_for('public.index') if url_for else '#' }}">
+                <i class="fas fa-graduation-cap"></i> UDC
+            </a>
+            
+            <!-- Right side controls for mobile/desktop -->
+            <div class="navbar-controls d-flex align-items-center">
+                <!-- Theme Toggle Button -->
+                <button class="theme-toggle me-2" aria-label="Cambiar tema">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="navbar-toggler d-lg-none" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Collapsible content -->
+            <div class="navbar-collapse collapse" id="navbarNav">
+                <!-- Navigation Links -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.index') if url_for else '#' }}">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.events') if url_for else '#' }}">
+                            <i class="fas fa-calendar-alt"></i> Eventos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.about') if url_for else '#' }}">
+                            <i class="fas fa-users"></i> Nosotros
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.contact') if url_for else '#' }}">
+                            <i class="fas fa-envelope"></i> Contacto
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- User Panel -->
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="authDropdown" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar me-2">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="d-none d-md-inline">{% if session.get('logged_in') %}{{ session.get('username', 'Usuario') }}{% else %}Cuenta{% endif %}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
+                            {% if session.get('logged_in') %}
+                                <li class="dropdown-header">
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    Bienvenido, {{ session.get('username', 'Usuario') }}
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.profile') if url_for else '#' }}">
+                                        <i class="fas fa-user-circle me-2"></i> Mi Perfil
+                                    </a>
+                                </li>
+                                {% if session.get('role') == 'admin' %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('admin.dashboard') if url_for else '#' }}">
+                                        <i class="fas fa-user-shield me-2"></i> Panel de Administración
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.login') if url_for else '#' }}">  
+                                        <i class="fas fa-exchange-alt me-2"></i> Cambiar Cuenta
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') if url_for else '#' }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="dropdown-header">
+                                    <i class="fas fa-user me-2"></i>
+                                    Acceso de Usuario
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.login') if url_for else '#' }}">
+                                        <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.register') if url_for else '#' }}">
+                                        <i class="fas fa-user-plus me-2"></i> Registrarse
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Flash Messages -->
+        {% if get_flashed_messages %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="container py-3">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} d-flex align-items-center">
+                <div class="alert-icon me-3">
+                    <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }}"></i>
+                </div>
+                <div class="alert-content flex-grow-1">
+                    <div class="alert-title">{{ 'Error!' if category == 'error' else '¡Éxito!' }}</div>
+                    <p class="mb-0">{{ message }}</p>
+                </div>
+                <button type="button" class="alert-close" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% endif %}
+
+        <!-- Content Section -->
+        {% block content %}
+        <!-- Hero Section -->
+        <section class="jumbotron">
+            <div class="container">
+                <h1 class="display-4 fw-bold mb-4">Bienvenido al Colegio UDC</h1>
+                <p class="lead mb-4">Sistema de Gestión de Contenidos Educativo para una experiencia académica moderna y eficiente</p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <a href="{{ url_for('public.events') if url_for else '#' }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Ver Eventos
+                    </a>
+                    <a href="{{ url_for('public.about') if url_for else '#' }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Conoce Más
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eventos Destacados -->
+        <section class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Eventos Destacados</h2>
+                <p class="section-subtitle">Próximas actividades importantes en nuestro calendario académico</p>
+                
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card event-card hover-lift">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="event-date me-3">
+                                    <span class="event-day">15</span>
+                                    <span class="event-month">MAY</span>
+                                </div>
+                                <h3 class="event-title mb-0">Feria de Ciencias</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="event-details mb-3">
+                                    <div class="event-time mb-2">
+                                        <i class="far fa-clock me-2"></i>
+                                        <span>9:00 AM - 2:00 PM</span>
+                                    </div>
+                                    <div class="event-location">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        <span>Auditorio Principal</span>
+                                    </div>
+                                </div>
+                                <p class="event-description">Exhibición de proyectos científicos desarrollados por estudiantes de todos los grados.</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card event-card hover-lift">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="event-date me-3">
+                                    <span class="event-day">22</span>
+                                    <span class="event-month">MAY</span>
+                                </div>
+                                <h3 class="event-title mb-0">Día del Deporte</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="event-details mb-3">
+                                    <div class="event-time mb-2">
+                                        <i class="far fa-clock me-2"></i>
+                                        <span>8:00 AM - 4:00 PM</span>
+                                    </div>
+                                    <div class="event-location">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        <span>Polideportivo</span>
+                                    </div>
+                                </div>
+                                <p class="event-description">Jornada deportiva con competencias en diferentes disciplinas para todos los estudiantes.</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card event-card hover-lift">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="event-date me-3">
+                                    <span class="event-day">30</span>
+                                    <span class="event-month">MAY</span>
+                                </div>
+                                <h3 class="event-title mb-0">Reunión de Padres</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="event-details mb-3">
+                                    <div class="event-time mb-2">
+                                        <i class="far fa-clock me-2"></i>
+                                        <span>5:00 PM - 7:00 PM</span>
+                                    </div>
+                                    <div class="event-location">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        <span>Salones de Clase</span>
+                                    </div>
+                                </div>
+                                <p class="event-description">Reunión para informar sobre el progreso académico y actividades del segundo trimestre.</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('public.events') if url_for else '#' }}" class="btn btn-primary">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Ver todos los eventos
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Servicios -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Nuestros Servicios</h2>
+                <p class="section-subtitle">Descubre todo lo que el Colegio UDC tiene para ofrecer a nuestra comunidad educativa</p>
+                
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <h3 class="service-title">Gestión Académica</h3>
+                            <p class="service-description">Administra calificaciones, horarios y contenido académico de manera eficiente con nuestro sistema integrado.</p>
+                            <a href="#" class="service-link">
+                                Explorar
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="service-title">Comunidad Estudiantil</h3>
+                            <p class="service-description">Conecta con estudiantes, profesores y padres de familia en una plataforma integrada y colaborativa.</p>
+                            <a href="#" class="service-link">
+                                Explorar
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="service-title">Reportes y Analytics</h3>
+                            <p class="service-description">Visualiza el progreso académico y estadísticas importantes con dashboards interactivos y detallados.</p>
+                            <a href="#" class="service-link">
+                                Explorar
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <!-- Logo y Descripción -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-brand mb-3">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        <span>Colegio UDC</span>
+                    </div>
+                    <p class="footer-text">Sistema de Gestión de Contenidos Educativo para una mejor experiencia académica moderna y eficiente.</p>
+                    <div class="footer-badge">
+                        <i class="fas fa-award me-2"></i>
+                        <span>Educación de Excelencia desde 2025</span>
+                    </div>
+                </div>
+
+                <!-- Enlaces Rápidos -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="footer-title">
+                        <i class="fas fa-link me-2"></i>
+                        Enlaces
+                    </h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('public.index') if url_for else '#' }}">Inicio</a></li>
+                        <li><a href="{{ url_for('public.events') if url_for else '#' }}">Eventos</a></li>
+                        <li><a href="{{ url_for('public.about') if url_for else '#' }}">Nosotros</a></li>
+                        <li><a href="{{ url_for('public.contact') if url_for else '#' }}">Contacto</a></li>
+                        <li><a href="#">Política de Privacidad</a></li>
+                        <li><a href="#">Términos de Uso</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="footer-title">
+                        <i class="fas fa-phone me-2"></i>
+                        Contacto
+                    </h5>
+                    <ul class="footer-contact">
+                        <li>
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <span>Calle Principal #123, Ciudad</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone me-2"></i>
+                            <span>(123) 456-7890</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>contacto@colegioudc.edu.co</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock me-2"></i>
+                            <span>Lun - Vie: 7:00 AM - 5:00 PM</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="footer-title">
+                        <i class="fas fa-bell me-2"></i>
+                        Mantente Informado
+                    </h5>
+                    <p class="footer-text mb-3">Recibe nuestras noticias y actualizaciones importantes</p>
+                    <div class="newsletter-form">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Tu correo electrónico" aria-label="Email">
+                            <button class="btn btn-primary" type="button" aria-label="Suscribirse">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <p class="copyright-text mb-0">
+                            &copy; 2025 UDC - Colegio UDC. Todos los derechos reservados.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0">Diseñado con <i class="fas fa-heart text-danger mx-1"></i> por NetSchool</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

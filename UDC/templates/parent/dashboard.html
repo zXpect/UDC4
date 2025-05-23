@@ -1,0 +1,26 @@
+{% extends 'base.html' %}  
+{% block title %}Dashboard Padre{% endblock %}  
+{% block content %}  
+<div class="container py-4">  
+    <h2>Dashboard de Padre de Familia</h2>  
+    <div class="row">  
+        <div class="col-12">  
+            <h3>Mis Hijos</h3>  
+            {% for child in children %}  
+                <div class="card mb-3">  
+                    <div class="card-body">  
+                        <h5 class="card-title">{{ child.first_name }} {{ child.last_name }}</h5>  
+                        <p class="card-text">Usuario: {{ child.username }}</p>  
+                        <a href="{{ url_for('parent.child_grades', child_id=child._id) }}" class="btn btn-primary">Ver Notas</a>  
+                    </div>  
+                </div>  
+            {% endfor %}  
+        </div>  
+    </div>  
+    <div class="row mt-4">  
+        <div class="col-12">  
+            <a href="{{ url_for('parent.academic_files') }}" class="btn btn-info">Ver Archivos Académicos</a>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}

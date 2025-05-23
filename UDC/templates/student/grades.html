@@ -1,0 +1,31 @@
+{% extends 'base.html' %}  
+{% block title %}Mis Notas{% endblock %}  
+{% block content %}  
+<div class="container py-4">  
+    <h2>Mis Calificaciones</h2>  
+    <div class="table-responsive">  
+        <table class="table table-striped">  
+            <thead>  
+                <tr>  
+                    <th>Materia</th>  
+                    <th>Tipo</th>  
+                    <th>Nota</th>  
+                    <th>Fecha</th>  
+                    <th>Observaciones</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                {% for grade in grades %}  
+                    <tr>  
+                        <td>{{ grade.course_id }}</td>  
+                        <td>{{ grade.grade_type }}</td>  
+                        <td><span class="badge bg-primary">{{ grade.grade_value }}</span></td>  
+                        <td>{{ grade.created_at.strftime('%d/%m/%Y') }}</td>  
+                        <td>{{ grade.description }}</td>  
+                    </tr>  
+                {% endfor %}  
+            </tbody>  
+        </table>  
+    </div>  
+</div>  
+{% endblock %}

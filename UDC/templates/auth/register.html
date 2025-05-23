@@ -1,0 +1,740 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - Colegio UDC{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+<style>
+    /* Estilo para el fondo con imagen - igual que login */
+    .auth-section {
+        background-image: url("{{ url_for('static', filename='img/school-bg.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        position: relative;
+    }
+    
+    /* Overlay semitransparente para mejorar legibilidad */
+    .auth-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: 1;
+    }
+    
+    /* Asegurar que el contenido esté por encima del overlay */
+    .auth-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Mejorar la visibilidad de la tarjeta */
+    .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Estilos adicionales para el sistema de pasos */
+    .steps-container {
+        margin-bottom: 2rem;
+    }
+
+    .steps-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .step-number {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .step.active .step-number {
+        background: #007bff;
+        color: white;
+    }
+
+    .step.completed .step-number {
+        background: #28a745;
+        color: white;
+    }
+
+    .step.completed .step-number i {
+        font-size: 0.8rem;
+    }
+
+    .step-connector {
+        width: 60px;
+        height: 2px;
+        background: #e9ecef;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .step.completed + .step .step-connector,
+    .step.completed .step-connector {
+        background: #28a745;
+    }
+
+    .step-content {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .step-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-step {
+        min-width: 120px;
+    }
+
+    .step-title {
+        color: #495057;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Ajustes para tema oscuro */
+    .dark-theme .step-title {
+        color: var(--text-primary, #fff);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .dark-theme .step {
+        color: var(--text-secondary, #ccc);
+    }
+
+    .dark-theme .step-number {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary, #ccc);
+    }
+
+    .dark-theme .step.active .step-number {
+        background: var(--primary, #007bff);
+        color: white;
+    }
+
+    .dark-theme .step.completed .step-number {
+        background: #28a745;
+        color: white;
+    }
+
+    .dark-theme .step-connector {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .dark-theme .step-navigation {
+        border-top-color: var(--border, #444);
+    }
+
+    .dark-theme .card {
+        background: rgba(var(--surface-rgb, 40, 40, 40), 0.8) !important;
+        border-color: var(--border, #444) !important;
+        backdrop-filter: blur(10px);
+    }
+
+    .dark-theme .card-body {
+        color: var(--text-primary, #fff);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .steps-indicator {
+            flex-wrap: wrap;
+        }
+        
+        .step-connector {
+            width: 40px;
+            margin: 0 0.5rem;
+        }
+        
+        .step span {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9 col-sm-11">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <div class="auth-logo">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h2 class="auth-title">Únete al Colegio UDC</h2>
+                        <p class="auth-subtitle">Crea tu cuenta paso a paso - Es rápido y sencillo</p>
+                    </div>
+
+                    <div class="auth-body">
+                        <!-- Indicador de pasos -->
+                        <div class="steps-container">
+                            <div class="steps-indicator">
+                                <div class="step active" data-step="1">
+                                    <div class="step-number">1</div>
+                                    <span>Información Personal</span>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step" data-step="2">
+                                    <div class="step-number">2</div>
+                                    <span>Cuenta y Rol</span>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step" data-step="3">
+                                    <div class="step-number">3</div>
+                                    <span>Seguridad</span>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step" data-step="4">
+                                    <div class="step-number">4</div>
+                                    <span>Finalizar</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alert Container -->
+                        <div id="registerAlert" class="alert-container">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'error' else 'info-circle' }}"></i>
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+
+                        <form id="registerForm" method="post" action="{{ url_for('auth.register') }}" class="auth-form" novalidate>
+                            
+                            <!-- Paso 1: Información Personal -->
+                            <div class="step-content active" data-step="1">
+                                <h4 class="step-title">
+                                    <i class="fas fa-user me-2"></i>
+                                    Información Personal
+                                </h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="firstName" class="form-label">
+                                                <i class="fas fa-user"></i>
+                                                Nombre
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input type="text" class="form-control" id="firstName" name="firstName"
+                                                    placeholder="Tu nombre" required>
+                                                <div class="input-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="lastName" class="form-label">
+                                                <i class="fas fa-user"></i>
+                                                Apellido
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <input type="text" class="form-control" id="lastName" name="lastName"
+                                                    placeholder="Tu apellido" required>
+                                                <div class="input-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Paso 2: Cuenta y Rol -->
+                            <div class="step-content" data-step="2">
+                                <h4 class="step-title">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    Cuenta y Rol
+                                </h4>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope"></i>
+                                        Correo Electrónico
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            placeholder="tu.email@ejemplo.com" required>
+                                        <div class="input-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="username" class="form-label">
+                                        <i class="fas fa-at"></i>
+                                        Nombre de Usuario
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="text" class="form-control" id="username" name="username"
+                                            placeholder="Elige un nombre de usuario único" required>
+                                        <div class="input-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="role" class="form-label">
+                                        <i class="fas fa-user-tag"></i>
+                                        Tipo de Usuario
+                                    </label>
+                                    <select class="form-select" id="role" name="role" required>
+                                        <option value="" selected disabled>¿Cuál es tu rol en el colegio?</option>
+                                        <option value="student">👨‍🎓 Estudiante</option>
+                                        <option value="parent">👨‍👩‍👧‍👦 Padre de Familia</option>
+                                        <option value="teacher">👨‍🏫 Profesor</option>
+                                        <option value="admin">👨‍💼 Administrador</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Paso 3: Seguridad -->
+                            <div class="step-content" data-step="3">
+                                <h4 class="step-title">
+                                    <i class="fas fa-lock me-2"></i>
+                                    Configuración de Seguridad
+                                </h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="password" class="form-label">
+                                                <i class="fas fa-lock"></i>
+                                                Contraseña
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <div class="password-input">
+                                                    <input type="password" class="form-control" id="password"
+                                                        name="password" placeholder="Crea una contraseña segura" required>
+                                                    <button type="button" class="password-toggle" data-target="password">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="input-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="confirmPassword" class="form-label">
+                                                <i class="fas fa-check-circle"></i>
+                                                Confirmar Contraseña
+                                            </label>
+                                            <div class="input-wrapper">
+                                                <div class="password-input">
+                                                    <input type="password" class="form-control" id="confirmPassword"
+                                                        name="confirmPassword" placeholder="Repite tu contraseña" required>
+                                                    <button type="button" class="password-toggle"
+                                                        data-target="confirmPassword">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="input-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Paso 4: Finalizar -->
+                            <div class="step-content" data-step="4">
+                                <h4 class="step-title">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    ¡Casi terminamos!
+                                </h4>
+                                
+                                <!-- Resumen de datos -->
+                                <div class="card mb-3" style="background: #f8f9fa; border: 1px solid #e9ecef;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Resumen de tu cuenta:</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Nombre:</strong> <span id="summaryName">-</span></p>
+                                                <p class="mb-1"><strong>Email:</strong> <span id="summaryEmail">-</span></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Usuario:</strong> <span id="summaryUsername">-</span></p>
+                                                <p class="mb-1"><strong>Rol:</strong> <span id="summaryRole">-</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                                        <label class="form-check-label" for="terms">
+                                            <strong>Acepto los <a href="#" target="_blank">Términos y Condiciones</a> y la
+                                            <a href="#" target="_blank">Política de Privacidad</a></strong>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="newsletter" name="newsletter">
+                                        <label class="form-check-label" for="newsletter">
+                                            Quiero recibir noticias y actualizaciones por correo electrónico
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navegación entre pasos -->
+                            <div class="step-navigation">
+                                <button type="button" class="btn btn-outline-secondary btn-step" id="prevBtn" style="display: none;">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Anterior
+                                </button>
+                                <button type="button" class="btn btn-primary btn-step" id="nextBtn">
+                                    Siguiente
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                                <button type="submit" class="btn-auth btn-primary btn-step" id="registerBtn" style="display: none;">
+                                    <span class="btn-text">
+                                        <i class="fas fa-user-plus"></i>
+                                        Crear Cuenta
+                                    </span>
+                                    <span class="btn-loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Creando cuenta...
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="auth-links">
+                            <p>¿Ya tienes cuenta?
+                                <a href="{{ url_for('auth.login') }}" class="auth-link">
+                                    Inicia sesión aquí
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        // Inicializar funcionalidades
+        setupPasswordToggle();
+        setupFormValidation();
+        setupStepNavigation();
+
+        // Navegación por pasos
+        function setupStepNavigation() {
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const registerBtn = document.getElementById('registerBtn');
+
+            nextBtn.addEventListener('click', function() {
+                if (validateCurrentStep()) {
+                    if (currentStep < totalSteps) {
+                        currentStep++;
+                        showStep(currentStep);
+                        updateStepIndicator();
+                        updateNavigationButtons();
+                        if (currentStep === 4) {
+                            updateSummary();
+                        }
+                    }
+                }
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                    updateStepIndicator();
+                    updateNavigationButtons();
+                }
+            });
+        }
+
+        function showStep(step) {
+            // Ocultar todos los pasos
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Mostrar el paso actual
+            const currentStepContent = document.querySelector(`.step-content[data-step="${step}"]`);
+            if (currentStepContent) {
+                currentStepContent.classList.add('active');
+            }
+        }
+
+        function updateStepIndicator() {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNumber = index + 1;
+                const stepElement = step.querySelector('.step-number');
+                
+                step.classList.remove('active', 'completed');
+                
+                if (stepNumber < currentStep) {
+                    step.classList.add('completed');
+                    stepElement.innerHTML = '<i class="fas fa-check"></i>';
+                } else if (stepNumber === currentStep) {
+                    step.classList.add('active');
+                    stepElement.textContent = stepNumber;
+                } else {
+                    stepElement.textContent = stepNumber;
+                }
+            });
+        }
+
+        function updateNavigationButtons() {
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const registerBtn = document.getElementById('registerBtn');
+
+            // Botón anterior
+            prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+
+            // Botón siguiente vs registrar
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                registerBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                registerBtn.style.display = 'none';
+            }
+        }
+
+        function validateCurrentStep() {
+            const currentStepContent = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+            const requiredFields = currentStepContent.querySelectorAll('[required]');
+            let isValid = true;
+
+            // Limpiar alertas previas
+            document.getElementById('registerAlert').innerHTML = '';
+
+            requiredFields.forEach(field => {
+                const wrapper = field.closest('.input-wrapper') || field.parentElement;
+                const feedback = wrapper.querySelector('.input-feedback');
+
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    if (feedback) {
+                        feedback.textContent = 'Este campo es obligatorio';
+                        feedback.className = 'input-feedback invalid';
+                    }
+                } else {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                    if (feedback) {
+                        feedback.textContent = '';
+                    }
+                }
+            });
+
+            // Validaciones específicas por paso
+            if (currentStep === 2) {
+                // Validar email
+                const email = document.getElementById('email');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (email.value && !emailRegex.test(email.value)) {
+                    isValid = false;
+                    email.classList.add('is-invalid');
+                    const wrapper = email.closest('.input-wrapper');
+                    const feedback = wrapper.querySelector('.input-feedback');
+                    if (feedback) {
+                        feedback.textContent = 'Ingresa un correo electrónico válido';
+                        feedback.className = 'input-feedback invalid';
+                    }
+                }
+            }
+
+            if (currentStep === 3) {
+                // Validar coincidencia de contraseñas
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (password && confirmPassword && password !== confirmPassword) {
+                    isValid = false;
+                    const confirmField = document.getElementById('confirmPassword');
+                    confirmField.classList.add('is-invalid');
+                    const wrapper = confirmField.closest('.input-wrapper');
+                    const feedback = wrapper.querySelector('.input-feedback');
+                    if (feedback) {
+                        feedback.textContent = 'Las contraseñas no coinciden';
+                        feedback.className = 'input-feedback invalid';
+                    }
+                }
+            }
+
+            if (!isValid) {
+                const alertContainer = document.getElementById('registerAlert');
+                alertContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Por favor, completa todos los campos requeridos correctamente
+                    </div>
+                `;
+            }
+
+            return isValid;
+        }
+
+        function updateSummary() {
+            document.getElementById('summaryName').textContent = 
+                `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`;
+            document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+            document.getElementById('summaryUsername').textContent = document.getElementById('username').value;
+            
+            const roleSelect = document.getElementById('role');
+            const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+            document.getElementById('summaryRole').textContent = selectedOption ? selectedOption.text : '-';
+        }
+
+        // Función para alternar visibilidad de contraseña
+        function setupPasswordToggle() {
+            document.querySelectorAll(".password-toggle").forEach((toggle) => {
+                toggle.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const targetId = toggle.getAttribute("data-target");
+                    const passwordInput = document.getElementById(targetId);
+                    const icon = toggle.querySelector("i");
+
+                    if (passwordInput.type === "password") {
+                        passwordInput.type = "text";
+                        icon.classList.remove("fa-eye");
+                        icon.classList.add("fa-eye-slash");
+                    } else {
+                        passwordInput.type = "password";
+                        icon.classList.remove("fa-eye-slash");
+                        icon.classList.add("fa-eye");
+                    }
+                });
+            });
+        }
+
+        // Validación del formulario final
+        function setupFormValidation() {
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function (e) {
+                    // Validar términos
+                    const terms = document.getElementById('terms');
+                    if (!terms.checked) {
+                        e.preventDefault();
+                        const alertContainer = document.getElementById('registerAlert');
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Debes aceptar los términos y condiciones para continuar
+                            </div>
+                        `;
+                        return false;
+                    }
+
+                    // Mostrar estado de carga
+                    const registerBtn = document.getElementById('registerBtn');
+                    registerBtn.classList.add('loading');
+                    registerBtn.disabled = true;
+
+                    return true;
+                });
+
+                // Validación en tiempo real
+                registerForm.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', function () {
+                        if (this.hasAttribute('required') && this.value.trim()) {
+                            this.classList.remove('is-invalid');
+                            this.classList.add('is-valid');
+
+                            const wrapper = this.closest('.input-wrapper');
+                            if (wrapper) {
+                                const feedback = wrapper.querySelector('.input-feedback');
+                                if (feedback) {
+                                    feedback.textContent = '';
+                                }
+                            }
+                        }
+                    });
+                });
+
+                // Validación de coincidencia de contraseñas en tiempo real
+                const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+
+                confirmPasswordInput.addEventListener('input', function () {
+                    if (passwordInput.value && this.value) {
+                        const wrapper = this.closest('.input-wrapper');
+                        const feedback = wrapper.querySelector('.input-feedback');
+
+                        if (passwordInput.value !== this.value) {
+                            this.classList.remove('is-valid');
+                            this.classList.add('is-invalid');
+                            if (feedback) {
+                                feedback.textContent = 'Las contraseñas no coinciden';
+                                feedback.className = 'input-feedback invalid';
+                            }
+                        } else {
+                            this.classList.remove('is-invalid');
+                            this.classList.add('is-valid');
+                            if (feedback) {
+                                feedback.textContent = 'Las contraseñas coinciden';
+                                feedback.className = 'input-feedback valid';
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}
