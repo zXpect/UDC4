@@ -1,37 +1,133 @@
 {% extends 'base.html' %}  
-{% block title %}Gestión de Archivos{% endblock %}  
+  
+{% block title %}Gestión de Archivos - NetSchool UDC{% endblock %}  
+  
+{% block extra_css %}  
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
+{% endblock %}  
+  
 {% block content %}  
-<div class="container py-4">  
-    <div class="d-flex justify-content-between align-items-center mb-4">  
-        <h2>Archivos Institucionales</h2>  
-        <a href="{{ url_for('admin.add_file') }}" class="btn btn-primary">Subir Archivo</a>  
-    </div>  
-    <div class="table-responsive">  
-        <table class="table table-striped">  
-            <thead>  
-                <tr>  
-                    <th>Título</th>  
-                    <th>Categoría</th>  
-                    <th>Tipo</th>  
-                    <th>Fecha</th>  
-                    <th>Acciones</th>  
-                </tr>  
-            </thead>  
-            <tbody>  
-                {% for file in files %}  
-                    <tr>  
-                        <td>{{ file.title }}</td>  
-                        <td>{{ file.category }}</td>  
-                        <td>{{ file.file_type }}</td>  
-                        <td>{{ file.created_at.strftime('%d/%m/%Y') }}</td>  
-                        <td>  
-                            <a href="{{ file.file_path }}" class="btn btn-sm btn-outline-primary">Descargar</a>  
-                            <a href="#" class="btn btn-sm btn-outline-danger">Eliminar</a>  
-                        </td>  
-                    </tr>  
-                {% endfor %}  
-            </tbody>  
-        </table>  
+<div class="row mb-4">  
+    <div class="col-12">  
+        <h2>Gestión de Archivos Institucionales</h2>  
+        <hr>  
     </div>  
 </div>  
+  
+<div class="row">  
+    <div class="col-md-3 mb-4">  
+        <div class="list-group">  
+            <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">  
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
+            </a>  
+            <a href="{{ url_for('admin.events') }}" class="list-group-item list-group-item-action">  
+                <i class="fas fa-calendar-alt me-2"></i>Eventos  
+            </a>  
+            <a href="{{ url_for('admin.files') }}" class="list-group-item list-group-item-action active">  
+                <i class="fas fa-file-alt me-2"></i>Archivos Institucionales  
+            </a>  
+            <a href="{{ url_for('admin.institutional_info') }}" class="list-group-item list-group-item-action">  
+                <i class="fas fa-info-circle me-2"></i>Información Institucional  
+            </a>  
+            <a href="#" class="list-group-item list-group-item-action">  
+                <i class="fas fa-users me-2"></i>Usuarios  
+            </a>  
+        </div>  
+    </div>  
+      
+    <div class="col-md-9">  
+        <div class="card">  
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">  
+                <h5 class="mb-0">Lista de Archivos</h5>  
+                <a href="{{ url_for('admin.add_file') }}" class="btn btn-primary">  
+                    <i class="fas fa-plus me-1"></i>Subir Archivo  
+                </a>  
+            </div>  
+            <div class="card-body">  
+                <!-- Filtros por categoría -->  
+                <div class="mb-3">  
+                    <div class="btn-group" role="group">  
+                        <button type="button" class="btn btn-outline-secondary active" onclick="filterFiles('all')">Todos</button>  
+                        <button type="button" class="btn btn-outline-secondary" onclick="filterFiles('academic')">Académicos</button>  
+                        <button type="button" class="btn btn-outline-secondary" onclick="filterFiles('administrative')">Administrativos</button>  
+                        <button type="button" class="btn btn-outline-secondary" onclick="filterFiles('general')">Generales</button>  
+                    </div>  
+                </div>  
+                  
+                <div class="table-responsive">  
+                    <table class="table table-hover">  
+                        <thead>  
+                            <tr>  
+                                <th>Título</th>  
+                                <th>Categoría</th>  
+                                <th>Tipo</th>  
+                                <th>Fecha</th>  
+                                <th>Subido por</th>  
+                                <th>Acciones</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody id="filesTable">  
+                            {% if files %}  
+                                {% for file in files %}  
+                                    <tr data-category="{{ file.category }}">  
+                                        <td>  
+                                            <i class="fas fa-file-{{ 'pdf' if file.file_type == 'pdf' else 'alt' }} me-2"></i>  
+                                            {{ file.title }}  
+                                        </td>  
+                                        <td>  
+                                            <span class="badge bg-{{ 'primary' if file.category == 'academic' else 'secondary' if file.category == 'administrative' else 'info' }}">  
+                                                {{ file.category|title }}  
+                                            </span>  
+                                        </td>  
+                                        <td>{{ file.file_type|upper }}</td>  
+                                        <td>{{ file.created_at.strftime('%d/%m/%Y %H:%M') if file.created_at else 'N/A' }}</td>  
+                                        <td>{{ file.uploaded_by if file.uploaded_by else 'Sistema' }}</td>  
+                                        <td>  
+                                            <a href="{{ url_for('admin.download_file', file_id=file._id) }}"   
+                                               class="btn btn-sm btn-outline-primary" title="Descargar">  
+                                                <i class="fas fa-download"></i>  
+                                            </a>  
+                                            <a href="{{ url_for('admin.delete_file', file_id=file._id) }}"   
+                                               class="btn btn-sm btn-outline-danger"   
+                                               onclick="return confirm('¿Estás seguro de eliminar este archivo?')"  
+                                               title="Eliminar">  
+                                                <i class="fas fa-trash"></i>  
+                                            </a>  
+                                        </td>  
+                                    </tr>  
+                                {% endfor %}  
+                            {% else %}  
+                                <tr>  
+                                    <td colspan="6" class="text-center">No hay archivos registrados</td>  
+                                </tr>  
+                            {% endif %}  
+                        </tbody>  
+                    </table>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}  
+  
+{% block extra_js %}  
+<script>  
+function filterFiles(category) {  
+    const rows = document.querySelectorAll('#filesTable tr[data-category]');  
+    const buttons = document.querySelectorAll('.btn-group .btn');  
+      
+    // Actualizar botones activos  
+    buttons.forEach(btn => btn.classList.remove('active'));  
+    event.target.classList.add('active');  
+      
+    // Filtrar filas  
+    rows.forEach(row => {  
+        if (category === 'all' || row.dataset.category === category) {  
+            row.style.display = '';  
+        } else {  
+            row.style.display = 'none';  
+        }  
+    });  
+}  
+</script>  
 {% endblock %}

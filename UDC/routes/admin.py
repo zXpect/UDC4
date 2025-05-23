@@ -4,9 +4,22 @@ from routes.auth import admin_required
 from models import User
 from models import InstitutionalInfo
 from models import InstitutionalFile
+import os
+from bson import ObjectId
+from werkzeug.utils import secure_filename  
+from flask import current_app  
+import datetime
+from flask import send_file
 
   
 admin = Blueprint('admin', __name__)  
+
+# Configuración para archivos  
+UPLOAD_FOLDER = 'uploads'  
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx'}  
+
+def allowed_file(filename):  
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS 
   
 @admin.route('/')  
 @admin_required  
@@ -128,19 +141,101 @@ def files():
 @admin_required  
 def add_file():  
     if request.method == 'POST':  
-        title = request.form.get('title')  
-        description = request.form.get('description')  
-        category = request.form.get('category')  
-        # Lógica de subida de archivos aquí  
-        file_path = '/uploads/placeholder.pdf'  
-          
-        if title and description:  
-            InstitutionalFile.create(title, description, file_path, 'pdf', session.get('user_id'), category)  
-            flash('Archivo subido exitosamente', 'success')  
-            return redirect(url_for('admin.files'))  
+        try:  
+            title = request.form.get('title')  
+            description = request.form.get('description')  
+            category = request.form.get('category')  
+              
+            # Validaciones  
+            if not title or not description:  
+                flash('Título y descripción son obligatorios', 'error')  
+                return render_template('admin/file_form.html')  
+              
+            # Verificar si se subió un archivo  
+            if 'file' not in request.files:  
+                flash('No se seleccionó ningún archivo', 'error')  
+                return render_template('admin/file_form.html')  
+              
+            file = request.files['file']  
+              
+            if file.filename == '':  
+                flash('No se seleccionó ningún archivo', 'error')  
+                return render_template('admin/file_form.html')  
+              
+            if file and allowed_file(file.filename):  
+                # Crear directorio si no existe  
+                upload_path = os.path.join(current_app.root_path, UPLOAD_FOLDER)  
+                if not os.path.exists(upload_path):  
+                    os.makedirs(upload_path)  
+                  
+                # Generar nombre seguro  
+                filename = secure_filename(file.filename)  
+                timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  
+                filename = timestamp + filename  
+                  
+                file_path = os.path.join(upload_path, filename)  
+                file.save(file_path)  
+                  
+                # Guardar en base de datos  
+                file_type = filename.rsplit('.', 1)[1].lower()  
+                relative_path = os.path.join(UPLOAD_FOLDER, filename)  
+                  
+                file_id = InstitutionalFile.create(  
+                    title, description, relative_path, file_type,   
+                    session.get('user_id'), category  
+                )  
+                  
+                if file_id:  
+                    flash('Archivo subido exitosamente', 'success')  
+                    return redirect(url_for('admin.files'))  
+                else:  
+                    flash('Error al guardar el archivo en la base de datos', 'error')  
+            else:  
+                flash('Tipo de archivo no permitido', 'error')  
+                  
+        except Exception as e:  
+            flash(f'Error al subir el archivo: {str(e)}', 'error')  
       
-    return render_template('admin/file_form.html')  
+    return render_template('admin/file_form.html')    
+
+# Agregar ruta para eliminar archivos  
+@admin.route('/files/delete/<file_id>')  
+@admin_required  
+def delete_file(file_id):  
+    try:  
+        if InstitutionalFile.delete(file_id):  
+            flash('Archivo eliminado exitosamente', 'success')  
+        else:  
+            flash('Error al eliminar el archivo', 'error')  
+    except Exception as e:  
+        flash(f'Error: {str(e)}', 'error')  
+      
+    return redirect(url_for('admin.files'))
+
+@admin.route('/files/download/<file_id>')  
+@admin_required  
+def download_file(file_id):  
+    try:  
+        file_doc = InstitutionalFile.collection.find_one({'_id': ObjectId(file_id)})  
+        if not file_doc:  
+            flash('Archivo no encontrado', 'error')  
+            return redirect(url_for('admin.files'))  
+          
+        file_path = os.path.join(current_app.root_path, file_doc['file_path'])  
+          
+        if os.path.exists(file_path):  
+            return send_file(file_path, as_attachment=True,   
+                           download_name=f"{file_doc['title']}.{file_doc['file_type']}")  
+        else:  
+            flash('Archivo físico no encontrado', 'error')  
+            return redirect(url_for('admin.files'))  
+              
+    except Exception as e:  
+        flash(f'Error al descargar: {str(e)}', 'error')  
+        return redirect(url_for('admin.files'))  
   
+# Ruta pública para descarga (para otros roles)  
+
 @admin.route('/institutional-info', methods=['GET', 'POST'])  
 @admin_required  
 def institutional_info():  
