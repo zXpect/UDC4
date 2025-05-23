@@ -1,0 +1,69 @@
+{% extends 'base.html' %}  
+  
+{% block title %}Archivos Académicos - Estudiante{% endblock %}  
+  
+{% block content %}  
+<div class="container py-4">  
+    <div class="row mb-4">  
+        <div class="col-12">  
+            <h2>Archivos Académicos</h2>  
+            <hr>  
+        </div>  
+    </div>  
+  
+    <div class="row">  
+        <div class="col-md-3 mb-4">  
+            <div class="list-group">  
+                <a href="{{ url_for('student.dashboard') }}" class="list-group-item list-group-item-action">  
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
+                </a>  
+                <a href="{{ url_for('student.events') }}" class="list-group-item list-group-item-action">  
+                    <i class="fas fa-calendar-alt me-2"></i>Eventos  
+                </a>  
+                <a href="{{ url_for('student.view_files') }}" class="list-group-item list-group-item-action active">  
+                    <i class="fas fa-file-alt me-2"></i>Archivos  
+                </a>  
+            </div>  
+        </div>  
+          
+        <div class="col-md-9">  
+            <div class="card">  
+                <div class="card-header bg-light">  
+                    <h5 class="mb-0">Materiales de Estudio</h5>  
+                </div>  
+                <div class="card-body">  
+                    {% if files %}  
+                        <div class="row">  
+                            {% for file in files %}  
+                                <div class="col-md-6 mb-3">  
+                                    <div class="card h-100">  
+                                        <div class="card-body">  
+                                            <h6 class="card-title">  
+                                                <i class="fas fa-file-{{ 'pdf' if file.file_type == 'pdf' else 'alt' }} me-2"></i>  
+                                                {{ file.title }}  
+                                            </h6>  
+                                            <p class="card-text text-muted small">{{ file.description[:100] }}...</p>  
+                                            <div class="d-flex justify-content-between align-items-center">  
+                                                <small class="text-muted">{{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}</small>  
+                                                <a href="{{ url_for('student.download_file', file_id=file._id) }}"   
+                                                   class="btn btn-sm btn-primary">  
+                                                    <i class="fas fa-download me-1"></i>Descargar  
+                                                </a>  
+                                            </div>  
+                                        </div>  
+                                    </div>  
+                                </div>  
+                            {% endfor %}  
+                        </div>  
+                    {% else %}  
+                        <div class="text-center text-muted">  
+                            <i class="fas fa-file-alt fa-3x mb-3"></i>  
+                            <p>No hay archivos académicos disponibles.</p>  
+                        </div>  
+                    {% endif %}  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}
