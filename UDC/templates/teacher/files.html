@@ -1,0 +1,161 @@
+{% extends 'base.html' %}  
+  
+{% block title %}Gestión de Archivos - Profesor{% endblock %}  
+  
+{% block extra_css %}  
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
+{% endblock %}  
+  
+{% block content %}  
+<div class="container py-4">  
+    <div class="row mb-4">  
+        <div class="col-12">  
+            <h2>Gestión de Archivos Educativos</h2>  
+            <hr>  
+        </div>  
+    </div>  
+  
+    <div class="row">  
+        <div class="col-md-3 mb-4">  
+            <div class="list-group">  
+                <a href="{{ url_for('teacher.dashboard') }}" class="list-group-item list-group-item-action">  
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
+                </a>  
+                <a href="{{ url_for('teacher.manage_grades') }}" class="list-group-item list-group-item-action">  
+                    <i class="fas fa-star me-2"></i>Calificaciones  
+                </a>  
+                <a href="{{ url_for('teacher.manage_files') }}" class="list-group-item list-group-item-action active">  
+                    <i class="fas fa-file-alt me-2"></i>Archivos  
+                </a>  
+            </div>  
+        </div>  
+          
+        <div class="col-md-9">  
+            <!-- Formulario de subida -->  
+            <div class="card mb-4">  
+                <div class="card-header bg-light">  
+                    <h5 class="mb-0">Subir Nuevo Archivo</h5>  
+                </div>  
+                <div class="card-body">  
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>  
+                        <div class="row">  
+                            <div class="col-md-6 mb-3">  
+                                <label for="title" class="form-label">Título *</label>  
+                                <input type="text" class="form-control" id="title" name="title" required>  
+                                <div class="invalid-feedback">  
+                                    El título es obligatorio.  
+                                </div>  
+                            </div>  
+                            <div class="col-md-6 mb-3">  
+                                <label for="category" class="form-label">Categoría *</label>  
+                                <select class="form-select" id="category" name="category" required>  
+                                    <option value="">Seleccionar categoría</option>  
+                                    <option value="academic">Académico</option>  
+                                    <option value="general">General</option>  
+                                </select>  
+                                <div class="invalid-feedback">  
+                                    Seleccione una categoría.  
+                                </div>  
+                            </div>  
+                        </div>  
+                          
+                        <div class="mb-3">  
+                            <label for="description" class="form-label">Descripción *</label>  
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>  
+                            <div class="invalid-feedback">  
+                                La descripción es obligatoria.  
+                            </div>  
+                        </div>  
+                          
+                        <div class="mb-3">  
+                            <label for="file" class="form-label">Archivo *</label>  
+                            <input type="file" class="form-control" id="file" name="file"   
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" required>  
+                            <div class="form-text">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG</div>  
+                            <div class="invalid-feedback">  
+                                Seleccione un archivo válido.  
+                            </div>  
+                        </div>  
+                          
+                        <button type="submit" class="btn btn-primary">  
+                            <i class="fas fa-upload me-1"></i>Subir Archivo  
+                        </button>  
+                    </form>  
+                </div>  
+            </div>  
+              
+            <!-- Lista de archivos -->  
+            <div class="card">  
+                <div class="card-header bg-light">  
+                    <h5 class="mb-0">Mis Archivos</h5>  
+                </div>  
+                <div class="card-body">  
+                    <div class="table-responsive">  
+                        <table class="table table-hover">  
+                            <thead>  
+                                <tr>  
+                                    <th>Título</th>  
+                                    <th>Categoría</th>  
+                                    <th>Tipo</th>  
+                                    <th>Fecha</th>  
+                                    <th>Acciones</th>  
+                                </tr>  
+                            </thead>  
+                            <tbody>  
+                                {% if files %}  
+                                    {% for file in files %}  
+                                        <tr>  
+                                            <td>  
+                                                <i class="fas fa-file-{{ 'pdf' if file.file_type == 'pdf' else 'alt' }} me-2"></i>  
+                                                {{ file.title }}  
+                                            </td>  
+                                            <td>  
+                                                <span class="badge bg-{{ 'primary' if file.category == 'academic' else 'info' }}">  
+                                                    {{ file.category|title }}  
+                                                </span>  
+                                            </td>  
+                                            <td>{{ file.file_type|upper }}</td>  
+                                            <td>{{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}</td>  
+                                            <td>  
+                                                <a href="{{ url_for('teacher.download_file', file_id=file._id) }}"   
+                                                   class="btn btn-sm btn-outline-primary" title="Descargar">  
+                                                    <i class="fas fa-download"></i>  
+                                                </a>  
+                                            </td>  
+                                        </tr>  
+                                    {% endfor %}  
+                                {% else %}  
+                                    <tr>  
+                                        <td colspan="5" class="text-center">No hay archivos subidos</td>  
+                                    </tr>  
+                                {% endif %}  
+                            </tbody>  
+                        </table>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}  
+  
+{% block extra_js %}  
+<script>  
+// Form validation  
+(function() {  
+    'use strict';  
+    window.addEventListener('load', function() {  
+        var forms = document.getElementsByClassName('needs-validation');  
+        var validation = Array.prototype.filter.call(forms, function(form) {  
+            form.addEventListener('submit', function(event) {  
+                if (form.checkValidity() === false) {  
+                    event.preventDefault();  
+                    event.stopPropagation();  
+                }  
+                form.classList.add('was-validated');  
+            }, false);  
+        });  
+    }, false);  
+})();  
+</script>  
+{% endblock %}
