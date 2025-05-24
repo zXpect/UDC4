@@ -1,24 +1,131 @@
-{% extends 'base.html' %}  
-{% block title %}Eventos - Estudiante{% endblock %}  
-{% block content %}  
-<div class="container py-4">  
-    <h2>Calendario de Eventos</h2>  
-    <div class="row">  
-        {% for event in events %}  
-            <div class="col-md-4 mb-3">  
-                <div class="card">  
-                    <div class="card-header">  
-                        <h5>{{ event.title }}</h5>  
-                    </div>  
-                    <div class="card-body">  
-                        <p><strong>Fecha:</strong> {{ event.date }}</p>  
-                        <p><strong>Hora:</strong> {{ event.time }}</p>  
-                        <p><strong>Lugar:</strong> {{ event.location }}</p>  
-                        <p>{{ event.description }}</p>  
-                    </div>  
-                </div>  
-            </div>  
-        {% endfor %}  
-    </div>  
-</div>  
+{% extends 'base_student.html' %}
+{% block title %}Eventos - Estudiante{% endblock %}
+{% block page_title %}Calendario de Eventos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center custom-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Eventos Académicos
+                    </h5>
+                    <span class="badge bg-light text-dark">{{ events|length }} evento(s)</span>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                    <div class="row">
+                        {% for event in events %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-header bg-light">
+                                    <div class="d-flex align-items-center">
+                                        <div class="event-date me-3">
+                                            <div class="text-center">
+                                                <div class="fw-bold text-primary">{{ event.date|safe_date('%d') if
+                                                    event.date else '??' }}</div>
+                                                <small class="text-muted">{{ event.date|safe_date('%b') if event.date
+                                                    else 'MES' }}</small>
+                                            </div>
+                                        </div>
+                                        <h6 class="mb-0 fw-medium">{{ event.title }}</h6>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-clock text-muted me-2"></i>
+                                            <span class="small">{{ event.time if event.time else 'Hora no especificada'
+                                                }}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                            <span class="small">{{ event.location if event.location else 'Ubicación no
+                                                especificada' }}</span>
+                                        </div>
+                                    </div>
+                                    <p class="card-text text-muted small">
+                                        {{ event.description[:100] if event.description else 'Sin descripción
+                                        disponible' }}
+                                        {% if event.description and event.description|length > 100 %}...{% endif %}
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Creado: {{ event.created_at.strftime('%d/%m/%Y') if event.created_at else 'N/A'
+                                        }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-alt fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted">No hay eventos programados</h4>
+                        <p class="text-muted">Los eventos aparecerán aquí cuando sean creados por los administradores
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Estilos base (modo claro por defecto) */
+    .card-header.bg-light {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+
+    .card-body {
+        color: #212529;
+    }
+
+    .card-body .text-muted {
+        color: #6c757d;
+    }
+
+    .badge.bg-light.text-dark {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+
+    /* Modo oscuro */
+    @media (prefers-color-scheme: dark) {
+        .card-header.bg-light {
+            background-color: #2c2f33 !important;
+            color: #f8f9fa !important;
+        }
+
+        .card-header.bg-light .text-muted {
+            color: #ccc !important;
+        }
+
+        .card-body {
+            background-color: #1e1e1e;
+            color: #f1f1f1 !important;
+        }
+
+        .card-body .text-muted,
+        .card-text.text-muted,
+        .small.text-muted {
+            color: #ccc !important;
+        }
+
+        .badge.bg-light.text-dark {
+            background-color: #444 !important;
+            color: #f8f9fa !important;
+        }
+
+        .card-footer.bg-transparent {
+            background-color: #1e1e1e !important;
+        }
+    }
+</style>
 {% endblock %}

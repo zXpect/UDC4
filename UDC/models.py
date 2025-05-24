@@ -321,6 +321,7 @@ class StudentParentRelation:
       
     @staticmethod  
     def create(student_id, parent_id):  
+        """Crear una nueva relación padre-hijo"""
         relation = {  
             'student_id': ObjectId(student_id),  
             'parent_id': ObjectId(parent_id),  
@@ -331,13 +332,22 @@ class StudentParentRelation:
       
     @staticmethod  
     def find_children_by_parent(parent_id):  
+        """Encontrar todos los hijos de un padre específico"""
         relations = list(StudentParentRelation.collection.find({'parent_id': ObjectId(parent_id)}))  
         children = []  
         for relation in relations:  
-            student = User.find_by_id(relation['student_id'])  
-            if student:  
-                children.append(student)  
-        return children  
+            child = User.collection.find_one({'_id': relation['student_id']})  
+            if child:  
+                children.append(child)  
+        return children
+    
+    @staticmethod  
+    def verify_parent_child_relationship(parent_id, child_id):  
+        """Verificar si existe una relación padre-hijo específica"""
+        return StudentParentRelation.collection.find_one({  
+            'parent_id': ObjectId(parent_id),  
+            'student_id': ObjectId(child_id)  
+        }) is not None
   
 class InstitutionalInfo:  
     collection = db.institutional_info  
@@ -365,22 +375,3 @@ class InstitutionalInfo:
     @staticmethod  
     def get_all_info():  
         return list(InstitutionalInfo.collection.find())
-class StudentParentRelation:  
-    collection = db.student_parent_relations  
-      
-    @staticmethod  
-    def find_children_by_parent(parent_id):  
-        relations = list(StudentParentRelation.collection.find({'parent_id': ObjectId(parent_id)}))  
-        children = []  
-        for relation in relations:  
-            child = User.collection.find_one({'_id': relation['student_id']})  
-            if child:  
-                children.append(child)  
-        return children
-    
-    @staticmethod  
-    def verify_parent_child_relationship(parent_id, child_id):  
-        return StudentParentRelation.collection.find_one({  
-        'parent_id': ObjectId(parent_id),  
-        'student_id': ObjectId(child_id)  
-    }) is not None

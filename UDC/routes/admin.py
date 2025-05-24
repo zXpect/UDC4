@@ -1,14 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash,session,jsonify
-from models import Event  
-from routes.auth import admin_required  
-from models import User
-from models import InstitutionalInfo
-from models import InstitutionalFile
-import os
-from bson import ObjectId
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify  
+from models import Event, User, InstitutionalInfo, InstitutionalFile, StudentParentRelation # Asegúrate de que StudentParentRelation esté aquí  
+import os  
+from bson import ObjectId  
 from werkzeug.utils import secure_filename  
 from flask import current_app  
-import datetime
+import datetime  
+from routes.auth import admin_required
 from flask import send_file
 
   
@@ -243,16 +240,46 @@ def institutional_info():
     if request.method == 'POST':  
         key = request.form.get('key')  
         value = request.form.get('value')  
-          
+  
         if key and value:  
             InstitutionalInfo.update_info(key, value, session.get('user_id'))  
             flash('Información actualizada exitosamente', 'success')  
-      
+  
     info_list = InstitutionalInfo.get_all_info()  
     return render_template('admin/institutional_info.html', info_list=info_list)  
+  
   
 @admin.route('/users')  
 @admin_required  
 def users():  
     users = User.collection.find({'active': True})  
-    return render_template('admin/users.html', users=users)
+    return render_template('admin/users.html', users=users)  
+@admin.route('/link_parent_child', methods=['GET', 'POST'])  
+@admin_required  
+def link_parent_child():  
+    if request.method == 'POST':  
+        parent_id = request.form.get('parent_id')  
+        student_id = request.form.get('student_id')  
+  
+        if not parent_id or not student_id:  
+            flash('Debe seleccionar un padre y un estudiante.', 'error')  
+            return redirect(url_for('admin.link_parent_child'))  
+  
+        # Verificar si la relación ya existe  
+        if StudentParentRelation.verify_parent_child_relationship(parent_id, student_id):  
+            flash('Esta relación padre-hijo ya existe.', 'warning')  
+            return redirect(url_for('admin.link_parent_child'))  
+  
+        try:  
+            StudentParentRelation.create(student_id, parent_id)  
+            flash('Relación padre-hijo creada exitosamente.', 'success')  
+        except Exception as e:  
+            flash(f'Error al crear la relación: {e}', 'error')  
+  
+        return redirect(url_for('admin.link_parent_child'))  
+  
+    # Obtener todos los usuarios con rol 'parent' y 'student'  
+    parents = list(User.collection.find({'role': 'parent', 'active': True}))  
+    students = list(User.collection.find({'role': 'student', 'active': True}))  
+  
+    return render_template('admin/link_parent_child.html', parents=parents, students=students)  

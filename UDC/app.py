@@ -25,6 +25,39 @@ app.register_blueprint(teacher, url_prefix='/teacher')
 @app.route('/')  
 def home():  
     return redirect(url_for('public.index'))  
+
+@app.template_filter('safe_date')  
+def safe_date(value, format='%d/%m/%Y'):  
+    if not value:  
+        return 'N/A'  
+      
+    if isinstance(value, str):  
+        try:  
+            from datetime import datetime  
+            # Intenta varios formatos comunes  
+            for fmt in ['%Y-%m-%d', '%d/%m/%Y', '%Y-%m-%d %H:%M:%S']:  
+                try:  
+                    value = datetime.strptime(value, fmt)  
+                    break  
+                except ValueError:  
+                    continue  
+            else:  
+                return value  # Si no se puede convertir, devuelve el string original  
+        except:  
+            return value  
+      
+    try:  
+        return value.strftime(format)  
+    except:  
+        return str(value)  
+  
+@app.template_filter('safe_float')  
+def safe_float(value, default=0):  
+    try:  
+        return float(value)  
+    except (ValueError, TypeError):  
+        return default
+  
   
 @app.errorhandler(404)  
 def page_not_found(e):  

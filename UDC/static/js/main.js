@@ -539,3 +539,4 @@ window.loadContent = function(url, container) {
             showNotification('Error al cargar el contenido', 'error');
         });
 };
+

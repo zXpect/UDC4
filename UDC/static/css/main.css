@@ -9,6 +9,7 @@
     --accent-light: #60a5fa;
     --accent-soft: #bfdbfe;
     --accent-hover: #2563eb;
+    --avatar-border-color: rgba(0, 0, 0, 0.1);
     
     /* Colores de estado */
     --success: #10b981;
@@ -82,6 +83,7 @@
     --radius-3xl: 1.5rem;
     --radius-full: 9999px;
     --radius: 0.25rem;
+    
     
     /* Espaciado moderno */
     --space-px: 1px;
@@ -182,6 +184,7 @@
     --accent-light: #60a5fa;
     --accent-soft: #bfdbfe;
     --accent-hover: #2563eb;
+    --avatar-border-color: rgba(255, 255, 255, 0.2);
     
     /* Colores de estado */
     --success: #10b981;

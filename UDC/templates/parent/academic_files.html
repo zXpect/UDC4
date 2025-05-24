@@ -1,69 +1,73 @@
-{% extends 'base.html' %}  
-  
+{% extends 'base_parent.html' %}  
 {% block title %}Archivos Académicos - Padre{% endblock %}  
+{% block page_title %}Archivos Académicos{% endblock %}  
   
 {% block content %}  
-<div class="container py-4">  
-    <div class="row mb-4">  
-        <div class="col-12">  
-            <h2>Archivos Académicos de mis Hijos</h2>  
-            <hr>  
-        </div>  
-    </div>  
-  
+<div class="container-fluid">  
     <div class="row">  
-        <div class="col-md-3 mb-4">  
-            <div class="list-group">  
-                <a href="{{ url_for('parent.dashboard') }}" class="list-group-item list-group-item-action">  
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
-                </a>  
-                <a href="{{ url_for('parent.academic_files') }}" class="list-group-item list-group-item-action active">  
-                    <i class="fas fa-file-alt me-2"></i>Archivos Académicos  
-                </a>  
-            </div>  
-        </div>  
-          
-        <div class="col-md-9">  
-            <div class="card">  
-                <div class="card-header bg-light">  
-                    <h5 class="mb-0">Documentos y Materiales Académicos</h5>  
+        <div class="col-12">  
+            <div class="card shadow">  
+                <div class="card-header bg-purple text-white d-flex justify-content-between align-items-center">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-file-alt me-2"></i>  
+                        Archivos Académicos de mis Hijos  
+                    </h5>  
+                    <span class="badge bg-light text-dark">{{ files|length }} archivo(s)</span>  
                 </div>  
                 <div class="card-body">  
                     {% if files %}  
-                        <div class="table-responsive">  
-                            <table class="table table-hover">  
-                                <thead>  
-                                    <tr>  
-                                        <th>Documento</th>  
-                                        <th>Descripción</th>  
-                                        <th>Fecha</th>  
-                                        <th>Acciones</th>  
-                                    </tr>  
-                                </thead>  
-                                <tbody>  
-                                    {% for file in files %}  
-                                        <tr>  
-                                            <td>  
-                                                <i class="fas fa-file-{{ 'pdf' if file.file_type == 'pdf' else 'alt' }} me-2"></i>  
-                                                {{ file.title }}  
-                                            </td>  
-                                            <td class="text-muted">{{ file.description[:80] }}...</td>  
-                                            <td>{{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}</td>  
-                                            <td>  
+                        <div class="row">  
+                            {% for file in files %}  
+                                <div class="col-lg-4 col-md-6 mb-4">  
+                                    <div class="card h-100 border-0 shadow-sm">  
+                                        <div class="card-body">  
+                                            <div class="d-flex align-items-center mb-3">  
+                                                <div class="file-icon me-3">  
+                                                    {% if file.file_type == 'pdf' %}  
+                                                        <i class="fas fa-file-pdf text-danger fs-2"></i>  
+                                                    {% elif file.file_type in ['doc', 'docx'] %}  
+                                                        <i class="fas fa-file-word text-primary fs-2"></i>  
+                                                    {% elif file.file_type in ['xls', 'xlsx'] %}  
+                                                        <i class="fas fa-file-excel text-success fs-2"></i>  
+                                                    {% elif file.file_type in ['ppt', 'pptx'] %}  
+                                                        <i class="fas fa-file-powerpoint text-warning fs-2"></i>  
+                                                    {% elif file.file_type in ['jpg', 'jpeg', 'png'] %}  
+                                                        <i class="fas fa-file-image text-info fs-2"></i>  
+                                                    {% else %}  
+                                                        <i class="fas fa-file-alt text-secondary fs-2"></i>  
+                                                    {% endif %}  
+                                                </div>  
+                                                <div class="flex-grow-1">  
+                                                    <h6 class="card-title mb-1">{{ file.title }}</h6>  
+                                                    <small class="text-muted text-uppercase">{{ file.file_type }}</small>  
+                                                </div>  
+                                            </div>  
+                                              
+                                            <p class="card-text text-muted small">  
+                                                {{ file.description[:100] if file.description else 'Sin descripción disponible' }}  
+                                                {% if file.description and file.description|length > 100 %}...{% endif %}  
+                                            </p>  
+                                              
+                                            <div class="d-flex justify-content-between align-items-center mt-3">  
+                                                <small class="text-muted">  
+                                                    <i class="fas fa-calendar me-1"></i>  
+                                                    {{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}  
+                                                </small>  
                                                 <a href="{{ url_for('parent.download_file', file_id=file._id) }}"   
-                                                   class="btn btn-sm btn-primary">  
+                                                   class="btn btn-purple btn-sm">  
                                                     <i class="fas fa-download me-1"></i>Descargar  
                                                 </a>  
-                                            </td>  
-                                        </tr>  
-                                    {% endfor %}  
-                                </tbody>  
-                            </table>  
+                                            </div>  
+                                        </div>  
+                                    </div>  
+                                </div>  
+                            {% endfor %}  
                         </div>  
                     {% else %}  
-                        <div class="text-center text-muted py-5">  
-                            <i class="fas fa-folder-open fa-3x mb-3"></i>  
-                            <p>No hay archivos académicos disponibles en este momento.</p>  
+                        <div class="text-center py-5">  
+                            <i class="fas fa-file-alt fa-4x text-muted mb-4"></i>  
+                            <h4 class="text-muted">No hay archivos académicos disponibles</h4>  
+                            <p class="text-muted">Los archivos aparecerán aquí cuando los profesores los suban</p>  
                         </div>  
                     {% endif %}  
                 </div>  
@@ -71,4 +75,20 @@
         </div>  
     </div>  
 </div>  
+  
+<style>  
+    .bg-purple {  
+        background-color: #8b5cf6 !important;  
+    }  
+    .btn-purple {  
+        background-color: #8b5cf6;  
+        border-color: #8b5cf6;  
+        color: white;  
+    }  
+    .btn-purple:hover {  
+        background-color: #7c3aed;  
+        border-color: #7c3aed;  
+        color: white;  
+    }  
+</style>  
 {% endblock %}

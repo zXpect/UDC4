@@ -15,14 +15,45 @@ teacher = Blueprint('teacher', __name__)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@teacher.route('/')
-@login_required
-@role_required('teacher')
-def dashboard():
-    teacher_id = session.get('user_id')
-    courses = Course.find_all()
-    recent_grades = Grade.find_by_teacher(teacher_id)[:10]
-    return render_template('teacher/dashboard.html', courses=courses, recent_grades=recent_grades)
+@teacher.route('/')  
+@login_required  
+@role_required('teacher')  
+def dashboard():  
+    teacher_id = session.get('user_id')  
+      
+    # Obtener datos reales  
+    courses = Course.find_all()  
+    recent_grades = Grade.find_by_teacher(teacher_id)[:10]  
+      
+    # Estadísticas del profesor  
+    total_students = len(User.collection.find({'role': 'student', 'active': True}).distinct('_id'))  
+    total_courses = len(courses)  
+    pending_grades = len([g for g in recent_grades if not g.get('graded', True)])  
+      
+    # Calcular promedio general - CORREGIR AQUÍ  
+    all_grades = Grade.find_by_teacher(teacher_id)  
+    # Convertir a float antes de sumar  
+    grade_values = []  
+    for g in all_grades:  
+        try:  
+            grade_val = float(g.get('grade_value', 0))  
+            grade_values.append(grade_val)  
+        except (ValueError, TypeError):  
+            continue  
+      
+    avg_grade = sum(grade_values) / len(grade_values) if grade_values else 0  
+      
+    stats = {  
+        'total_students': total_students,  
+        'total_courses': total_courses,  
+        'pending_grades': pending_grades,  
+        'avg_grade': round(avg_grade, 1)  
+    }  
+      
+    return render_template('teacher/dashboard.html',   
+                         courses=courses,   
+                         recent_grades=recent_grades,  
+                         stats=stats)
 
 @teacher.route('/grades', methods=['GET', 'POST'])
 @login_required
@@ -31,13 +62,13 @@ def manage_grades():
     if request.method == 'POST':
         student_id = request.form.get('student_id')
         course_id = request.form.get('course_id')
-        grade_value = request.form.get('grade_value')
+        grade_value = float(request.form.get('grade_value'))
         grade_type = request.form.get('grade_type')
         description = request.form.get('description', '')
         teacher_id = session.get('user_id')
 
-        if all([student_id, course_id, grade_value, grade_type]):
-            Grade.create(student_id, course_id, teacher_id, grade_value, grade_type, description)
+        if all([student_id, course_id, float(grade_value), grade_type]):
+            Grade.create(student_id, course_id, teacher_id, float(grade_value), grade_type, description)
             flash('Nota registrada exitosamente', 'success')
         else:
             flash('Todos los campos son obligatorios', 'error')

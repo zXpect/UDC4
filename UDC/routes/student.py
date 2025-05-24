@@ -7,22 +7,72 @@ from models import Event, Grade, Course, InstitutionalFile
 
 student = Blueprint('student', __name__)
 
-@student.route('/')
-@login_required
-@role_required('student')
-def dashboard():
-    events = Event.find_all()[:5]  # Últimos 5 eventos
-    student_id = session.get('user_id')
-    grades = Grade.find_by_student(student_id)
-    
-    return render_template('student/dashboard.html', events=events, grades=grades)
+@student.route('/')  
+@login_required  
+@role_required('student')  
+def dashboard():  
+    student_id = session.get('user_id')  
+      
+    grades = Grade.find_by_student(student_id)  
+    events = Event.find_all()[:5]  
+    academic_files = InstitutionalFile.find_by_category('academic')  
+      
+    # Convertir calificaciones a float de manera segura  
+    grade_values = []  
+    for g in grades:  
+        try:  
+            grade_val = float(g.get('grade_value', 0))  
+            grade_values.append(grade_val)  
+        except (ValueError, TypeError):  
+            continue  
+      
+    avg_grade = sum(grade_values) / len(grade_values) if grade_values else 0  
+      
+    stats = {  
+        'avg_grade': round(avg_grade, 1) if avg_grade > 0 else 0,  
+        'total_grades': len(grades),  
+        'available_files': len(academic_files),  
+        'upcoming_events': len(events)  
+    }  
+      
+    # Procesar eventos para evitar errores de strftime  
+    processed_events = []  
+    for event in events:  
+        event_dict = dict(event)  
+        # Asegurar que date sea un objeto datetime  
+        if isinstance(event.get('date'), str):  
+            try:  
+                from datetime import datetime  
+                event_dict['date'] = datetime.strptime(event['date'], '%Y-%m-%d')  
+            except:  
+                event_dict['date'] = None  
+        processed_events.append(event_dict)  
+      
+    return render_template('student/dashboard.html',   
+                         stats=stats,  
+                         recent_grades=grades[:10],  
+                         upcoming_events=processed_events)
 
-@student.route('/events')
-@login_required
-@role_required('student')
-def events():
-    events = Event.find_all()
-    return render_template('student/events.html', events=events)
+@student.route('/events')  
+@login_required  
+@role_required('student')  
+def events():  
+    events = Event.find_all()  
+      
+    # Procesar eventos para convertir fechas string a datetime  
+    processed_events = []  
+    for event in events:  
+        event_dict = dict(event)  
+        # Asegurar que date sea un objeto datetime  
+        if isinstance(event.get('date'), str):  
+            try:  
+                from datetime import datetime  
+                event_dict['date'] = datetime.strptime(event['date'], '%Y-%m-%d')  
+            except:  
+                event_dict['date'] = None  
+        processed_events.append(event_dict)  
+      
+    return render_template('student/events.html', events=processed_events)
 
 @student.route('/grades')
 @login_required

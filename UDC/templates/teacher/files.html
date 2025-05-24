@@ -1,46 +1,24 @@
-{% extends 'base.html' %}  
-  
+{% extends 'base_teacher.html' %}  
 {% block title %}Gestión de Archivos - Profesor{% endblock %}  
-  
-{% block extra_css %}  
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
-{% endblock %}  
+{% block page_title %}Gestión de Archivos{% endblock %}  
   
 {% block content %}  
-<div class="container py-4">  
+<div class="container-fluid">  
+    <!-- Formulario de subida mejorado -->  
     <div class="row mb-4">  
         <div class="col-12">  
-            <h2>Gestión de Archivos Educativos</h2>  
-            <hr>  
-        </div>  
-    </div>  
-  
-    <div class="row">  
-        <div class="col-md-3 mb-4">  
-            <div class="list-group">  
-                <a href="{{ url_for('teacher.dashboard') }}" class="list-group-item list-group-item-action">  
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
-                </a>  
-                <a href="{{ url_for('teacher.manage_grades') }}" class="list-group-item list-group-item-action">  
-                    <i class="fas fa-star me-2"></i>Calificaciones  
-                </a>  
-                <a href="{{ url_for('teacher.manage_files') }}" class="list-group-item list-group-item-action active">  
-                    <i class="fas fa-file-alt me-2"></i>Archivos  
-                </a>  
-            </div>  
-        </div>  
-          
-        <div class="col-md-9">  
-            <!-- Formulario de subida -->  
-            <div class="card mb-4">  
-                <div class="card-header bg-light">  
-                    <h5 class="mb-0">Subir Nuevo Archivo</h5>  
+            <div class="card shadow">  
+                <div class="card-header bg-warning text-white">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-cloud-upload-alt me-2"></i>  
+                        Subir Nuevo Archivo Educativo  
+                    </h5>  
                 </div>  
                 <div class="card-body">  
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>  
                         <div class="row">  
                             <div class="col-md-6 mb-3">  
-                                <label for="title" class="form-label">Título *</label>  
+                                <label for="title" class="form-label">Título del Archivo *</label>  
                                 <input type="text" class="form-control" id="title" name="title" required>  
                                 <div class="invalid-feedback">  
                                     El título es obligatorio.  
@@ -50,7 +28,10 @@
                                 <label for="category" class="form-label">Categoría *</label>  
                                 <select class="form-select" id="category" name="category" required>  
                                     <option value="">Seleccionar categoría</option>  
-                                    <option value="academic">Académico</option>  
+                                    <option value="academic">Material Académico</option>  
+                                    <option value="homework">Tareas y Ejercicios</option>  
+                                    <option value="exams">Exámenes y Evaluaciones</option>  
+                                    <option value="resources">Recursos Educativos</option>  
                                     <option value="general">General</option>  
                                 </select>  
                                 <div class="invalid-feedback">  
@@ -61,7 +42,8 @@
                           
                         <div class="mb-3">  
                             <label for="description" class="form-label">Descripción *</label>  
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>  
+                            <textarea class="form-control" id="description" name="description" rows="3" required   
+                                      placeholder="Describe el contenido del archivo y su propósito educativo..."></textarea>  
                             <div class="invalid-feedback">  
                                 La descripción es obligatoria.  
                             </div>  
@@ -70,69 +52,152 @@
                         <div class="mb-3">  
                             <label for="file" class="form-label">Archivo *</label>  
                             <input type="file" class="form-control" id="file" name="file"   
-                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" required>  
-                            <div class="form-text">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG</div>  
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.ppt,.pptx" required>  
+                            <div class="form-text">  
+                                Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, PPT, PPTX (Máx. 10MB)  
+                            </div>  
                             <div class="invalid-feedback">  
                                 Seleccione un archivo válido.  
                             </div>  
                         </div>  
                           
-                        <button type="submit" class="btn btn-primary">  
-                            <i class="fas fa-upload me-1"></i>Subir Archivo  
-                        </button>  
+                        <div class="d-flex justify-content-between">  
+                            <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">  
+                                <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard  
+                            </a>  
+                            <button type="submit" class="btn btn-warning">  
+                                <i class="fas fa-upload me-1"></i>Subir Archivo  
+                            </button>  
+                        </div>  
                     </form>  
                 </div>  
             </div>  
-              
-            <!-- Lista de archivos -->  
-            <div class="card">  
-                <div class="card-header bg-light">  
-                    <h5 class="mb-0">Mis Archivos</h5>  
+        </div>  
+    </div>  
+  
+    <!-- Lista de archivos del profesor -->  
+    <div class="row">  
+        <div class="col-12">  
+            <div class="card shadow">  
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-folder-open me-2"></i>  
+                        Mis Archivos Subidos  
+                    </h5>  
+                    <span class="badge bg-warning">{{ files|length }} archivo(s)</span>  
                 </div>  
                 <div class="card-body">  
-                    <div class="table-responsive">  
-                        <table class="table table-hover">  
-                            <thead>  
-                                <tr>  
-                                    <th>Título</th>  
-                                    <th>Categoría</th>  
-                                    <th>Tipo</th>  
-                                    <th>Fecha</th>  
-                                    <th>Acciones</th>  
-                                </tr>  
-                            </thead>  
-                            <tbody>  
-                                {% if files %}  
+                    {% if files %}  
+                        <div class="table-responsive">  
+                            <table class="table table-hover">  
+                                <thead class="table-light">  
+                                    <tr>  
+                                        <th>Archivo</th>  
+                                        <th>Categoría</th>  
+                                        <th>Tipo</th>  
+                                        <th>Fecha de Subida</th>  
+                                        <th>Acciones</th>  
+                                    </tr>  
+                                </thead>  
+                                <tbody>  
                                     {% for file in files %}  
                                         <tr>  
                                             <td>  
-                                                <i class="fas fa-file-{{ 'pdf' if file.file_type == 'pdf' else 'alt' }} me-2"></i>  
-                                                {{ file.title }}  
+                                                <div class="d-flex align-items-center">  
+                                                    <div class="file-icon me-3">  
+                                                        {% if file.file_type == 'pdf' %}  
+                                                            <i class="fas fa-file-pdf text-danger fs-4"></i>  
+                                                        {% elif file.file_type in ['doc', 'docx'] %}  
+                                                            <i class="fas fa-file-word text-primary fs-4"></i>  
+                                                        {% elif file.file_type in ['xls', 'xlsx'] %}  
+                                                            <i class="fas fa-file-excel text-success fs-4"></i>  
+                                                        {% elif file.file_type in ['ppt', 'pptx'] %}  
+                                                            <i class="fas fa-file-powerpoint text-warning fs-4"></i>  
+                                                        {% elif file.file_type in ['jpg', 'jpeg', 'png'] %}  
+                                                            <i class="fas fa-file-image text-info fs-4"></i>  
+                                                        {% else %}  
+                                                            <i class="fas fa-file-alt text-secondary fs-4"></i>  
+                                                        {% endif %}  
+                                                    </div>  
+                                                    <div>  
+                                                        <h6 class="mb-0 fw-medium">{{ file.title }}</h6>  
+                                                        {% if file.description %}  
+                                                            <small class="text-muted">{{ file.description[:60] }}{% if file.description|length > 60 %}...{% endif %}</small>  
+                                                        {% endif %}  
+                                                    </div>  
+                                                </div>  
                                             </td>  
                                             <td>  
-                                                <span class="badge bg-{{ 'primary' if file.category == 'academic' else 'info' }}">  
-                                                    {{ file.category|title }}  
+                                                {% set category_info = {  
+                                                    'academic': {'name': 'Académico', 'color': 'primary'},  
+                                                    'homework': {'name': 'Tareas', 'color': 'warning'},  
+                                                    'exams': {'name': 'Exámenes', 'color': 'danger'},  
+                                                    'resources': {'name': 'Recursos', 'color': 'info'},  
+                                                    'general': {'name': 'General', 'color': 'secondary'}  
+                                                } %}  
+                                                {% set cat_info = category_info.get(file.category, {'name': file.category|title, 'color': 'secondary'}) %}  
+                                                <span class="badge bg-{{ cat_info.color }}">  
+                                                    {{ cat_info.name }}  
                                                 </span>  
                                             </td>  
-                                            <td>{{ file.file_type|upper }}</td>  
-                                            <td>{{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}</td>  
                                             <td>  
-                                                <a href="{{ url_for('teacher.download_file', file_id=file._id) }}"   
-                                                   class="btn btn-sm btn-outline-primary" title="Descargar">  
-                                                    <i class="fas fa-download"></i>  
-                                                </a>  
+                                                <span class="text-uppercase fw-medium">{{ file.file_type }}</span>  
+                                            </td>  
+                                            <td>  
+                                                <div class="text-sm">  
+                                                    {{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}  
+                                                    <br>  
+                                                    <small class="text-muted">{{ file.created_at.strftime('%H:%M') if file.created_at else '' }}</small>  
+                                                </div>  
+                                            </td>  
+                                            <td>  
+                                                <div class="btn-group" role="group">  
+                                                    <a href="{{ url_for('teacher.download_file', file_id=file._id) }}"   
+                                                       class="btn btn-outline-warning btn-sm"   
+                                                       title="Descargar archivo"  
+                                                       data-bs-toggle="tooltip">  
+                                                        <i class="fas fa-download"></i>  
+                                                    </a>  
+                                                    <button type="button"   
+                                                            class="btn btn-outline-info btn-sm"   
+                                                            title="Ver detalles"  
+                                                            data-bs-toggle="tooltip"  
+                                                            onclick="viewFileDetails('{{ file._id }}', '{{ file.title }}', '{{ file.description }}', '{{ file.category }}')">  
+                                                        <i class="fas fa-eye"></i>  
+                                                    </button>  
+                                                </div>  
                                             </td>  
                                         </tr>  
                                     {% endfor %}  
-                                {% else %}  
-                                    <tr>  
-                                        <td colspan="5" class="text-center">No hay archivos subidos</td>  
-                                    </tr>  
-                                {% endif %}  
-                            </tbody>  
-                        </table>  
-                    </div>  
+                                </tbody>  
+                            </table>  
+                        </div>  
+                    {% else %}  
+                        <div class="text-center py-5">  
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>  
+                            <h5 class="text-muted">No has subido archivos aún</h5>  
+                            <p class="text-muted mb-3">Comienza subiendo tu primer archivo educativo</p>  
+                        </div>  
+                    {% endif %}  
                 </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+  
+<!-- Modal para detalles del archivo -->  
+<div class="modal fade" id="fileDetailsModal" tabindex="-1">  
+    <div class="modal-dialog">  
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h5 class="modal-title">Detalles del Archivo</h5>  
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>  
+            </div>  
+            <div class="modal-body">  
+                <div id="fileDetailsContent"></div>  
+            </div>  
+            <div class="modal-footer">  
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>  
             </div>  
         </div>  
     </div>  
@@ -141,7 +206,33 @@
   
 {% block extra_js %}  
 <script>  
-// Form validation  
+function viewFileDetails(fileId, title, description, category) {  
+    const categoryNames = {  
+        'academic': 'Material Académico',  
+        'homework': 'Tareas y Ejercicios',  
+        'exams': 'Exámenes y Evaluaciones',  
+        'resources': 'Recursos Educativos',  
+        'general': 'General'  
+    };  
+      
+    const content = `  
+        <div class="mb-3">  
+            <strong>Título:</strong> ${title}  
+        </div>  
+        <div class="mb-3">  
+            <strong>Categoría:</strong> ${categoryNames[category] || category}  
+        </div>  
+        <div class="mb-3">  
+            <strong>Descripción:</strong><br>  
+            ${description || 'Sin descripción'}  
+        </div>  
+    `;  
+      
+    document.getElementById('fileDetailsContent').innerHTML = content;  
+    new bootstrap.Modal(document.getElementById('fileDetailsModal')).show();  
+}  
+  
+// Validación del formulario  
 (function() {  
     'use strict';  
     window.addEventListener('load', function() {  
@@ -157,5 +248,11 @@
         });  
     }, false);  
 })();  
+  
+// Tooltips  
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))  
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {  
+    return new bootstrap.Tooltip(tooltipTriggerEl)  
+});  
 </script>  
 {% endblock %}
