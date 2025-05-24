@@ -283,59 +283,109 @@ class AdminDashboard {
     }
 
     // Modal functionality
-    initModals() {
-        const addEventForm = document.getElementById('addEventForm');
-        
-        if (addEventForm) {
-            addEventForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.handleAddEvent();
-            });
-        }
-
-        // Save button for add event modal
-        const saveEventBtn = document.querySelector('#addEventModal .btn-primary');
-        if (saveEventBtn) {
-            saveEventBtn.addEventListener('click', () => {
-                this.handleAddEvent();
-            });
-        }
-    }
-
-    handleAddEvent() {
-        const form = document.getElementById('addEventForm');
-        const formData = new FormData(form);
-        
-        // Basic validation
-        const title = document.getElementById('eventTitle').value.trim();
-        const date = document.getElementById('eventDate').value;
-        const status = document.getElementById('eventStatus').value;
-        
-        if (!title || !date || !status) {
-            alert('Por favor, complete todos los campos requeridos.');
-            return;
-        }
-        
-        // Here you would typically send data to server
-        console.log('Adding event:', {
-            title,
-            date,
-            status,
-            location: document.getElementById('eventLocation').value,
-            time: document.getElementById('eventTime').value,
-            description: document.getElementById('eventDescription').value
+    // Modal functionality
+initModals() {
+    // Capturar el botón de submit específico
+    const submitEventBtn = document.getElementById('submitEventBtn');
+    if (submitEventBtn) {
+        submitEventBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            this.handleAddEvent();
         });
-        
-        // Close modal and reset form
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
-        if (modal) {
-            modal.hide();
-        }
-        form.reset();
-        
-        // Show success message
-        this.showToast('Evento agregado exitosamente', 'success');
     }
+
+    // También capturar el submit del formulario para prevenir comportamiento por defecto
+    const addEventForm = document.getElementById('submitEventBtn');
+    if (addEventForm) {
+        addEventForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevenir submit por defecto
+            this.handleAddEvent();
+        });
+    }
+}
+
+handleAddEvent() {
+    const form = document.getElementById('submitEventBtn');
+    const alertDiv = document.getElementById('eventAlert');
+
+    if (!form || !alertDiv) {
+        console.log("❌ Formulario o alerta no encontrados");
+        return;
+    }
+
+    // Obtener valores del formulario
+    const title = document.getElementById('title')?.value.trim();
+    const date = document.getElementById('date')?.value.trim();
+    const time = document.getElementById('time')?.value.trim();
+    const location = document.getElementById('location')?.value.trim();
+    const description = document.getElementById('description')?.value.trim();
+
+    console.log("📥 Datos del formulario:");
+    console.log({ title, date, time, location, description });
+
+    // Validación básica
+    if (!title || !date || !time || !location || !description) {
+        console.warn("⚠️ Faltan campos por completar");
+        alertDiv.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Por favor, complete todos los campos requeridos.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        return;
+    }
+
+    const submitBtn = document.getElementById('submitEventBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+    }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('date', date);
+    formData.append('time', time);
+    formData.append('location', location);
+    formData.append('description', description);
+
+    console.log("📤 Enviando datos al servidor...");
+
+    fetch('/events/add-ajax', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log("✅ Respuesta recibida del servidor", response);
+        if (!response.ok) throw new Error("Error en la respuesta del servidor");
+        return response.json();
+    })
+    .then(data => {
+        console.log("🎉 Evento guardado exitosamente:", data);
+        alertDiv.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Evento creado exitosamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        form.reset();
+    })
+    .catch(error => {
+        console.error("❌ Error al enviar datos:", error);
+        alertDiv.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Ocurrió un error al guardar el evento.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    })
+    .finally(() => {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Guardar Evento';
+        }
+    });
+}
+
 
     // Initialize charts
     initCharts() {

@@ -94,12 +94,13 @@ def edit_event(event_id):
 @admin_required  
 def add_event_ajax():  
     try:  
+        # Usar los nombres que están llegando desde el JavaScript
         title = request.form.get('eventTitle')  
         date = request.form.get('eventDate')  
         time = request.form.get('eventTime')  
         location = request.form.get('eventLocation')  
         description = request.form.get('eventDescription')  
-          
+        
         if title and date and time and location and description:  
             event_id = Event.create(title, date, time, location, description)  
             if event_id:  

@@ -275,16 +275,69 @@
     {% block extra_js %}{% endblock %}
 
     <style>
-        /* Estilos adicionales para el offcanvas sidebar */
+        /* Variables CSS para modo oscuro/claro */
+        :root {
+            /* Modo claro */
+            --sidebar-bg: #ffffff;
+            --sidebar-color: #374151;
+            --sidebar-border: rgba(0, 0, 0, 0.1);
+            --sidebar-brand-color: #1f2937;
+            --sidebar-brand-icon: #3b82f6;
+            --profile-name-color: #1f2937;
+            --profile-role-color: #6b7280;
+            --nav-group-title-color: #9ca3af;
+            --nav-link-color: #6b7280;
+            --nav-link-hover-bg: rgba(59, 130, 246, 0.1);
+            --nav-link-hover-color: #3b82f6;
+            --nav-link-active-bg: rgba(59, 130, 246, 0.15);
+            --status-badge-border: #ffffff;
+            --toggle-btn-bg: #f9fafb;
+            --toggle-btn-color: #374151;
+            --toggle-btn-border: #d1d5db;
+        }
+
+        /* Modo oscuro */
+        [data-theme="dark"], 
+        .dark-theme {
+            --sidebar-bg: #1e293b;
+            --sidebar-color: #cbd5e1;
+            --sidebar-border: rgba(255, 255, 255, 0.1);
+            --sidebar-brand-color: #ffffff;
+            --sidebar-brand-icon: #3b82f6;
+            --profile-name-color: #ffffff;
+            --profile-role-color: #94a3b8;
+            --nav-group-title-color: #64748b;
+            --nav-link-color: #cbd5e1;
+            --nav-link-hover-bg: rgba(59, 130, 246, 0.1);
+            --nav-link-hover-color: #3b82f6;
+            --nav-link-active-bg: rgba(59, 130, 246, 0.15);
+            --status-badge-border: #1e293b;
+            --toggle-btn-bg: #374151;
+            --toggle-btn-color: #f9fafb;
+            --toggle-btn-border: #4b5563;
+        }
+
+        /* Estilos principales del offcanvas sidebar */
         .admin-sidebar-offcanvas {
             width: 280px;
-            background: var(--sidebar-bg, #1e293b);
-            color: var(--sidebar-color, #cbd5e1);
+            background: var(--sidebar-bg);
+            color: var(--sidebar-color);
+            border-right: 1px solid var(--sidebar-border);
         }
 
         .admin-sidebar-offcanvas .offcanvas-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--sidebar-border);
             padding: 1.5rem;
+            background: var(--sidebar-bg);
+        }
+
+        .admin-sidebar-offcanvas .btn-close {
+            filter: var(--bs-btn-close-white-filter, invert(1) grayscale(100%) brightness(200%));
+        }
+
+        /* Modo claro - botón de cerrar oscuro */
+        :root .admin-sidebar-offcanvas .btn-close {
+            filter: none;
         }
 
         .sidebar-toggle-btn {
@@ -298,6 +351,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background: var(--toggle-btn-bg);
+            color: var(--toggle-btn-color);
+            border: 1px solid var(--toggle-btn-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .sidebar-toggle-header {
@@ -307,6 +370,11 @@
             font-size: 1.2rem;
             padding: 0.5rem;
             margin-right: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-toggle-header:hover {
+            color: var(--nav-link-hover-color);
         }
 
         .admin-main-full {
@@ -320,24 +388,24 @@
             position: relative;
         }
 
-        /* Mantener los estilos del sidebar original */
+        /* Estilos del sidebar con soporte para modo oscuro */
         .sidebar-brand {
             display: flex;
             align-items: center;
             font-size: 1.25rem;
             font-weight: 600;
-            color: #fff;
+            color: var(--sidebar-brand-color);
         }
 
         .sidebar-brand i {
             margin-right: 0.75rem;
             font-size: 1.5rem;
-            color: #3b82f6;
+            color: var(--sidebar-brand-icon);
         }
 
         .sidebar-profile {
             padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--sidebar-border);
             text-align: center;
         }
 
@@ -351,7 +419,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            border: 3px solid #3b82f6;
+            border: 3px solid var(--sidebar-brand-icon);
         }
 
         .status-badge {
@@ -361,7 +429,7 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            border: 2px solid #1e293b;
+            border: 2px solid var(--status-badge-border);
         }
 
         .status-badge.online {
@@ -371,13 +439,13 @@
         .profile-name {
             font-size: 1rem;
             font-weight: 600;
-            color: #fff;
+            color: var(--profile-name-color);
             margin-bottom: 0.25rem;
         }
 
         .profile-role {
             font-size: 0.875rem;
-            color: #94a3b8;
+            color: var(--profile-role-color);
             margin: 0;
         }
 
@@ -394,7 +462,7 @@
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            color: #64748b;
+            color: var(--nav-group-title-color);
             padding: 0 1.5rem;
             margin-bottom: 0.75rem;
         }
@@ -413,28 +481,50 @@
             display: flex;
             align-items: center;
             padding: 0.75rem 1.5rem;
-            color: #cbd5e1;
+            color: var(--nav-link-color);
             text-decoration: none;
             transition: all 0.2s ease;
             border-left: 3px solid transparent;
         }
 
         .nav-link:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-            border-left-color: #3b82f6;
+            background-color: var(--nav-link-hover-bg);
+            color: var(--nav-link-hover-color);
+            border-left-color: var(--nav-link-hover-color);
         }
 
         .nav-item.active .nav-link {
-            background-color: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
-            border-left-color: #3b82f6;
+            background-color: var(--nav-link-active-bg);
+            color: var(--nav-link-hover-color);
+            border-left-color: var(--nav-link-hover-color);
         }
 
         .nav-link i {
             margin-right: 0.75rem;
             width: 20px;
             text-align: center;
+        }
+
+        /* Soporte adicional para detectar modo oscuro del sistema */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --sidebar-bg: #1e293b;
+                --sidebar-color: #cbd5e1;
+                --sidebar-border: rgba(255, 255, 255, 0.1);
+                --sidebar-brand-color: #ffffff;
+                --profile-name-color: #ffffff;
+                --profile-role-color: #94a3b8;
+                --nav-group-title-color: #64748b;
+                --nav-link-color: #cbd5e1;
+                --status-badge-border: #1e293b;
+                --toggle-btn-bg: #374151;
+                --toggle-btn-color: #f9fafb;
+                --toggle-btn-border: #4b5563;
+            }
+
+            :root:not([data-theme="light"]) .admin-sidebar-offcanvas .btn-close {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
         }
 
         /* Responsive adjustments */
@@ -449,6 +539,31 @@
                 display: inline-block;
             }
         }
+
+        /* Mejoras de accesibilidad */
+        .sidebar-toggle-btn:focus,
+        .sidebar-toggle-header:focus {
+            outline: 2px solid var(--sidebar-brand-icon);
+            outline-offset: 2px;
+        }
+
+        .nav-link:focus {
+            outline: 2px solid var(--sidebar-brand-icon);
+            outline-offset: -2px;
+        }
+
+        /* Animaciones suaves para transiciones de tema */
+        .admin-sidebar-offcanvas,
+        .sidebar-brand,
+        .profile-name,
+        .profile-role,
+        .nav-group-title,
+        .nav-link,
+        .sidebar-toggle-btn {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        
     </style>
 </body>
 
