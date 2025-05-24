@@ -1,0 +1,322 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Panel de Administración - NetSchool UDC{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-value">{{ stats.users_count|default(0) }}</h3>
+                <p class="stat-label">Usuarios</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i> 12% desde el mes pasado
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-value">{{ stats.events_count|default(0) }}</h3>
+                <p class="stat-label">Eventos</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i> 5% desde el mes pasado
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-value">{{ stats.files_count|default(5) }}</h3>
+                <p class="stat-label">Archivos</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i> 8% desde el mes pasado
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-value">{{ stats.tasks_count|default(8) }}</h3>
+                <p class="stat-label">Tareas</p>
+                <div class="stat-trend negative">
+                    <i class="fas fa-arrow-down"></i> 3% desde el mes pasado
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Events & Tasks Row -->
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Eventos Recientes</h5>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#addEventModal">
+                        <i class="fas fa-plus me-1"></i>Nuevo Evento
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Fecha</th>
+                                <th>Ubicación</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events|default([
+                            {'title': 'Reunión de Padres', 'date': '2025-05-15', 'location': 'Auditorio
+                            Principal', 'status': 'Programado'},
+                            {'title': 'Día del Maestro', 'date': '2025-05-20', 'location': 'Patio Central',
+                            'status': 'Confirmado'},
+                            {'title': 'Feria de Ciencias', 'date': '2025-06-10', 'location': 'Laboratorios',
+                            'status': 'Pendiente'},
+                            {'title': 'Graduación', 'date': '2025-07-05', 'location': 'Auditorio Principal',
+                            'status': 'Programado'}
+                            ]) %}
+                            <tr>
+                                <td>
+                                    <div class="event-item">
+                                        <div class="event-icon 
+                                            {% if event.status == 'Confirmado' %}bg-success
+                                            {% elif event.status == 'Programado' %}bg-primary
+                                            {% elif event.status == 'Pendiente' %}bg-warning
+                                            {% else %}bg-secondary{% endif %}
+                                        ">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </div>
+                                        <span>{{ event.title }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ event.date }}</td>
+                                <td>{{ event.location }}</td>
+                                <td>
+                                    <span class="status-badge 
+                                        {% if event.status == 'Confirmado' %}success
+                                        {% elif event.status == 'Programado' %}primary
+                                        {% elif event.status == 'Pendiente' %}warning
+                                        {% else %}secondary{% endif %}
+                                    ">
+                                        {{ event.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="action-btn edit" data-bs-toggle="tooltip"
+                                            title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete" data-bs-toggle="tooltip"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <button class="action-btn view" data-bs-toggle="tooltip"
+                                            title="Ver detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn-link">Ver todos los eventos</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Tareas Pendientes</h5>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-plus me-1"></i>Nueva
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="task1">
+                            <label class="form-check-label" for="task1">
+                                Revisar solicitudes de inscripción
+                            </label>
+                        </div>
+                        <div class="task-meta">
+                            <span class="priority high">Alta</span>
+                            <span class="task-date">Hoy</span>
+                        </div>
+                    </li>
+                    <li class="task-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="task2">
+                            <label class="form-check-label" for="task2">
+                                Actualizar información institucional
+                            </label>
+                        </div>
+                        <div class="task-meta">
+                            <span class="priority medium">Media</span>
+                            <span class="task-date">Mañana</span>
+                        </div>
+                    </li>
+                    <li class="task-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="task3">
+                            <label class="form-check-label" for="task3">
+                                Preparar informe mensual
+                            </label>
+                        </div>
+                        <div class="task-meta">
+                            <span class="priority low">Normal</span>
+                            <span class="task-date">28/05</span>
+                        </div>
+                    </li>
+                    <li class="task-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="task4">
+                            <label class="form-check-label" for="task4">
+                                Revisar presupuesto para eventos
+                            </label>
+                        </div>
+                        <div class="task-meta">
+                            <span class="priority medium">Media</span>
+                            <span class="task-date">30/05</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn-link">Ver todas las tareas</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access Row -->
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Acceso Rápido</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3 col-sm-6">
+                        <a href="#" class="quick-access-item">
+                            <div class="quick-access-icon bg-primary">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <span>Crear Evento</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <a href="#" class="quick-access-item">
+                            <div class="quick-access-icon bg-success">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <span>Añadir Usuario</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <a href="#" class="quick-access-item">
+                            <div class="quick-access-icon bg-info">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <span>Subir Archivo</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <a href="#" class="quick-access-item">
+                            <div class="quick-access-icon bg-warning">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <span>Enviar Notificación</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Event Modal -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Agregar Nuevo Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEventForm" method="POST" action="{{ url_for('admin.add_event_ajax') }}">
+                    <div class="mb-3">
+                        <label for="eventTitle" class="form-label">Título del Evento</label>
+                        <input type="text" class="form-control" id="eventTitle" name="eventTitle"
+                            placeholder="Ingrese el título del evento" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="eventDate" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="eventTime" class="form-label">Hora</label>
+                            <input type="time" class="form-control" id="eventTime" name="eventTime" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventLocation" class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="eventLocation" name="eventLocation"
+                            placeholder="Ingrese la ubicación" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDescription" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3"
+                            placeholder="Ingrese la descripción del evento" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="addEventForm" class="btn btn-primary">Guardar Evento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

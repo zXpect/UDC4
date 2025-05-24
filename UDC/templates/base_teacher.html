@@ -1,0 +1,548 @@
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta name="description" content="Sistema de Gestión de Contenidos del Colegio UDC">  
+    <meta name="theme-color" content="#0f172a">  
+    <title>{% block title %}UDC - Profesor{% endblock %}</title>  
+      
+    <!-- Preconexiones -->  
+    <link rel="preconnect" href="https://fonts.googleapis.com">  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">  
+      
+    <!-- Fuentes -->  
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
+      
+    <!-- Estilos -->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
+    {% block extra_css %}{% endblock %}  
+      
+    <!-- Favicon -->  
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') if url_for else '#' }}">  
+</head>  
+  
+<body>  
+    <div class="admin-container">  
+        <!-- Botón para abrir el sidebar offcanvas -->  
+        <button class="btn btn-outline-secondary sidebar-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">  
+            <i class="fas fa-bars"></i>  
+        </button>  
+  
+        <!-- Sidebar Offcanvas -->  
+        <div class="offcanvas offcanvas-start admin-sidebar-offcanvas" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">  
+            <div class="offcanvas-header sidebar-header">  
+                <div class="sidebar-brand">  
+                    <i class="fas fa-graduation-cap"></i>  
+                    <span>NetSchool UDC</span>  
+                </div>  
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>  
+            </div>  
+              
+            <div class="offcanvas-body p-0">  
+                <div class="sidebar-profile">  
+                    <div class="profile-avatar">  
+                        <img src="{{ session.get('avatar_url', url_for('static', filename='img/default-avatar.png')) }}"  
+                            alt="Avatar">  
+                        <span class="status-badge online"></span>  
+                    </div>  
+                    <div class="profile-info">  
+                        <h6 class="profile-name">{{ session.get('first_name', '') }} {{ session.get('last_name', '') }}</h6>  
+                        <p class="profile-role">Profesor</p>  
+                    </div>  
+                </div>  
+  
+                <nav class="sidebar-nav">  
+                    <div class="nav-group">  
+                        <h6 class="nav-group-title">Principal</h6>  
+                        <ul class="nav-list">  
+                            <li class="nav-item {% if request.endpoint == 'teacher.dashboard' %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.dashboard') }}" class="nav-link">  
+                                    <i class="fas fa-tachometer-alt"></i>  
+                                    <span>Dashboard</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item {% if request.endpoint == 'teacher.manage_grades' %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.manage_grades') }}" class="nav-link">  
+                                    <i class="fas fa-clipboard-list"></i>  
+                                    <span>Gestión de Notas</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item {% if request.endpoint == 'teacher.dashboard' %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.dashboard') }}" class="nav-link">  
+                                    <i class="fas fa-user-graduate"></i>  
+                                    <span>Mis Estudiantes</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item {% if request.endpoint == 'teacher.manage_files' %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.manage_files') }}" class="nav-link">  
+                                    <i class="fas fa-file-alt"></i>  
+                                    <span>Archivos</span>  
+                                </a>  
+                            </li>  
+                        </ul>  
+                    </div>  
+  
+                    <div class="nav-group">  
+                        <h6 class="nav-group-title">Académico</h6>  
+                        <ul class="nav-list">  
+                            <li class="nav-item">  
+                                <a href="#" class="nav-link">  
+                                    <i class="fas fa-book"></i>  
+                                    <span>Mis Materias</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="#" class="nav-link">  
+                                    <i class="fas fa-tasks"></i>  
+                                    <span>Asignar Tareas</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="#" class="nav-link">  
+                                    <i class="fas fa-calendar-check"></i>  
+                                    <span>Horarios</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="#" class="nav-link">  
+                                    <i class="fas fa-chart-bar"></i>  
+                                    <span>Reportes</span>  
+                                </a>  
+                            </li>  
+                        </ul>  
+                    </div>  
+  
+                    <div class="nav-group">  
+                        <h6 class="nav-group-title">Configuración</h6>  
+                        <ul class="nav-list">  
+                            <li class="nav-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">  
+                                <a href="{{ url_for('auth.profile') }}" class="nav-link">  
+                                    <i class="fas fa-user-cog"></i>  
+                                    <span>Mi Perfil</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('auth.logout') }}" class="nav-link text-danger">  
+                                    <i class="fas fa-sign-out-alt"></i>  
+                                    <span>Cerrar Sesión</span>  
+                                </a>  
+                            </li>  
+                        </ul>  
+                    </div>  
+                </nav>  
+            </div>  
+        </div>  
+  
+        <!-- Main Content -->  
+        <main class="admin-main-full">  
+            <!-- Header -->  
+            <header class="admin-header">  
+                <div class="header-left">  
+                    <button class="sidebar-toggle-header" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">  
+                        <i class="fas fa-bars"></i>  
+                    </button>  
+                    <div class="header-title">  
+                        <h4>{% block page_title %}Dashboard Profesor{% endblock %}</h4>  
+                    </div>  
+                </div>  
+  
+                <div class="header-right">  
+                    <div class="search-box">  
+                        <input type="text" placeholder="Buscar...">  
+                        <i class="fas fa-search"></i>  
+                    </div>  
+  
+                    <div class="header-actions">  
+                        <button class="theme-toggle" aria-label="Cambiar tema">  
+                            <i class="fas fa-sun"></i>  
+                            <i class="fas fa-moon"></i>  
+                        </button>  
+  
+                        <div class="dropdown">  
+                            <button class="notification-btn" data-bs-toggle="dropdown">  
+                                <i class="fas fa-bell"></i>  
+                                <span class="badge">4</span>  
+                            </button>  
+                            <div class="dropdown-menu dropdown-menu-end">  
+                                <div class="dropdown-header">  
+                                    <h6>Notificaciones</h6>  
+                                    <a href="#">Marcar como leídas</a>  
+                                </div>  
+                                <div class="notification-list">  
+                                    <a href="#" class="notification-item unread">  
+                                        <div class="notification-icon">  
+                                            <i class="fas fa-user-graduate"></i>  
+                                        </div>  
+                                        <div class="notification-content">  
+                                            <p>Nuevo estudiante asignado</p>  
+                                            <span>Hace 15 minutos</span>  
+                                        </div>  
+                                    </a>  
+                                    <a href="#" class="notification-item unread">  
+                                        <div class="notification-icon">  
+                                            <i class="fas fa-tasks"></i>  
+                                        </div>  
+                                        <div class="notification-content">  
+                                            <p>Tarea pendiente de calificar</p>  
+                                            <span>Hace 1 hora</span>  
+                                        </div>  
+                                    </a>  
+                                </div>  
+                                <div class="dropdown-footer">  
+                                    <a href="#">Ver todas</a>  
+                                </div>  
+                            </div>  
+                        </div>  
+  
+                        <div class="dropdown">  
+                            <button class="profile-btn" data-bs-toggle="dropdown">  
+                                <img src="{{ session.get('avatar_url', url_for('static', filename='img/default-avatar.png')) }}"  
+                                    alt="Avatar">  
+                            </button>  
+                            <div class="dropdown-menu dropdown-menu-end">  
+                                <a href="{{ url_for('auth.profile') }}" class="dropdown-item">  
+                                    <i class="fas fa-user"></i> Mi Perfil  
+                                </a>  
+                                <a href="#" class="dropdown-item">  
+                                    <i class="fas fa-cog"></i> Configuración  
+                                </a>  
+                                <div class="dropdown-divider"></div>  
+                                <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">  
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión  
+                                </a>  
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>  
+            </header>  
+  
+            <!-- Flash Messages -->  
+            {% if get_flashed_messages %}  
+            {% with messages = get_flashed_messages(with_categories=true) %}  
+            {% if messages %}  
+            <div class="container-fluid py-3">  
+                {% for category, message in messages %}  
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} d-flex align-items-center">  
+                    <div class="alert-icon me-3">  
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }}"></i>  
+                    </div>  
+                    <div class="alert-content flex-grow-1">  
+                        <div class="alert-title">{{ 'Error!' if category == 'error' else '¡Éxito!' }}</div>  
+                        <p class="mb-0">{{ message }}</p>  
+                    </div>  
+                    <button type="button" class="alert-close" aria-label="Close">  
+                        <i class="fas fa-times"></i>  
+                    </button>  
+                </div>  
+                {% endfor %}  
+            </div>  
+            {% endif %}  
+            {% endwith %}  
+            {% endif %}  
+  
+            <!-- Content -->  
+            <div class="admin-content">  
+                {% block content %}{% endblock %}  
+            </div>  
+  
+            <!-- Footer -->  
+            <footer class="admin-footer">  
+                <div>© 2025 NetSchool UDC. Todos los derechos reservados.</div>  
+                <div>v2.5.0</div>  
+            </footer>  
+        </main>  
+    </div>  
+  
+    <!-- Scripts -->  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>  
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>  
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>  
+    {% block extra_js %}{% endblock %}  
+  
+    <style>  
+        /* Variables CSS específicas para profesores */  
+        :root {  
+            --sidebar-bg: #ffffff;  
+            --sidebar-color: #374151;  
+            --sidebar-border: rgba(0, 0, 0, 0.1);  
+            --sidebar-brand-color: #1f2937;  
+            --sidebar-brand-icon: #f59e0b; /* Amarillo para profesores */  
+            --profile-name-color: #1f2937;  
+            --profile-role-color: #6b7280;  
+            --nav-group-title-color: #9ca3af;  
+            --nav-link-color: #6b7280;  
+            --nav-link-hover-bg: rgba(245, 158, 11, 0.1);  
+            --nav-link-hover-color: #f59e0b;  
+            --nav-link-active-bg: rgba(245, 158, 11, 0.15);  
+            --status-badge-border: #ffffff;  
+            --toggle-btn-bg: #f9fafb;  
+            --toggle-btn-color: #374151;  
+            --toggle-btn-border: #d1d5db;  
+        }  
+  
+        [data-theme="dark"], .dark-theme {  
+            --sidebar-bg: #1e293b;  
+            --sidebar-color: #cbd5e1;  
+            --sidebar-border: rgba(255, 255, 255, 0.1);  
+            --sidebar-brand-color: #ffffff;  
+            --sidebar-brand-icon: #f59e0b;  
+            --profile-name-color: #ffffff;  
+            --profile-role-color: #94a3b8;  
+            --nav-group-title-color: #64748b;  
+            --nav-link-color: #cbd5e1;  
+            --nav-link-hover-bg: rgba(245, 158, 11, 0.1);  
+            --nav-link-hover-color: #f59e0b;  
+            --nav-link-active-bg: rgba(245, 158, 11, 0.15);  
+            --status-badge-border: #1e293b;  
+            --toggle-btn-bg: #374151;  
+            --toggle-btn-color: #f9fafb;  
+            --toggle-btn-border: #4b5563;  
+        }  
+  
+        /* Reutilizar todos los estilos del admin con las nuevas variables */  
+        .admin-sidebar-offcanvas {  
+            width: 280px;  
+            background: var(--sidebar-bg);  
+            color: var(--sidebar-color);  
+            border-right: 1px solid var(--sidebar-border);  
+        }  
+  
+        .admin-sidebar-offcanvas .offcanvas-header {  
+            border-bottom: 1px solid var(--sidebar-border);  
+            padding: 1.5rem;  
+            background: var(--sidebar-bg);  
+        }  
+  
+        .admin-sidebar-offcanvas .btn-close {  
+            filter: var(--bs-btn-close-white-filter, invert(1) grayscale(100%) brightness(200%));  
+        }  
+  
+        :root .admin-sidebar-offcanvas .btn-close {  
+            filter: none;  
+        }  
+  
+        .sidebar-toggle-btn {  
+            position: fixed;  
+            top: 20px;  
+            left: 20px;  
+            z-index: 1040;  
+            border-radius: 50%;  
+            width: 50px;  
+            height: 50px;  
+            display: flex;  
+            align-items: center;  
+            justify-content: center;  
+            background: var(--toggle-btn-bg);  
+            color: var(--toggle-btn-color);  
+            border: 1px solid var(--toggle-btn-border);  
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);  
+            transition: all 0.2s ease;  
+        }  
+  
+        .sidebar-toggle-btn:hover {  
+            transform: translateY(-1px);  
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  
+        }  
+  
+        .sidebar-toggle-header {  
+            background: none;  
+            border: none;  
+            color: inherit;  
+            font-size: 1.2rem;  
+            padding: 0.5rem;  
+            margin-right: 1rem;  
+            transition: color 0.2s ease;  
+        }  
+  
+        .sidebar-toggle-header:hover {  
+            color: var(--nav-link-hover-color);  
+        }  
+  
+        .admin-main-full {  
+            width: 100%;  
+            min-height: 100vh;  
+            display: flex;  
+            flex-direction: column;  
+        }  
+  
+        .admin-container {  
+            position: relative;  
+        }  
+  
+        .sidebar-brand {  
+            display: flex;  
+            align-items: center;  
+            font-size: 1.25rem;  
+            font-weight: 600;  
+            color: var(--sidebar-brand-color);  
+        }  
+  
+        .sidebar-brand i {  
+            margin-right: 0.75rem;  
+            font-size: 1.5rem;  
+            color: var(--sidebar-brand-icon);  
+        }  
+  
+        .sidebar-profile {  
+            padding: 1.5rem;  
+            border-bottom: 1px solid var(--sidebar-border);  
+            text-align: center;  
+        }  
+  
+        .profile-avatar {  
+            position: relative;  
+            display: inline-block;  
+            margin-bottom: 1rem;  
+        }  
+  
+        .profile-avatar img {  
+            width: 60px;  
+            height: 60px;  
+            border-radius: 50%;  
+            border: 3px solid var(--sidebar-brand-icon);  
+        }  
+  
+        .status-badge {  
+            position: absolute;  
+            bottom: 2px;  
+            right: 2px;  
+            width: 16px;  
+            height: 16px;  
+            border-radius: 50%;  
+            border: 2px solid var(--status-badge-border);  
+        }  
+  
+        .status-badge.online {  
+            background-color: #10b981;  
+        }  
+  
+        .profile-name {  
+            font-size: 1rem;  
+            font-weight: 600;  
+            color: var(--profile-name-color);  
+            margin-bottom: 0.25rem;  
+        }  
+  
+        .profile-role {  
+            font-size: 0.875rem;  
+            color: var(--profile-role-color);  
+            margin: 0;  
+        }  
+  
+        .sidebar-nav {  
+            padding: 1rem 0;  
+            flex: 1;  
+        }  
+  
+        .nav-group {  
+            margin-bottom: 2rem;  
+        }  
+  
+        .nav-group-title {  
+            font-size: 0.75rem;  
+            font-weight: 600;  
+            text-transform: uppercase;  
+            color: var(--nav-group-title-color);  
+            padding: 0 1.5rem;  
+            margin-bottom: 0.75rem;  
+        }  
+  
+        .nav-list {  
+            list-style: none;  
+            padding: 0;  
+            margin: 0;  
+        }  
+  
+        .nav-item {  
+            margin-bottom: 0.25rem;  
+        }  
+  
+        .nav-link {  
+            display: flex;  
+            align-items: center;  
+            padding: 0.75rem 1.5rem;  
+            color: var(--nav-link-color);  
+            text-decoration: none;  
+            transition: all 0.2s ease;  
+            border-left: 3px solid transparent;  
+        }  
+  
+        .nav-link:hover {  
+            background-color: var(--nav-link-hover-bg);  
+            color: var(--nav-link-hover-color);  
+            border-left-color: var(--nav-link-hover-color);  
+        }  
+  
+        .nav-item.active .nav-link {  
+            background-color: var(--nav-link-active-bg);  
+            color: var(--nav-link-hover-color);  
+            border-left-color: var(--nav-link-hover-color);  
+        }  
+  
+        .nav-link i {  
+            margin-right: 0.75rem;  
+            width: 20px;  
+            text-align: center;  
+        }  
+  
+        @media (prefers-color-scheme: dark) {  
+            :root:not([data-theme="light"]) {  
+                --sidebar-bg: #1e293b;  
+                --sidebar-color: #cbd5e1;  
+                --sidebar-border: rgba(255, 255, 255, 0.1);  
+                --sidebar-brand-color: #ffffff;  
+                --profile-name-color: #ffffff;  
+                --profile-role-color: #94a3b8;  
+                --nav-group-title-color: #64748b;  
+                --nav-link-color: #cbd5e1;  
+                --status-badge-border: #1e293b;  
+                --toggle-btn-bg: #374151;  
+                --toggle-btn-color: #f9fafb;  
+                --toggle-btn-border: #4b5563;  
+            }  
+  
+            :root:not([data-theme="light"]) .admin-sidebar-offcanvas .btn-close {  
+                filter: invert(1) grayscale(100%) brightness(200%);  
+            }  
+        }  
+  
+        @media (min-width: 768px) {  
+            .sidebar-toggle-btn {  
+                display: none;  
+            }  
+        }  
+  
+        @media (max-width: 767px) {  
+            .sidebar-toggle-header {  
+                display: inline-block;  
+            }  
+        }  
+  
+        .sidebar-toggle-btn:focus,  
+        .sidebar-toggle-header:focus {  
+            outline: 2px solid var(--sidebar-brand-icon);  
+            outline-offset: 2px;  
+        }  
+  
+        .nav-link:focus {  
+            outline: 2px solid var(--sidebar-brand-icon);  
+            outline-offset: -2px;  
+        }  
+  
+        .admin-sidebar-offcanvas,  
+        .sidebar-brand,  
+        .profile-name,  
+        .profile-role,  
+        .nav-group-title,  
+        .nav-link,  
+        .sidebar-toggle-btn {  
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;  
+        }  
+    </style>  
+</body>
+</html>

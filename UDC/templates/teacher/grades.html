@@ -1,0 +1,276 @@
+{% extends 'base_teacher.html' %}  
+{% block title %}Gestión de Notas - Profesor{% endblock %}  
+{% block page_title %}Gestión de Calificaciones{% endblock %}  
+  
+{% block content %}  
+<div class="container-fluid">  
+    <!-- Formulario para registrar notas -->  
+    <div class="row mb-4">  
+        <div class="col-12">  
+            <div class="card shadow">  
+                <div class="card-header bg-warning text-white">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-star me-2"></i>  
+                        Registrar Nueva Calificación  
+                    </h5>  
+                </div>  
+                <div class="card-body">  
+                    <form method="post" class="needs-validation" novalidate>
+                        <div class="row">  
+                            <div class="col-md-6 mb-3">  
+                                <label for="student_id" class="form-label">Estudiante *</label>  
+                                <select class="form-select" id="student_id" name="student_id" required>  
+                                    <option value="">Seleccionar estudiante</option>  
+                                    {% for student in students %}  
+                                        <option value="{{ student._id }}">{{ student.first_name }} {{ student.last_name }} - {{ student.username }}</option>  
+                                    {% endfor %}  
+                                </select>  
+                                <div class="invalid-feedback">  
+                                    Seleccione un estudiante.  
+                                </div>  
+                            </div>  
+                            <div class="col-md-6 mb-3">  
+                                <label for="course_id" class="form-label">Materia *</label>  
+                                <select class="form-select" id="course_id" name="course_id" required>  
+                                    <option value="">Seleccionar materia</option>  
+                                    {% for course in courses %}  
+                                        <option value="{{ course._id }}">{{ course.name }}</option>  
+                                    {% endfor %}  
+                                </select>  
+                                <div class="invalid-feedback">  
+                                    Seleccione una materia.  
+                                </div>  
+                            </div>  
+                        </div>  
+                          
+                        <div class="row">  
+                            <div class="col-md-4 mb-3">  
+                                <label for="grade_value" class="form-label">Calificación *</label>  
+                                <input type="number" class="form-control" id="grade_value" name="grade_value"   
+                                       min="0" max="10" step="0.1" required>  
+                                <div class="form-text">Escala de 0.0 a 10.0</div>  
+                                <div class="invalid-feedback">  
+                                    Ingrese una calificación válida.  
+                                </div>  
+                            </div>  
+                            <div class="col-md-4 mb-3">  
+                                <label for="grade_type" class="form-label">Tipo de Evaluación *</label>  
+                                <select class="form-select" id="grade_type" name="grade_type" required>  
+                                    <option value="">Seleccionar tipo</option>  
+                                    <option value="parcial">Examen Parcial</option>  
+                                    <option value="quiz">Quiz</option>  
+                                    <option value="tarea">Tarea</option>  
+                                    <option value="proyecto">Proyecto</option>  
+                                    <option value="participacion">Participación</option>  
+                                    <option value="laboratorio">Laboratorio</option>  
+                                </select>  
+                                <div class="invalid-feedback">  
+                                    Seleccione el tipo de evaluación.  
+                                </div>  
+                            </div>  
+                            <div class="col-md-4 mb-3">  
+                                <label for="weight" class="form-label">Peso (%)</label>  
+                                <input type="number" class="form-control" id="weight" name="weight"   
+                                       min="1" max="100" value="20">  
+                                <div class="form-text">Porcentaje de la nota final</div>  
+                            </div>  
+                        </div>  
+                          
+                        <div class="mb-3">  
+                            <label for="description" class="form-label">Observaciones</label>  
+                            <textarea class="form-control" id="description" name="description" rows="3"   
+                                      placeholder="Comentarios adicionales sobre la evaluación..."></textarea>  
+                        </div>  
+                          
+                        <div class="d-flex justify-content-between">  
+                            <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">  
+                                <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard  
+                            </a>  
+                            <button type="submit" class="btn btn-warning">  
+                                <i class="fas fa-save me-1"></i>Registrar Calificación  
+                            </button>  
+                        </div>  
+                    </form>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- Historial de calificaciones recientes -->  
+    <div class="row">  
+        <div class="col-12">  
+            <div class="card shadow">  
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-history me-2"></i>  
+                        Calificaciones Registradas Recientemente  
+                    </h5>  
+                    <span class="badge bg-warning">{{ recent_grades|length }} registro(s)</span>  
+                </div>  
+                <div class="card-body">  
+                    {% if recent_grades %}  
+                        <div class="table-responsive">  
+                            <table class="table table-hover">  
+                                <thead class="table-light">  
+                                    <tr>  
+                                        <th>Estudiante</th>  
+                                        <th>Materia</th>  
+                                        <th>Tipo</th>  
+                                        <th>Calificación</th>  
+                                        <th>Fecha</th>  
+                                        <th>Acciones</th>  
+                                    </tr>  
+                                </thead>  
+                                <tbody>  
+                                    {% for grade in recent_grades %}  
+                                        <tr>  
+                                            <td>  
+                                                <div class="d-flex align-items-center">  
+                                                    <div class="avatar-sm me-2">  
+                                                        <i class="fas fa-user-graduate text-warning"></i>  
+                                                    </div>  
+                                                    <div>  
+                                                        <h6 class="mb-0">{{ grade.student_name if grade.student_name else 'Estudiante' }}</h6>  
+                                                        <small class="text-muted">{{ grade.student_username if grade.student_username else '' }}</small>  
+                                                    </div>  
+                                                </div>  
+                                            </td>  
+                                            <td>  
+                                                <span class="fw-medium">{{ grade.course_name if grade.course_name else 'Materia' }}</span>  
+                                            </td>  
+                                            <td>  
+                                                {% set type_info = {  
+                                                    'parcial': {'name': 'Parcial', 'color': 'primary'},  
+                                                    'quiz': {'name': 'Quiz', 'color': 'info'},  
+                                                    'tarea': {'name': 'Tarea', 'color': 'success'},  
+                                                    'proyecto': {'name': 'Proyecto', 'color': 'warning'},  
+                                                    'participacion': {'name': 'Participación', 'color': 'secondary'},  
+                                                    'laboratorio': {'name': 'Laboratorio', 'color': 'danger'}  
+                                                } %}  
+                                                {% set grade_type_info = type_info.get(grade.grade_type, {'name': grade.grade_type|title, 'color': 'secondary'}) %}  
+                                                <span class="badge bg-{{ grade_type_info.color }}">  
+                                                    {{ grade_type_info.name }}  
+                                                </span>  
+                                            </td>  
+                                            <td>  
+                                                {% set grade_value = grade.grade_value|float %}  
+                                                <span class="badge fs-6 bg-{{ 'success' if grade_value >= 7 else 'warning' if grade_value >= 5 else 'danger' }}">  
+                                                    {{ "%.1f"|format(grade_value) }}/10  
+                                                </span>  
+                                            </td>  
+                                            <td>  
+                                                <div class="text-sm">  
+                                                    {{ grade.created_at.strftime('%d/%m/%Y') if grade.created_at else 'N/A' }}  
+                                                    <br>  
+                                                    <small class="text-muted">{{ grade.created_at.strftime('%H:%M') if grade.created_at else '' }}</small>  
+                                                </div>  
+                                            </td>  
+                                            <td>  
+                                                <div class="btn-group" role="group">  
+                                                    <button type="button"   
+                                                            class="btn btn-outline-info btn-sm"   
+                                                            title="Ver detalles"  
+                                                            data-bs-toggle="tooltip"  
+                                                            onclick="viewGradeDetails('{{ grade._id }}', '{{ grade.description }}', '{{ grade.weight }}')">  
+                                                        <i class="fas fa-eye"></i>  
+                                                    </button>  
+                                                    <button type="button"   
+                                                            class="btn btn-outline-warning btn-sm"   
+                                                            title="Editar calificación"  
+                                                            data-bs-toggle="tooltip">  
+                                                        <i class="fas fa-edit"></i>  
+                                                    </button>  
+                                                </div>  
+                                            </td>  
+                                        </tr>  
+                                    {% endfor %}  
+                                </tbody>  
+                            </table>  
+                        </div>  
+                    {% else %}  
+                        <div class="text-center py-5">  
+                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>  
+                            <h5 class="text-muted">No hay calificaciones registradas</h5>  
+                            <p class="text-muted mb-3">Comienza registrando la primera calificación</p>  
+                        </div>  
+                    {% endif %}  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+  
+<!-- Modal para detalles de calificación -->  
+<div class="modal fade" id="gradeDetailsModal" tabindex="-1">  
+    <div class="modal-dialog">  
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h5 class="modal-title">Detalles de la Calificación</h5>  
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>  
+            </div>  
+            <div class="modal-body">  
+                <div id="gradeDetailsContent"></div>  
+            </div>  
+            <div class="modal-footer">  
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}  
+  
+{% block extra_js %}  
+<script>  
+function viewGradeDetails(gradeId, description, weight) {  
+    const content = `  
+        <div class="mb-3">  
+            <strong>Peso en la nota final:</strong> ${weight || 'No especificado'}%  
+        </div>  
+        <div class="mb-3">  
+            <strong>Observaciones:</strong><br>  
+            ${description || 'Sin observaciones adicionales'}  
+        </div>  
+    `;  
+      
+    document.getElementById('gradeDetailsContent').innerHTML = content;  
+    new bootstrap.Modal(document.getElementById('gradeDetailsModal')).show();  
+}  
+  
+// Validación del formulario  
+(function() {  
+    'use strict';  
+    window.addEventListener('load', function() {  
+        var forms = document.getElementsByClassName('needs-validation');  
+        var validation = Array.prototype.filter.call(forms, function(form) {  
+            form.addEventListener('submit', function(event) {  
+                if (form.checkValidity() === false) {  
+                    event.preventDefault();  
+                    event.stopPropagation();  
+                }  
+                form.classList.add('was-validated');  
+            }, false);  
+        });  
+    }, false);  
+})();  
+  
+// Tooltips  
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))  
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {  
+    return new bootstrap.Tooltip(tooltipTriggerEl)  
+});  
+  
+// Validación en tiempo real de la calificación  
+document.getElementById('grade_value').addEventListener('input', function() {  
+    const value = parseFloat(this.value);  
+    const feedback = this.nextElementSibling.nextElementSibling;  
+      
+    if (value < 0 || value > 10) {  
+        this.setCustomValidity('La calificación debe estar entre 0.0 y 10.0');  
+        feedback.textContent = 'La calificación debe estar entre 0.0 y 10.0';  
+    } else {  
+        this.setCustomValidity('');  
+        feedback.textContent = 'Ingrese una calificación válida.';  
+    }  
+});  
+</script>  
+{% endblock %}
