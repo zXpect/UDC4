@@ -153,7 +153,7 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="header-title">
-                        <h4>{% block page_title %}Dashboard{% endblock %}</h4>
+                        <h4>{% block page_title %}Panel Administrativo{% endblock %}</h4>
                     </div>
                 </div>
 
@@ -163,74 +163,41 @@
                         <i class="fas fa-search"></i>
                     </div>
 
-                    <div class="header-actions">
-                        <button class="theme-toggle" aria-label="Cambiar tema">
-                            <i class="fas fa-sun"></i>
-                            <i class="fas fa-moon"></i>
-                        </button>
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </button>
 
-                        <div class="dropdown">
-                            <button class="notification-btn" data-bs-toggle="dropdown">
-                                <i class="fas fa-bell"></i>
-                                <span class="badge">5</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <div class="dropdown-header">
-                                    <h6>Notificaciones</h6>
-                                    <a href="#">Marcar como leídas</a>
-                                </div>
-                                <div class="notification-list">
-                                    <a href="#" class="notification-item unread">
-                                        <div class="notification-icon">
-                                            <i class="fas fa-user-plus"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <p>Nuevo usuario registrado</p>
-                                            <span>Hace 10 minutos</span>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="notification-item unread">
-                                        <div class="notification-icon">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <p>Nuevo evento creado</p>
-                                            <span>Hace 1 hora</span>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="notification-item">
-                                        <div class="notification-icon">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <p>Alerta de sistema</p>
-                                            <span>Hace 2 horas</span>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dropdown-footer">
-                                    <a href="#">Ver todas</a>
+                    <!-- User Account Dropdown -->
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar-container-simple">
+                                <div class="user-avatar">
+                                    {% if session.get('logged_in') %}
+                                        {{ session.get('username', 'A')[0].upper() }}
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="dropdown">
-                            <button class="profile-btn" data-bs-toggle="dropdown">
-                                <img src="{{ current_user.avatar_url if current_user.avatar_url else url_for('static', filename='img/default-avatar.png') }}"
-                                    alt="Avatar">
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a href="{{ url_for('auth.profile') }}" class="dropdown-item">
-                                    <i class="fas fa-user"></i> Mi Perfil
-                                </a>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-cog"></i> Configuración
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                                </a>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <div class="dropdown-header">
+                                {{ session.get('username', 'Administrador') }}
+                                <div class="text-muted small">{{ session.get('role', 'Admin').title() }}</div>
                             </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('auth.profile') if url_for else '#' }}">
+                                <i class="fas fa-user-circle"></i> Mi Perfil
+                            </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog"></i> Configuración
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') if url_for else '#' }}">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
                         </div>
                     </div>
                 </div>

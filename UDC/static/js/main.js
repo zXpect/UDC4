@@ -110,45 +110,79 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Manejo del menú móvil
     const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
+    const navbarNavContainer = document.querySelector('.navbar-nav-container');
     
-    if (navbarToggler && navbarCollapse) {
-        // Crear overlay para cerrar menú
-        const navbarOverlay = document.createElement('div');
-        navbarOverlay.className = 'navbar-overlay';
-        document.body.appendChild(navbarOverlay);
+    if (navbarToggler && navbarNavContainer) {
+        // Crear overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'navbar-overlay';
+        document.body.appendChild(overlay);
         
-        navbarToggler.addEventListener('click', function() {
-            navbarCollapse.classList.toggle('show');
-            
-            if (navbarCollapse.classList.contains('show')) {
-                navbarOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+        function toggleMobileMenu(show) {
+            if (show) {
+                navbarNavContainer.classList.add('show');
+                overlay.classList.add('show');
+                document.body.classList.add('menu-open');
+                navbarToggler.innerHTML = '<i class="fas fa-times"></i>';
             } else {
-                navbarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
+                navbarNavContainer.classList.remove('show');
+                overlay.classList.remove('show');
+                document.body.classList.remove('menu-open');
+                navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';
             }
+        }
+        
+        // Toggle button click
+        navbarToggler.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            toggleMobileMenu(!isExpanded);
         });
         
-        // Cerrar menú al hacer clic en overlay
-        navbarOverlay.addEventListener('click', function() {
-            navbarCollapse.classList.remove('show');
-            navbarOverlay.classList.remove('active');
-            document.body.style.overflow = '';
+        // Overlay click
+        overlay.addEventListener('click', function() {
+            toggleMobileMenu(false);
+            navbarToggler.setAttribute('aria-expanded', 'false');
         });
         
-        // Cerrar menú al hacer clic en enlaces
-        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        // Close menu when clicking links
+        const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
                 if (window.innerWidth < 992) {
-                    navbarCollapse.classList.remove('show');
-                    navbarOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
+                    toggleMobileMenu(false);
+                    navbarToggler.setAttribute('aria-expanded', 'false');
                 }
             });
         });
+        
+        // Close menu on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                toggleMobileMenu(false);
+                navbarToggler.setAttribute('aria-expanded', 'false');
+            }
+        });
+        
+        // Handle escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navbarNavContainer.classList.contains('show')) {
+                toggleMobileMenu(false);
+                navbarToggler.setAttribute('aria-expanded', 'false');
+            }
+        });
     }
+
+    // Manejar estado activo de los enlaces
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath ||
+            (currentPath === '/' && link.getAttribute('href').includes('index'))) {
+            link.classList.add('active');
+        }
+    });
 
     // ========================================
     // DROPDOWNS MEJORADOS

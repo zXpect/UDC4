@@ -204,7 +204,7 @@ def register():
     
     return render_template('auth/register.html')
 
-@auth.route('/profile')
+@auth.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     # Obtener información completa del usuario
@@ -212,6 +212,25 @@ def profile():
     if not user:
         flash('Usuario no encontrado', 'danger')
         return redirect(url_for('auth.logout'))
+    
+    if request.method == 'POST':
+        # Actualizar configuraciones
+        settings = {
+            'theme': request.form.get('theme', 'light'),
+            'email_notifications': request.form.get('email_notifications') == 'on'
+        }
+        
+        try:
+            User.collection.update_one(
+                {'_id': user['_id']},
+                {'$set': {'settings': settings}}
+            )
+            flash('Configuraciones actualizadas exitosamente', 'success')
+        except Exception as e:
+            flash('Error al actualizar las configuraciones', 'danger')
+            print(f"Error updating settings: {e}")
+        
+        return redirect(url_for('auth.profile'))
     
     # Preparar datos del usuario para el template
     user_data = {
@@ -232,7 +251,17 @@ def profile():
         'academic_info': user.get('academic_info', {})
     }
     
-    return render_template('auth/profile.html', user=user_data)
+    # Preparar configuraciones del usuario
+    user_settings = {
+        'theme': user.get('settings', {}).get('theme', 'light'),
+        'email_notifications': user.get('settings', {}).get('email_notifications', False)
+    }
+    
+    # Seleccionar la plantilla base según el rol del usuario
+    role = user['role']
+    template = f'admin/profile_{role}.html'
+    
+    return render_template(template, user=user_data, user_settings=user_settings)
 
 @auth.route('/logout')
 def logout():

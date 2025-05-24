@@ -1,0 +1,51 @@
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel"><i class="fas fa-cog me-2"></i>Configuración de la Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('auth.profile') }}" method="POST"> 
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="themeSelect" class="form-label">Tema de la Interfaz</label>
+                        <select class="form-select" id="themeSelect" name="theme">
+                            <option value="light" {% if user_settings.theme == 'light' %}selected{% endif %}>Claro</option>
+                            <option value="dark" {% if user_settings.theme == 'dark' %}selected{% endif %}>Oscuro</option>
+                            <option value="system" {% if user_settings.theme == 'system' %}selected{% endif %}>Preferencias del Sistema</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Preferencias de Notificación</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailNotifications" name="email_notifications" {% if user_settings.email_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="emailNotifications">Recibir notificaciones por correo electrónico</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="inAppNotifications" name="in_app_notifications" {% if user_settings.in_app_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="inAppNotifications">Mostrar notificaciones en la aplicación</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="languageSelect" class="form-label">Idioma</label>
+                        <select class="form-select" id="languageSelect" name="language">
+                            <option value="es" {% if user_settings.language == 'es' %}selected{% endif %}>Español</option>
+                            <option value="en" {% if user_settings.language == 'en' %}selected{% endif %}>Inglés</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Guardar Configuración</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

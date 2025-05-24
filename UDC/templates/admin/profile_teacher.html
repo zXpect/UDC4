@@ -1,0 +1,283 @@
+{% extends 'base_teacher.html' %}
+
+{% block title %}Perfil del Docente - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="profile-section">
+    <div class="container">
+        {% include 'partials/_profile_header.html' %}
+
+        <div class="row">
+            <div class="col-lg-3">
+                {% include 'partials/_profile_sidebar_teacher.html' %}
+            </div>
+
+            <div class="col-lg-9">
+                <div class="profile-content">
+                    <!-- Overview Tab -->
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                        <h4 class="mb-4">Resumen General</h4>
+                        <div class="row">
+                            <!-- Statistics Cards -->
+                            {% if stats %}
+                                {% for stat in stats %}
+                                <div class="col-md-6 col-xl-3 mb-4">
+                                    <div class="stat-card h-100">
+                                        <div class="stat-icon bg-{{ stat.color }}">
+                                            <i class="fas fa-{{ stat.icon }}"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <div class="stat-number">{{ stat.value }}</div>
+                                            <div class="stat-label">{{ stat.label }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-md-6 col-xl-3 mb-4">
+                                    <div class="stat-card h-100">
+                                        <div class="stat-icon bg-primary"><i class="fas fa-chalkboard-teacher"></i></div>
+                                        <div class="stat-info"><div class="stat-number">4</div><div class="stat-label">Cursos Asignados</div></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xl-3 mb-4">
+                                    <div class="stat-card h-100">
+                                        <div class="stat-icon bg-success"><i class="fas fa-users"></i></div>
+                                        <div class="stat-info"><div class="stat-number">112</div><div class="stat-label">Estudiantes Totales</div></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xl-3 mb-4">
+                                    <div class="stat-card h-100">
+                                        <div class="stat-icon bg-info"><i class="fas fa-file-alt"></i></div>
+                                        <div class="stat-info"><div class="stat-number">88%</div><div class="stat-label">Tareas Calificadas</div></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xl-3 mb-4">
+                                    <div class="stat-card h-100">
+                                        <div class="stat-icon bg-warning"><i class="fas fa-bullhorn"></i></div>
+                                        <div class="stat-info"><div class="stat-number">2</div><div class="stat-label">Anuncios Recientes</div></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0"><i class="fas fa-tasks me-2"></i>Próximas Actividades y Eventos</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-0">Calificar Examen Parcial - Matemáticas 3A</h6>
+                                                    <small class="text-muted">Fecha Límite: 27 de Mayo</small>
+                                                </div>
+                                                <span class="badge bg-danger">Urgente</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-0">Reunión de Departamento</h6>
+                                                    <small class="text-muted">Sala de Juntas - 29 de Mayo, 09:00 AM</small>
+                                                </div>
+                                                <span class="badge bg-warning">Próximo</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-0">Preparar Clase de Repaso - Álgebra 5B</h6>
+                                                    <small class="text-muted">Para el 03 de Junio</small>
+                                                </div>
+                                                <span class="badge bg-info">Pendiente</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0"><i class="fas fa-chart-pie me-2"></i>Distribución de Estudiantes</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Placeholder para gráfica, ej: Chart.js -->
+                                        <canvas id="studentDistributionChart" height="150"></canvas>
+                                        <p class="text-center text-muted mt-2">Gráfica de distribución de estudiantes por curso.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mis Cursos Tab -->
+                    <div class="tab-pane fade" id="my-courses" role="tabpanel">
+                        <h4 class="mb-4">Mis Cursos Asignados</h4>
+                        <div class="row">
+                            {% for course in teacher_courses|default([]) %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card course-card-teacher h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="course-icon-teacher bg-{{ ['primary', 'success', 'info', 'warning']|random }} me-3">
+                                                <i class="fas fa-{{ course.icon|default('book') }}"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title mb-0">{{ course.name|default('Nombre del Curso') }}</h5>
+                                                <p class="card-text text-muted mb-0">{{ course.grade_level|default('Nivel') }} - {{ course.students_count|default(0) }} Estudiantes</p>
+                                            </div>
+                                        </div>
+                                        <p class="card-text">{{ course.description|default('Descripción breve del curso.')|truncate(100) }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">Próxima clase: {{ course.next_class_date|default('Por definir') }}</small>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">Gestionar Curso</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-12">
+                                <p class="text-muted">Aún no tienes cursos asignados.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Horario Tab -->
+                    <div class="tab-pane fade" id="teacher-schedule" role="tabpanel">
+                        <h4 class="mb-4">Mi Horario de Clases</h4>
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Aquí iría el componente de horario, ej: FullCalendar o una tabla personalizada -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>Hora</th>
+                                                <th>Lunes</th>
+                                                <th>Martes</th>
+                                                <th>Miércoles</th>
+                                                <th>Jueves</th>
+                                                <th>Viernes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>08:00 - 09:30</td><td class="table-primary">Matemáticas 3A</td><td></td><td class="table-primary">Matemáticas 3A</td><td></td><td class="table-primary">Matemáticas 3A</td></tr>
+                                            <tr><td>09:45 - 11:15</td><td class="table-info">Álgebra 5B</td><td class="table-primary">Matemáticas 3A</td><td class="table-info">Álgebra 5B</td><td class="table-primary">Matemáticas 3A</td><td class="table-info">Álgebra 5B</td></tr>
+                                            <tr><td>11:30 - 13:00</td><td></td><td class="table-info">Álgebra 5B</td><td></td><td class="table-info">Álgebra 5B</td><td></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information Tab -->
+                    <div class="tab-pane fade" id="personal-info" role="tabpanel">
+                        <h4 class="mb-4">Información Personal y Profesional</h4>
+                        <div class="card">
+                            <div class="card-body">
+                                <form>
+                                     <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" value="{{ user.first_name }}" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Apellido</label>
+                                            <input type="text" class="form-control" value="{{ user.last_name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Correo Electrónico</label>
+                                        <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Teléfono</label>
+                                            <input type="tel" class="form-control" value="{{ user.phone|default('No especificado') }}" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Departamento</label>
+                                            <input type="text" class="form-control" value="{{ user.get('teacher_details', {}).get('department')|default('No asignado') }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Especialidades</label>
+                                        <input type="text" class="form-control" value="{{ user.get('teacher_details', {}).get('specialties', [])|join(', ') if user.get('teacher_details', {}).get('specialties') else 'No especificadas' }}" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Años de Experiencia</label>
+                                        <input type="number" class="form-control" value="{{ user.get('teacher_details', {}).get('experience_years')|default(0) }}" readonly>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                        <i class="fas fa-edit me-2"></i>Editar Perfil
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'partials/_edit_profile_modal.html' %}
+{% include 'partials/_settings_modal.html' %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tabs
+        var triggerTabList = [].slice.call(document.querySelectorAll('#profileSidebarMenu a'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        });
+
+        // Chart.js Example for Student Distribution
+        var ctx = document.getElementById('studentDistributionChart');
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Matemáticas 3A', 'Álgebra 5B', 'Ciencias 2C', 'Historia 4A'],
+                    datasets: [{
+                        label: 'N° de Estudiantes',
+                        data: [30, 28, 25, 29],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)', 
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

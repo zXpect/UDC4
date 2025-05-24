@@ -110,11 +110,12 @@
         }
 
         /* Mejoras para el usuario dropdown */
-.user-profile-section {
-    margin-left: auto; /* Empuja el contenido hacia la derecha */
-    display: flex;
-    align-items: center;
-}
+        .user-profile-section {
+            margin-left: auto;
+            /* Empuja el contenido hacia la derecha */
+            display: flex;
+            align-items: center;
+        }
 
         .user-avatar-container {
             position: relative;
@@ -134,26 +135,26 @@
             transform: translateY(-1px);
         }
 
-.user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px; 
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-avatar);
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--avatar-border-color);
-    text-align: center;
-    vertical-align: middle;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-avatar);
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--avatar-border-color);
+            text-align: center;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
 
         .user-avatar::before {
@@ -363,18 +364,18 @@
                 </button>
 
                 <!-- Mobile Menu Toggle -->
-                <button class="navbar-toggler d-lg-none" type="button" aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
+        </div>
 
-            <!-- Collapsible content -->
-            <div class="navbar-collapse collapse" id="navbarNav">
-                <!-- Navigation Links -->
-                <ul class="navbar-nav me-auto">
+        <!-- Navigation Container -->
+        <div class="navbar-nav-container">
+            <div class="navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('public.index') if url_for else '#' }}">
+                        <a class="nav-link" href="{{ url_for('public.index') if url_for else '#' }}">
                             <i class="fas fa-home"></i> Inicio
                         </a>
                     </li>
@@ -385,7 +386,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('public.about') if url_for else '#' }}">
-                            <i class="fas fa-users"></i> Nosotros
+                            <i class="fas fa-info-circle"></i> Nosotros
                         </a>
                     </li>
                     <li class="nav-item">
@@ -393,111 +394,94 @@
                             <i class="fas fa-envelope"></i> Contacto
                         </a>
                     </li>
-                </ul>
-
-                <!-- User Panel -->
-                <div class="navbar-nav">
-                    <div class="nav-item dropdown user-profile-section">
-                        <a class="nav-link dropdown-toggle p-0" href="#" id="authDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-avatar-container">
-                                <div class="user-avatar">
-                                    {% if session.get('logged_in') %}
-                                    <span>{{ session.get('username', 'U')[0].upper() }}</span>
-                                    <div class="user-status-indicator user-status-online"></div>
-                                    {% else %}
-                                    <i class="fas fa-user"></i>
-                                    <div class="user-status-indicator user-status-offline"></div>
-                                    {% endif %}
+                    
+                    <!-- User Account Dropdown -->
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar-container-simple">
+                                    <div class="user-avatar">
+                                        {% if session.get('logged_in') %}
+                                            {{ session.get('username', 'U')[0].upper() }}
+                                        {% else %}
+                                            <i class="fas fa-user"></i>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="user-info d-none d-md-flex">
-                                    {% if session.get('logged_in') %}
-                                    <span class="user-name">{{ session.get('username', 'Usuario') }}</span>
-                                    <span class="user-role">{{ session.get('role', 'estudiante') }}</span>
-                                    {% else %}
-                                    <span class="user-name">Invitado</span>
-                                    <span class="user-role">Sin sesión</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="authDropdown">
+                                {% if session.get('logged_in') %}
+                                    <div class="dropdown-header">
+                                        {{ session.get('username', 'Usuario') }}
+                                        <div class="text-muted small">{{ session.get('role', '').title() }}</div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    
+                                    <!-- Dashboard según rol -->
+                                    {% if session.get('role') == 'admin' %}
+                                        <a class="dropdown-item" href="{{ url_for('admin.dashboard') if url_for else '#' }}">
+                                            <i class="fas fa-user-shield"></i> Panel Administrativo
+                                        </a>
+                                    {% elif session.get('role') == 'teacher' %}
+                                        <a class="dropdown-item" href="{{ url_for('teacher.dashboard') if url_for else '#' }}">
+                                            <i class="fas fa-chalkboard-teacher"></i> Panel Docente
+                                        </a>
+                                    {% elif session.get('role') == 'student' %}
+                                        <a class="dropdown-item" href="{{ url_for('student.dashboard') if url_for else '#' }}">
+                                            <i class="fas fa-user-graduate"></i> Panel Estudiante
+                                        </a>
+                                    {% elif session.get('role') == 'parent' %}
+                                        <a class="dropdown-item" href="{{ url_for('parent.dashboard') if url_for else '#' }}">
+                                            <i class="fas fa-users"></i> Panel Familiar
+                                        </a>
                                     {% endif %}
-                                </div>
-                                <i class="fas fa-chevron-down dropdown-arrow d-none d-md-inline"></i>
+                                    
+                                    <a class="dropdown-item" href="{{ url_for('auth.profile') if url_for else '#' }}">
+                                        <i class="fas fa-user-circle"></i> Mi Perfil
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') if url_for else '#' }}">
+                                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{{ url_for('auth.login') if url_for else '#' }}">
+                                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.register') if url_for else '#' }}">
+                                        <i class="fas fa-user-plus"></i> Registrarse
+                                    </a>
+                                {% endif %}
                             </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
-                            {% if session.get('logged_in') %}
-                            <li class="dropdown-header">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar me-2" style="width: 24px; height: 24px; font-size: 12px;">
-                                        <span>{{ session.get('username', 'U')[0].upper() }}</span>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 14px; font-weight: 600;">{{ session.get('username',
-                                            'Usuario') }}</div>
-                                        <div style="font-size: 12px; opacity: 0.7;">{{ session.get('role',
-                                            'estudiante').title() }}</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('auth.profile') if url_for else '#' }}">
-                                    <i class="fas fa-user-circle me-2"></i> Mi Perfil
-                                </a>
-                            </li>
-                            {% if session.get('role') == 'admin' %}
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('admin.dashboard') if url_for else '#' }}">
-                                    <i class="fas fa-user-shield me-2"></i> Panel de Administración
-                                </a>
-                            </li>
-                            {% endif %}
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('auth.login') if url_for else '#' }}">
-                                    <i class="fas fa-exchange-alt me-2"></i> Cambiar Cuenta
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-danger"
-                                    href="{{ url_for('auth.logout') if url_for else '#' }}">
-                                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="dropdown-header">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar me-2" style="width: 24px; height: 24px; font-size: 12px;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 14px; font-weight: 600;">Bienvenido</div>
-                                        <div style="font-size: 12px; opacity: 0.7;">Accede a tu cuenta</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('auth.login') if url_for else '#' }}">
-                                    <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('auth.register') if url_for else '#' }}">
-                                    <i class="fas fa-user-plus me-2"></i> Registrarse
-                                </a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Floating Action Button -->  
+<div class="floating-nav" id="floatingNav">  
+    <button class="floating-nav-toggle" id="floatingToggle">  
+        <i class="fas fa-bars"></i>  
+    </button>  
+    <div class="floating-nav-menu" id="floatingMenu">  
+        <a href="{{ url_for('public.index') if url_for else '#' }}" class="floating-nav-item" title="Inicio">  
+            <i class="fas fa-home"></i>  
+        </a>  
+        <a href="{{ url_for('public.events') if url_for else '#' }}" class="floating-nav-item" title="Eventos">  
+            <i class="fas fa-calendar-alt"></i>  
+        </a>  
+        <a href="{{ url_for('public.about') if url_for else '#' }}" class="floating-nav-item" title="Nosotros">  
+            <i class="fas fa-users"></i>  
+        </a>  
+        <a href="{{ url_for('public.contact') if url_for else '#' }}" class="floating-nav-item" title="Contacto">  
+            <i class="fas fa-envelope"></i>  
+        </a>  
+        <button class="floating-nav-item theme-toggle-floating" title="Cambiar tema">  
+            <i class="fas fa-moon"></i>  
+        </button>  
+    </div>  
+</div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -820,110 +804,459 @@
         </div>
     </footer>
 
+<style>  
+/* Navbar base - mantener estilos existentes y agregar nuevos */  
+.navbar {  
+    backdrop-filter: blur(20px);  
+    -webkit-backdrop-filter: blur(20px);  
+    background-color: var(--glass);  
+    border-bottom: 1px solid var(--border);  
+    box-shadow: var(--shadow);  
+    transition: all 0.3s ease;  
+    padding: 0.75rem 0;  
+    position: fixed;  
+    top: 0;  
+    left: 0;  
+    right: 0;  
+    z-index: 1000;  
+    width: 100%;  
+    transform: translateY(0);  
+}  
+  
+/* Navbar oculto al hacer scroll */  
+.navbar.navbar-hidden {  
+    transform: translateY(-100%);  
+}  
+  
+/* Navbar compacto al hacer scroll */  
+.navbar.navbar-compact {  
+    padding: 0.5rem 0;  
+    background-color: rgba(var(--glass), 0.95);  
+    backdrop-filter: blur(15px);  
+}  
+  
+.navbar-container {  
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between;  
+    width: 100%;  
+    max-width: var(--container-max);  
+    margin: 0 auto;  
+    padding: 0 var(--space-4);  
+}  
+  
+.navbar-controls {  
+    display: flex;  
+    align-items: center;  
+    gap: var(--space-3);  
+}  
+  
+.navbar-nav-desktop .navbar-nav {  
+    display: flex;  
+    align-items: center;  
+    gap: var(--space-2);  
+}  
+  
+/* User avatar simplificado */  
+.user-avatar-simple {  
+    width: 32px;  
+    height: 32px;  
+    border-radius: var(--radius-lg);  
+    background: linear-gradient(135deg, var(--primary), var(--accent));  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+    color: white;  
+    font-size: 14px;  
+    font-weight: 600;  
+    transition: all 0.3s ease;  
+}  
+  
+.user-avatar-simple:hover {  
+    transform: scale(1.05);  
+}  
+  
+/* Floating Navigation */  
+.floating-nav {  
+    position: fixed;  
+    bottom: 2rem;  
+    right: 2rem;  
+    z-index: 1100;  
+    opacity: 0;  
+    visibility: hidden;  
+    transform: scale(0.8);  
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);  
+}  
+  
+.floating-nav.show {  
+    opacity: 1;  
+    visibility: visible;  
+    transform: scale(1);  
+}  
+  
+.floating-nav-toggle {  
+    width: 56px;  
+    height: 56px;  
+    border-radius: 50%;  
+    background: linear-gradient(135deg, var(--primary), var(--accent));  
+    border: none;  
+    color: white;  
+    font-size: 1.2rem;  
+    cursor: pointer;  
+    box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.3);  
+    transition: all 0.3s ease;  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+}  
+  
+.floating-nav-toggle:hover {  
+    transform: scale(1.1);  
+    box-shadow: 0 12px 35px rgba(var(--primary-rgb), 0.4);  
+}  
+  
+.floating-nav-toggle.active {  
+    transform: rotate(45deg);  
+}  
+  
+.floating-nav-menu {  
+    position: absolute;  
+    bottom: 70px;  
+    right: 0;  
+    display: flex;  
+    flex-direction: column;  
+    gap: 0.75rem;  
+    opacity: 0;  
+    visibility: hidden;  
+    transform: translateY(20px);  
+    transition: all 0.3s ease;  
+}  
+  
+.floating-nav-menu.show {  
+    opacity: 1;  
+    visibility: visible;  
+    transform: translateY(0);  
+}  
+  
+.floating-nav-item {  
+    width: 48px;  
+    height: 48px;  
+    border-radius: 50%;  
+    background: var(--bg-card);  
+    border: 1px solid var(--border);  
+    color: var(--text-primary);  
+    text-decoration: none;  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+    font-size: 1rem;  
+    transition: all 0.3s ease;  
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);  
+    cursor: pointer;  
+}  
+  
+.floating-nav-item:hover {  
+    background: var(--primary);  
+    color: white;  
+    transform: scale(1.1);  
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.3);  
+}  
+  
+/* Animaciones de entrada escalonada */  
+.floating-nav-item:nth-child(1) { transition-delay: 0.1s; }  
+.floating-nav-item:nth-child(2) { transition-delay: 0.15s; }  
+.floating-nav-item:nth-child(3) { transition-delay: 0.2s; }  
+.floating-nav-item:nth-child(4) { transition-delay: 0.25s; }  
+.floating-nav-item:nth-child(5) { transition-delay: 0.3s; }  
+  
+/* Mobile responsive */  
+@media (max-width: 991.98px) {  
+    .floating-nav {  
+        bottom: 1.5rem;  
+        right: 1.5rem;  
+    }  
+      
+    .floating-nav-toggle {  
+        width: 50px;  
+        height: 50px;  
+        font-size: 1.1rem;  
+    }  
+      
+    .floating-nav-item {  
+        width: 44px;  
+        height: 44px;  
+        font-size: 0.9rem;  
+    }  
+      
+    .navbar-collapse {  
+        background: var(--bg-card);  
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);  
+        margin-top: 0;  
+        padding: var(--space-4);  
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  
+        border: 1px solid var(--border);  
+        border-top: none;  
+    }  
+}  
+  
+/* Estilos existentes mejorados */  
+.nav-link {  
+    position: relative;  
+    transition: all 0.3s ease;  
+    border-radius: var(--radius-lg);  
+    padding: var(--space-2) var(--space-4);  
+    color: var(--text-primary);  
+    text-decoration: none;  
+    display: flex;  
+    align-items: center;  
+    gap: var(--space-2);  
+}  
+  
+.nav-link:hover {  
+    background: var(--surface-hover);  
+    color: var(--primary);  
+    transform: translateY(-2px);  
+}  
+  
+.nav-link.active {  
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1), rgba(var(--accent-rgb), 0.1));  
+    color: var(--primary);  
+    font-weight: 500;  
+}  
+  
+/* Theme toggle mejorado */  
+.theme-toggle, .theme-toggle-floating {  
+    background: transparent;  
+    border: none;  
+    cursor: pointer;  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+    width: 36px;  
+    height: 36px;  
+    border-radius: var(--radius-full);  
+    color: var(--text-primary);  
+    transition: all 0.3s ease;  
+}  
+.theme-toggle:hover, .theme-toggle-floating:hover {  
+    background: var(--surface-hover);  
+    transform: scale(1.05);  
+}  
+  
+/* Dropdown mejorado */  
+.dropdown-menu {  
+    border-radius: var(--radius-lg);  
+    box-shadow: var(--shadow-lg);  
+    border: 1px solid var(--border);  
+    padding: var(--space-2);  
+    min-width: 180px;  
+    animation: fadeInDown 0.3s ease;  
+}  
+  
+@keyframes fadeInDown {  
+    from {  
+        opacity: 0;  
+        transform: translateY(-10px);  
+    }  
+    to {  
+        opacity: 1;  
+        transform: translateY(0);  
+    }  
+}  
+  
+.dropdown-item {  
+    border-radius: var(--radius);  
+    padding: var(--space-2) var(--space-3);  
+    transition: all 0.2s ease;  
+    margin: var(--space-1) 0;  
+}  
+  
+.dropdown-item:hover {  
+    background: var(--surface-hover);  
+    transform: translateX(4px);  
+}  
+  
+/* Ajustes para el body cuando el navbar es fixed */  
+body {  
+    padding-top: 80px; /* Espacio para el navbar fixed */  
+}  
+  
+/* Indicador de scroll para mostrar/ocultar floating nav */  
+.scroll-indicator {  
+    position: fixed;  
+    top: 0;  
+    left: 0;  
+    width: 100%;  
+    height: 3px;  
+    background: linear-gradient(90deg, var(--primary), var(--accent));  
+    transform: scaleX(0);  
+    transform-origin: left;  
+    transition: transform 0.3s ease;  
+    z-index: 1001;  
+}  
+</style>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     <!-- JavaScript adicional para mejoras de navbar -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Mejorar la funcionalidad del toggle de navbar móvil
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-
-            if (navbarToggler && navbarCollapse) {
-                navbarToggler.addEventListener('click', function () {
-                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                    this.setAttribute('aria-expanded', !isExpanded);
-
-                    if (!isExpanded) {
-                        navbarCollapse.classList.add('show');
-                        this.innerHTML = '<i class="fas fa-times"></i>';
-                    } else {
-                        navbarCollapse.classList.remove('show');
-                        this.innerHTML = '<i class="fas fa-bars"></i>';
-                    }
-                });
-
-                // Cerrar el menú al hacer clic en un enlace (móvil)
-                const navLinks = document.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function () {
-                        if (window.innerWidth < 992) {
-                            navbarCollapse.classList.remove('show');
-                            navbarToggler.setAttribute('aria-expanded', 'false');
-                            navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';
-                        }
-                    });
-                });
-            }
-
-            // Manejar el estado activo de los enlaces de navegación
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === currentPath ||
-                    (currentPath === '/' && link.getAttribute('href').includes('index'))) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Mejorar la animación del dropdown del usuario
-            const userDropdown = document.querySelector('#authDropdown');
-            const dropdownMenu = document.querySelector('.dropdown-menu');
-
-            if (userDropdown && dropdownMenu) {
-                userDropdown.addEventListener('show.bs.dropdown', function () {
-                    dropdownMenu.style.display = 'block';
-                    dropdownMenu.style.opacity = '0';
-                    dropdownMenu.style.transform = 'translateY(-10px)';
-
-                    requestAnimationFrame(() => {
-                        dropdownMenu.style.opacity = '1';
-                        dropdownMenu.style.transform = 'translateY(0)';
-                    });
-                });
-
-                userDropdown.addEventListener('hide.bs.dropdown', function () {
-                    dropdownMenu.style.opacity = '0';
-                    dropdownMenu.style.transform = 'translateY(-10px)';
-
-                    setTimeout(() => {
-                        dropdownMenu.style.display = 'none';
-                    }, 200);
-                });
-            }
-
-            // Agregar funcionalidad de teclado para accesibilidad
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    // Cerrar dropdown si está abierto
-                    const openDropdown = document.querySelector('.dropdown.show');
-                    if (openDropdown) {
-                        bootstrap.Dropdown.getInstance(openDropdown.querySelector('[data-bs-toggle="dropdown"]')).hide();
-                    }
-
-                    // Cerrar menú móvil si está abierto
-                    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-                        navbarCollapse.classList.remove('show');
-                        navbarToggler.setAttribute('aria-expanded', 'false');
-                        navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';
-                    }
-                }
-            });
-
-            // Cerrar menú móvil al redimensionar la ventana
-            window.addEventListener('resize', function () {
-                if (window.innerWidth >= 992 && navbarCollapse && navbarCollapse.classList.contains('show')) {
-                    navbarCollapse.classList.remove('show');
-                    navbarToggler.setAttribute('aria-expanded', 'false');
-                    navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';
-                }
-            });
-        });
-    </script>
+<script>  
+document.addEventListener('DOMContentLoaded', function () {  
+    const navbar = document.getElementById('mainNavbar');  
+    const floatingNav = document.getElementById('floatingNav');  
+    const floatingToggle = document.getElementById('floatingToggle');  
+    const floatingMenu = document.getElementById('floatingMenu');  
+    const navbarToggler = document.querySelector('.navbar-toggler');  
+    const mobileNav = document.getElementById('mobileNav');  
+      
+    let lastScrollTop = 0;  
+    let isFloatingMenuOpen = false;  
+      
+    // Crear indicador de scroll  
+    const scrollIndicator = document.createElement('div');  
+    scrollIndicator.className = 'scroll-indicator';  
+    document.body.appendChild(scrollIndicator);  
+      
+    // Función para manejar el scroll  
+    function handleScroll() {  
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;  
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;  
+        const scrollProgress = scrollTop / scrollHeight;  
+          
+        scrollIndicator.style.transform = `scaleX(${scrollProgress})`;  
+          
+        if (scrollTop > 100) {  
+            if (scrollTop > lastScrollTop) {  
+                navbar.classList.add('navbar-hidden');  
+                floatingNav.classList.add('show');  
+            } else {  
+                navbar.classList.remove('navbar-hidden');  
+                navbar.classList.add('navbar-compact');  
+                floatingNav.classList.remove('show');  
+                closeFloatingMenu();  
+            }  
+        } else {  
+            navbar.classList.remove('navbar-hidden', 'navbar-compact');  
+            floatingNav.classList.remove('show');  
+            closeFloatingMenu();  
+        }  
+          
+        lastScrollTop = scrollTop;  
+    }  
+      
+    function toggleFloatingMenu() {  
+        isFloatingMenuOpen = !isFloatingMenuOpen;  
+        floatingMenu.classList.toggle('show', isFloatingMenuOpen);  
+        floatingToggle.classList.toggle('active', isFloatingMenuOpen);  
+          
+        if (isFloatingMenuOpen) {  
+            floatingToggle.innerHTML = '<i class="fas fa-times"></i>';  
+        } else {  
+            floatingToggle.innerHTML = '<i class="fas fa-bars"></i>';  
+        }  
+    }  
+      
+    function closeFloatingMenu() {  
+        isFloatingMenuOpen = false;  
+        floatingMenu.classList.remove('show');  
+        floatingToggle.classList.remove('active');  
+        floatingToggle.innerHTML = '<i class="fas fa-bars"></i>';  
+    }  
+      
+    // Event listeners  
+    window.addEventListener('scroll', handleScroll);  
+      
+    if (floatingToggle) {  
+        floatingToggle.addEventListener('click', toggleFloatingMenu);  
+    }  
+      
+    // Cerrar menú flotante al hacer clic en un enlace  
+    const floatingNavItems = document.querySelectorAll('.floating-nav-item');  
+    floatingNavItems.forEach(item => {  
+        item.addEventListener('click', function(e) {  
+            if (!this.classList.contains('theme-toggle-floating')) {  
+                closeFloatingMenu();  
+            }  
+        });  
+    });  
+      
+    // USAR LA FUNCIONALIDAD EXISTENTE DEL TEMA  
+    // En lugar de crear nueva funcionalidad, usar la que ya existe  
+    const themeToggleFloating = document.querySelector('.theme-toggle-floating');  
+    const themeToggleMain = document.querySelector('.theme-toggle');  
+      
+    if (themeToggleFloating && themeToggleMain) {  
+        themeToggleFloating.addEventListener('click', function() {  
+            // Simular click en el botón principal de tema  
+            themeToggleMain.click();  
+        });  
+    }  
+      
+    // Manejo del menú móvil tradicional  
+    if (navbarToggler && mobileNav) {  
+        navbarToggler.addEventListener('click', function() {  
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';  
+            this.setAttribute('aria-expanded', !isExpanded);  
+            mobileNav.classList.toggle('show');  
+              
+            if (mobileNav.classList.contains('show')) {  
+                this.innerHTML = '<i class="fas fa-times"></i>';  
+                document.body.style.overflow = 'hidden';  
+            } else {  
+                this.innerHTML = '<i class="fas fa-bars"></i>';  
+                document.body.style.overflow = '';  
+            }  
+        });  
+          
+        const mobileNavLinks = mobileNav.querySelectorAll('.nav-link');  
+        mobileNavLinks.forEach(link => {  
+            link.addEventListener('click', function() {  
+                mobileNav.classList.remove('show');  
+                navbarToggler.setAttribute('aria-expanded', 'false');  
+                navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';  
+                document.body.style.overflow = '';  
+            });  
+        });  
+    }  
+      
+    // Manejar estado activo de enlaces  
+    const currentPath = window.location.pathname;  
+    const allNavLinks = document.querySelectorAll('.nav-link, .floating-nav-item');  
+      
+    allNavLinks.forEach(link => {  
+        if (link.getAttribute('href') === currentPath ||  
+            (currentPath === '/' && link.getAttribute('href')?.includes('index'))) {  
+            link.classList.add('active');  
+        }  
+    });  
+      
+    // Cerrar menús al presionar Escape  
+    document.addEventListener('keydown', function(e) {  
+        if (e.key === 'Escape') {  
+            closeFloatingMenu();  
+            if (mobileNav?.classList.contains('show')) {  
+                mobileNav.classList.remove('show');  
+                navbarToggler?.setAttribute('aria-expanded', 'false');  
+                navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';  
+                document.body.style.overflow = '';  
+            }  
+        }  
+    });  
+      
+    // Optimización de performance para scroll  
+    let ticking = false;  
+    function requestTick() {  
+        if (!ticking) {  
+            requestAnimationFrame(handleScroll);  
+            ticking = true;  
+            setTimeout(() => { ticking = false; }, 16);  
+        }  
+    }  
+      
+    window.addEventListener('scroll', requestTick, { passive: true });  
+});  
+</script>
 
     {% block extra_js %}{% endblock %}
 </body>

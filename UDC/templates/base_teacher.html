@@ -147,8 +147,21 @@
                         <i class="fas fa-bars"></i>  
                     </button>  
                     <div class="header-title">  
-                        <h4>{% block page_title %}Dashboard Profesor{% endblock %}</h4>  
+                        <h4>{% block page_title %}Panel Docente{% endblock %}</h4>  
                     </div>  
+  
+                    <!-- Navegación Principal -->  
+                    <nav class="dashboard-nav">  
+                        <a href="{{ url_for('public.index') }}" class="nav-link">  
+                            <i class="fas fa-home"></i> Inicio  
+                        </a>  
+                        <a href="{{ url_for('public.about') }}" class="nav-link">  
+                            <i class="fas fa-info-circle"></i> Nosotros  
+                        </a>  
+                        <a href="{{ url_for('public.contact') }}" class="nav-link">  
+                            <i class="fas fa-envelope"></i> Contacto  
+                        </a>  
+                    </nav>  
                 </div>  
   
                 <div class="header-right">  
@@ -157,66 +170,65 @@
                         <i class="fas fa-search"></i>  
                     </div>  
   
-                    <div class="header-actions">  
-                        <button class="theme-toggle" aria-label="Cambiar tema">  
-                            <i class="fas fa-sun"></i>  
-                            <i class="fas fa-moon"></i>  
-                        </button>  
+                    <!-- Theme Toggle -->  
+                    <button class="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">  
+                        <i class="fas fa-sun"></i>  
+                        <i class="fas fa-moon"></i>  
+                    </button>  
   
-                        <div class="dropdown">  
-                            <button class="notification-btn" data-bs-toggle="dropdown">  
-                                <i class="fas fa-bell"></i>  
-                                <span class="badge">4</span>  
-                            </button>  
-                            <div class="dropdown-menu dropdown-menu-end">  
-                                <div class="dropdown-header">  
-                                    <h6>Notificaciones</h6>  
-                                    <a href="#">Marcar como leídas</a>  
-                                </div>  
-                                <div class="notification-list">  
-                                    <a href="#" class="notification-item unread">  
-                                        <div class="notification-icon">  
-                                            <i class="fas fa-user-graduate"></i>  
-                                        </div>  
-                                        <div class="notification-content">  
-                                            <p>Nuevo estudiante asignado</p>  
-                                            <span>Hace 15 minutos</span>  
-                                        </div>  
-                                    </a>  
-                                    <a href="#" class="notification-item unread">  
-                                        <div class="notification-icon">  
-                                            <i class="fas fa-tasks"></i>  
-                                        </div>  
-                                        <div class="notification-content">  
-                                            <p>Tarea pendiente de calificar</p>  
-                                            <span>Hace 1 hora</span>  
-                                        </div>  
-                                    </a>  
-                                </div>  
-                                <div class="dropdown-footer">  
-                                    <a href="#">Ver todas</a>  
+                    <!-- User Account Dropdown -->  
+                    <div class="dropdown">  
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">  
+                            <div class="user-avatar-container-simple">  
+                                <div class="user-avatar">  
+                                    {% if session.get('logged_in') %}  
+                                        {{ session.get('username', 'T')[0].upper() }}  
+                                    {% else %}  
+                                        <i class="fas fa-user"></i>  
+                                    {% endif %}  
                                 </div>  
                             </div>  
-                        </div>  
-  
-                        <div class="dropdown">  
-                            <button class="profile-btn" data-bs-toggle="dropdown">  
-                                <img src="{{ session.get('avatar_url', url_for('static', filename='img/default-avatar.png')) }}"  
-                                    alt="Avatar">  
-                            </button>  
-                            <div class="dropdown-menu dropdown-menu-end">  
-                                <a href="{{ url_for('auth.profile') }}" class="dropdown-item">  
-                                    <i class="fas fa-user"></i> Mi Perfil  
-                                </a>  
-                                <a href="#" class="dropdown-item">  
-                                    <i class="fas fa-cog"></i> Configuración  
-                                </a>  
-                                <div class="dropdown-divider"></div>  
-                                <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">  
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión  
-                                </a>  
+                        </a>  
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">  
+                            <div class="user-menu-header">  
+                                <div class="user-menu-info">  
+                                    <div class="user-menu-avatar">  
+                                        {{ session.get('username', 'T')[0].upper() }}  
+                                    </div>  
+                                    <div class="user-menu-details">  
+                                        <div class="user-menu-name">{{ session.get('username', 'Profesor') }}</div>  
+                                        <div class="user-menu-role">{{ session.get('role', 'Teacher').title() }}</div>  
+                                    </div>  
+                                </div>  
                             </div>  
+                            <div class="dropdown-divider"></div>  
+                            <a class="dropdown-item" href="{{ url_for('auth.profile') if url_for else '#' }}">  
+                                <i class="fas fa-user-circle"></i> Mi Perfil  
+                            </a>  
+                            <a class="dropdown-item" href="{{ url_for('teacher.manage_grades') if url_for else '#' }}">  
+                                <i class="fas fa-clipboard-list"></i> Gestionar Notas  
+                            </a>  
+                            <a class="dropdown-item" href="{{ url_for('teacher.manage_files') if url_for else '#' }}">  
+                                <i class="fas fa-file-alt"></i> Mis Archivos  
+                            </a>  
+                            <div class="dropdown-divider"></div>  
+                            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') if url_for else '#' }}">  
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión  
+                            </a>  
                         </div>  
+                    </div>  
+  
+                    <!-- Mobile Navigation -->  
+                    <div class="dashboard-nav-mobile d-lg-none">  
+                        <a href="{{ url_for('public.index') }}" class="nav-link">  
+                            <i class="fas fa-home"></i> Inicio  
+                        </a>  
+                        <a href="{{ url_for('public.about') }}" class="nav-link">  
+                            <i class="fas fa-info-circle"></i> Nosotros  
+                        </a>  
+                        <a href="{{ url_for('public.contact') }}" class="nav-link">  
+                            <i class="fas fa-envelope"></i> Contacto  
+                        </a>  
                     </div>  
                 </div>  
             </header>  

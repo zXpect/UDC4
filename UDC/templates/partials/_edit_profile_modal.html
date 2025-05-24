@@ -1,0 +1,66 @@
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel"><i class="fas fa-user-edit me-2"></i>Editar Información Personal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('auth.profile') }}" method="POST">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="birthDate" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="birthDate" name="birth_date" value="{{ user.birth_date|default('', true) }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Dirección</label>
+                        <textarea class="form-control" id="address" name="address" rows="3">{{ user.address|default('', true) }}</textarea>
+                    </div>
+                    
+                    <!-- Campos específicos del rol (ejemplo para estudiante) -->
+                    {% if current_user.role == 'student' %}
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="studentGrade" class="form-label">Grado/Nivel</label>
+                            <input type="text" class="form-control" id="studentGrade" name="student_grade" value="{{ user.get('student_details', {}).get('grade')|default('', true) }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="studentSection" class="form-label">Sección</label>
+                            <input type="text" class="form-control" id="studentSection" name="student_section" value="{{ user.get('student_details', {}).get('section')|default('', true) }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="academicYear" class="form-label">Año Académico</label>
+                            <input type="text" class="form-control" id="academicYear" name="academic_year" value="{{ user.get('student_details', {}).get('academic_year')|default('', true) }}" readonly>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 
