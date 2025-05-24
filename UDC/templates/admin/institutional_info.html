@@ -1,0 +1,137 @@
+{% extends 'base.html' %}  
+  
+{% block title %}Información Institucional - NetSchool UDC{% endblock %}  
+  
+{% block extra_css %}  
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
+{% endblock %}  
+  
+{% block content %}  
+<div class="row mb-4">  
+    <div class="col-12">  
+        <h2>Información Institucional</h2>  
+        <hr>  
+    </div>  
+</div>  
+  
+<div class="row">  
+    <div class="col-md-3 mb-4">  
+        <div class="list-group">  
+            <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">  
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
+            </a>  
+            <a href="{{ url_for('admin.events') }}" class="list-group-item list-group-item-action">  
+                <i class="fas fa-calendar-alt me-2"></i>Eventos  
+            </a>  
+            <a href="{{ url_for('admin.files') }}" class="list-group-item list-group-item-action">  
+                <i class="fas fa-file-alt me-2"></i>Archivos Institucionales  
+            </a>  
+            <a href="{{ url_for('admin.institutional_info') }}" class="list-group-item list-group-item-action active">  
+                <i class="fas fa-info-circle me-2"></i>Información Institucional  
+            </a>  
+        </div>  
+    </div>  
+      
+    <div class="col-md-9">  
+        <div class="row">  
+            <!-- Formulario para agregar/editar información -->  
+            <div class="col-lg-6 mb-4">  
+                <div class="card">  
+                    <div class="card-header bg-light">  
+                        <h5 class="mb-0">Agregar/Editar Información</h5>  
+                    </div>  
+                    <div class="card-body">  
+                        <form method="post" id="infoForm">  
+                            <div class="mb-3">  
+                                <label for="key" class="form-label">Clave *</label>  
+                                <select class="form-select" id="key" name="key" required>  
+                                    <option value="">Seleccionar información</option>  
+                                    <option value="institution_name">Nombre de la Institución</option>  
+                                    <option value="address">Dirección</option>  
+                                    <option value="phone">Teléfono</option>  
+                                    <option value="email">Email</option>  
+                                    <option value="website">Sitio Web</option>  
+                                    <option value="mission">Misión</option>  
+                                    <option value="vision">Visión</option>  
+                                    <option value="schedule">Horarios de Atención</option>  
+                                    <option value="director">Director</option>  
+                                    <option value="founded_year">Año de Fundación</option>  
+                                </select>  
+                            </div>  
+                              
+                            <div class="mb-3">  
+                                <label for="value" class="form-label">Valor *</label>  
+                                <textarea class="form-control" id="value" name="value" rows="4"   
+                                          required minlength="3" maxlength="1000"></textarea>  
+                                <div class="form-text">Máximo 1000 caracteres.</div>  
+                            </div>  
+                              
+                            <button type="submit" class="btn btn-primary">  
+                                <i class="fas fa-save me-1"></i>Guardar  
+                            </button>  
+                        </form>  
+                    </div>  
+                </div>  
+            </div>  
+              
+            <!-- Lista de información actual -->  
+            <div class="col-lg-6">  
+                <div class="card">  
+                    <div class="card-header bg-light">  
+                        <h5 class="mb-0">Información Actual</h5>  
+                    </div>  
+                    <div class="card-body">  
+                        {% if info_list %}  
+                            <div class="list-group list-group-flush">  
+                                {% for info in info_list %}  
+                                    <div class="list-group-item d-flex justify-content-between align-items-start">  
+                                        <div class="ms-2 me-auto">  
+                                            <div class="fw-bold">{{ info.key|replace('_', ' ')|title }}</div>  
+                                            <p class="mb-1 text-muted small">  
+                                                {{ info.value[:100] }}{% if info.value|length > 100 %}...{% endif %}  
+                                            </p>  
+                                            {% if info.updated_at %}  
+                                                <small class="text-muted">  
+                                                    Actualizado: {{ info.updated_at.strftime('%d/%m/%Y %H:%M') }}  
+                                                </small>  
+                                            {% endif %}  
+                                        </div>  
+                                        <button class="btn btn-sm btn-outline-primary"   
+                                                onclick="editInfo('{{ info.key }}', '{{ info.value|e }}')">  
+                                            <i class="fas fa-edit"></i>  
+                                        </button>  
+                                    </div>  
+                                {% endfor %}  
+                            </div>  
+                        {% else %}  
+                            <div class="text-center text-muted">  
+                                <i class="fas fa-info-circle fa-3x mb-3"></i>  
+                                <p>No hay información institucional registrada.</p>  
+                            </div>  
+                        {% endif %}  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}  
+  
+{% block extra_js %}  
+<script>  
+function editInfo(key, value) {  
+    document.getElementById('key').value = key;  
+    document.getElementById('value').value = value;  
+    document.getElementById('value').focus();  
+}  
+  
+// Form validation  
+document.getElementById('infoForm').addEventListener('submit', function(e) {  
+    if (!this.checkValidity()) {  
+        e.preventDefault();  
+        e.stopPropagation();  
+    }  
+    this.classList.add('was-validated');  
+});  
+</script>  
+{% endblock %}
