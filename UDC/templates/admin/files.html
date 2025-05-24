@@ -1,133 +1,279 @@
-{% extends 'base.html' %}  
-  
-{% block title %}Gestión de Archivos - NetSchool UDC{% endblock %}  
-  
-{% block extra_css %}  
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
-{% endblock %}  
-  
-{% block content %}  
-<div class="row mb-4">  
-    <div class="col-12">  
-        <h2>Gestión de Archivos Institucionales</h2>  
-        <hr>  
-    </div>  
-</div>  
-  
-<div class="row">  
-    <div class="col-md-3 mb-4">  
-        <div class="list-group">  
-            <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">  
-                <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
-            </a>  
-            <a href="{{ url_for('admin.events') }}" class="list-group-item list-group-item-action">  
-                <i class="fas fa-calendar-alt me-2"></i>Eventos  
-            </a>  
-            <a href="{{ url_for('admin.files') }}" class="list-group-item list-group-item-action active">  
-                <i class="fas fa-file-alt me-2"></i>Archivos Institucionales  
-            </a>  
-            <a href="{{ url_for('admin.institutional_info') }}" class="list-group-item list-group-item-action">  
-                <i class="fas fa-info-circle me-2"></i>Información Institucional  
-            </a>  
-            <a href="#" class="list-group-item list-group-item-action">  
-                <i class="fas fa-users me-2"></i>Usuarios  
-            </a>  
-        </div>  
-    </div>  
-      
-    <div class="col-md-9">  
-        <div class="card">  
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">  
-                <h5 class="mb-0">Lista de Archivos</h5>  
-                <a href="{{ url_for('admin.add_file') }}" class="btn btn-primary">  
-                    <i class="fas fa-plus me-1"></i>Subir Archivo  
-                </a>  
-            </div>  
-            <div class="card-body">  
-                <!-- Filtros por categoría -->  
-                <div class="mb-3">  
-                    <div class="btn-group" role="group">  
-                        <button type="button" class="btn btn-outline-secondary active" onclick="filterFiles('all')">Todos</button>  
-                        <button type="button" class="btn btn-outline-secondary" onclick="filterFiles('academic')">Académicos</button>  
-                        <button type="button" class="btn btn-outline-secondary" onclick="filterFiles('administrative')">Administrativos</button>  
-                        <button type="button" class="btn btn-outline-secondary" onclick="filterFiles('general')">Generales</button>  
-                    </div>  
-                </div>  
-                  
-                <div class="table-responsive">  
-                    <table class="table table-hover">  
-                        <thead>  
-                            <tr>  
-                                <th>Título</th>  
-                                <th>Categoría</th>  
-                                <th>Tipo</th>  
-                                <th>Fecha</th>  
-                                <th>Subido por</th>  
-                                <th>Acciones</th>  
-                            </tr>  
-                        </thead>  
-                        <tbody id="filesTable">  
-                            {% if files %}  
-                                {% for file in files %}  
-                                    <tr data-category="{{ file.category }}">  
-                                        <td>  
-                                            <i class="fas fa-file-{{ 'pdf' if file.file_type == 'pdf' else 'alt' }} me-2"></i>  
-                                            {{ file.title }}  
-                                        </td>  
-                                        <td>  
-                                            <span class="badge bg-{{ 'primary' if file.category == 'academic' else 'secondary' if file.category == 'administrative' else 'info' }}">  
-                                                {{ file.category|title }}  
-                                            </span>  
-                                        </td>  
-                                        <td>{{ file.file_type|upper }}</td>  
-                                        <td>{{ file.created_at.strftime('%d/%m/%Y %H:%M') if file.created_at else 'N/A' }}</td>  
-                                        <td>{{ file.uploaded_by if file.uploaded_by else 'Sistema' }}</td>  
-                                        <td>  
-                                            <a href="{{ url_for('admin.download_file', file_id=file._id) }}"   
-                                               class="btn btn-sm btn-outline-primary" title="Descargar">  
-                                                <i class="fas fa-download"></i>  
-                                            </a>  
-                                            <a href="{{ url_for('admin.delete_file', file_id=file._id) }}"   
-                                               class="btn btn-sm btn-outline-danger"   
-                                               onclick="return confirm('¿Estás seguro de eliminar este archivo?')"  
-                                               title="Eliminar">  
-                                                <i class="fas fa-trash"></i>  
-                                            </a>  
-                                        </td>  
-                                    </tr>  
-                                {% endfor %}  
-                            {% else %}  
-                                <tr>  
-                                    <td colspan="6" class="text-center">No hay archivos registrados</td>  
-                                </tr>  
-                            {% endif %}  
-                        </tbody>  
-                    </table>  
-                </div>  
-            </div>  
-        </div>  
-    </div>  
-</div>  
-{% endblock %}  
-  
-{% block extra_js %}  
-<script>  
-function filterFiles(category) {  
-    const rows = document.querySelectorAll('#filesTable tr[data-category]');  
-    const buttons = document.querySelectorAll('.btn-group .btn');  
-      
-    // Actualizar botones activos  
-    buttons.forEach(btn => btn.classList.remove('active'));  
-    event.target.classList.add('active');  
-      
-    // Filtrar filas  
-    rows.forEach(row => {  
-        if (category === 'all' || row.dataset.category === category) {  
-            row.style.display = '';  
-        } else {  
-            row.style.display = 'none';  
-        }  
-    });  
-}  
-</script>  
+{% extends 'base_admin.html' %}
+
+{% block title %}Gestión de Archivos - NetSchool UDC{% endblock %}
+
+{% block page_title %}Gestión de Archivos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h4 mb-1">Archivos Institucionales</h2>
+                        <p class="text-muted mb-0">Gestiona los documentos y archivos del colegio</p>
+                    </div>
+                    <a href="{{ url_for('admin.add_file') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Subir Archivo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-file-alt me-2"></i>Lista de Archivos
+                        </h5>
+                        
+                        <!-- Filtros por categoría -->
+                        <div class="btn-group" role="group" aria-label="Filtros de categoría">
+                            <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="filterFiles('all')">
+                                Todos
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFiles('academic')">
+                                Académicos
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFiles('administrative')">
+                                Administrativos
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFiles('general')">
+                                Generales
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0">Archivo</th>
+                                    <th class="border-0">Categoría</th>
+                                    <th class="border-0">Tipo</th>
+                                    <th class="border-0">Fecha de Subida</th>
+                                    <th class="border-0">Subido por</th>
+                                    <th class="border-0 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filesTable">
+                                {% if files %}
+                                    {% for file in files %}
+                                        <tr data-category="{{ file.category }}">
+                                            <td class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="file-icon me-3">
+                                                        {% if file.file_type == 'pdf' %}
+                                                            <i class="fas fa-file-pdf text-danger fs-4"></i>
+                                                        {% elif file.file_type in ['doc', 'docx'] %}
+                                                            <i class="fas fa-file-word text-primary fs-4"></i>
+                                                        {% elif file.file_type in ['xls', 'xlsx'] %}
+                                                            <i class="fas fa-file-excel text-success fs-4"></i>
+                                                        {% elif file.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                                                            <i class="fas fa-file-image text-info fs-4"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-file-alt text-secondary fs-4"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0 fw-medium">{{ file.title }}</h6>
+                                                        {% if file.description %}
+                                                            <small class="text-muted">{{ file.description[:50] }}{% if file.description|length > 50 %}...{% endif %}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                {% set category_colors = {
+                                                    'academic': 'primary',
+                                                    'administrative': 'secondary', 
+                                                    'general': 'info'
+                                                } %}
+                                                <span class="badge bg-{{ category_colors.get(file.category, 'secondary') }}">
+                                                    {% if file.category == 'academic' %}
+                                                        Académico
+                                                    {% elif file.category == 'administrative' %}
+                                                        Administrativo
+                                                    {% elif file.category == 'general' %}
+                                                        General
+                                                    {% else %}
+                                                        {{ file.category|title }}
+                                                    {% endif %}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="text-uppercase fw-medium">{{ file.file_type }}</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="text-sm">
+                                                    {{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}
+                                                    <br>
+                                                    <small class="text-muted">{{ file.created_at.strftime('%H:%M') if file.created_at else '' }}</small>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="text-muted">{{ file.uploaded_by if file.uploaded_by else 'Sistema' }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ url_for('admin.download_file', file_id=file._id) }}" 
+                                                       class="btn btn-outline-primary btn-sm" 
+                                                       title="Descargar archivo"
+                                                       data-bs-toggle="tooltip">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                    <button type="button" 
+                                                            class="btn btn-outline-secondary btn-sm" 
+                                                            title="Ver detalles"
+                                                            data-bs-toggle="tooltip"
+                                                            onclick="viewFileDetails('{{ file._id }}')">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <a href="{{ url_for('admin.delete_file', file_id=file._id) }}" 
+                                                       class="btn btn-outline-danger btn-sm" 
+                                                       title="Eliminar archivo"
+                                                       data-bs-toggle="tooltip"
+                                                       onclick="return confirm('¿Estás seguro de que deseas eliminar este archivo? Esta acción no se puede deshacer.')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <i class="fas fa-file-alt text-muted mb-3" style="font-size: 3rem;"></i>
+                                                <h5 class="text-muted">No hay archivos registrados</h5>
+                                                <p class="text-muted mb-3">Comienza subiendo tu primer archivo institucional</p>
+                                                <a href="{{ url_for('admin.add_file') }}" class="btn btn-primary">
+                                                    <i class="fas fa-plus me-2"></i>Subir Primer Archivo
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                {% if files and files|length > 0 %}
+                <div class="card-footer bg-light border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            Mostrando {{ files|length }} archivo{{ 's' if files|length != 1 else '' }}
+                        </small>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="exportFiles()">
+                                <i class="fas fa-download me-1"></i>Exportar Lista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para detalles del archivo -->
+<div class="modal fade" id="fileDetailsModal" tabindex="-1" aria-labelledby="fileDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileDetailsModalLabel">Detalles del Archivo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="fileDetailsContent">
+                <!-- El contenido se cargará dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Función para filtrar archivos por categoría
+function filterFiles(category) {
+    const rows = document.querySelectorAll('#filesTable tr[data-category]');
+    const buttons = document.querySelectorAll('.btn-group .btn');
+    
+    // Actualizar botones activos
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Filtrar filas
+    let visibleCount = 0;
+    rows.forEach(row => {
+        if (category === 'all' || row.dataset.category === category) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Actualizar contador si existe
+    const counter = document.querySelector('.card-footer small');
+    if (counter && category !== 'all') {
+        counter.textContent = `Mostrando ${visibleCount} archivo${visibleCount !== 1 ? 's' : ''} (filtrado)`;
+    }
+}
+
+// Función para ver detalles del archivo
+function viewFileDetails(fileId) {
+    // Aquí puedes implementar la lógica para cargar los detalles del archivo
+    const modal = new bootstrap.Modal(document.getElementById('fileDetailsModal'));
+    const content = document.getElementById('fileDetailsContent');
+    
+    content.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>';
+    modal.show();
+    
+    // Simular carga de datos (reemplazar con llamada AJAX real)
+    setTimeout(() => {
+        content.innerHTML = `
+            <div class="row">
+                <div class="col-sm-4 fw-medium">ID:</div>
+                <div class="col-sm-8">${fileId}</div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-4 fw-medium">Tamaño:</div>
+                <div class="col-sm-8">1.5 MB</div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-4 fw-medium">Descargas:</div>
+                <div class="col-sm-8">25 veces</div>
+            </div>
+        `;
+    }, 1000);
+}
+
+// Función para exportar lista de archivos
+function exportFiles() {
+    // Implementar lógica de exportación
+    alert('Funcionalidad de exportación próximamente');
+}
+
+// Inicializar tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
 {% endblock %}

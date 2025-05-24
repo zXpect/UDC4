@@ -503,7 +503,9 @@ class AdminDashboard {
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new AdminDashboard();
+    if (typeof AdminDashboard !== 'undefined') {  
+        new AdminDashboard();  
+    }  
 });
 
 // Export for use in other scripts if needed
