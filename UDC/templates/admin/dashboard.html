@@ -109,7 +109,7 @@
                                         <button type="button" class="btn btn-sm btn-outline-primary edit-event-btn"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#editEventModal"
-                                            onclick="setupEditModal('{{ event._id }}', this)"
+                                            data-event-id="{{ event._id }}"
                                             data-event-title="{{ event.title }}"
                                             data-event-date="{{ event.date }}"
                                             data-event-time="{{ event.time|default('') }}"
@@ -311,15 +311,13 @@
 <div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editEventForm" method="POST" action="{{ url_for('admin.edit_event_from_dashboard') }}">
-        
+            <form id="editEventForm" method="POST" action="{{ url_for('admin.edit_event_from_dashboard') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
                     <input type="hidden" id="editEventId" name="eventId" value="">
-                    
                     <div class="mb-3">
                         <label for="editEventTitle" class="form-label">Título del Evento</label>
                         <input type="text" class="form-control" id="editEventTitle" name="title"
@@ -345,15 +343,16 @@
                         <textarea class="form-control" id="editEventDescription" name="description" rows="3"
                             placeholder="Ingrese la descripción del evento" required></textarea>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="editEventForm" class="btn btn-primary">Guardar Cambios</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 <!-- View Event Details Modal -->
 <div class="modal fade" id="viewEventModal" tabindex="-1" aria-labelledby="viewEventModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -398,117 +397,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-function setupEditModal(eventId, button) {
-    console.log('Setting up edit modal with ID:', eventId);
     
-    // Establecer el ID del evento - ASEGURAR QUE SE ASIGNE CORRECTAMENTE
-    const idField = document.getElementById('editEventId');
-    if (idField) {
-        idField.value = eventId;
-        console.log('Event ID set to:', idField.value);
-    } else {
-        console.error('Could not find editEventId field!');
-    }
-    
-    // Obtener otros datos del botón
-    const title = button.getAttribute('data-event-title') || '';
-    const date = button.getAttribute('data-event-date') || '';
-    const time = button.getAttribute('data-event-time') || '';
-    const location = button.getAttribute('data-event-location') || '';
-    const description = button.getAttribute('data-event-description') || '';
-
-    // Llenar los campos del formulario
-    const titleField = document.getElementById('editEventTitle');
-    const dateField = document.getElementById('editEventDate');
-    const timeField = document.getElementById('editEventTime');
-    const locationField = document.getElementById('editEventLocation');
-    const descriptionField = document.getElementById('editEventDescription');
-
-    if (titleField) titleField.value = title;
-    if (dateField) dateField.value = date;
-    if (timeField) timeField.value = time;
-    if (locationField) locationField.value = location;
-    if (descriptionField) descriptionField.value = description;
-
-    // Debug: verificar que los campos se llenaron correctamente
-    console.log('Form fields after filling:', {
-        id: idField ? idField.value : 'NOT FOUND',
-        title: titleField ? titleField.value : 'NOT FOUND',
-        date: dateField ? dateField.value : 'NOT FOUND',
-        time: timeField ? timeField.value : 'NOT FOUND',
-        location: locationField ? locationField.value : 'NOT FOUND',
-        description: descriptionField ? descriptionField.value : 'NOT FOUND'
-    });
-}
-
-// Agregar evento de submit al formulario para debug
-document.addEventListener('DOMContentLoaded', function () {
-    const editForm = document.getElementById('editEventForm');
-    if (editForm) {
-        editForm.addEventListener('submit', function(e) {
-            const formData = new FormData(this);
-            console.log('Form being submitted with data:');
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
-            
-            // Verificar que eventId está presente
-            const eventId = formData.get('eventId');
-            if (!eventId) {
-                console.error('ERROR: eventId is missing from form data!');
-                alert('Error: ID del evento no encontrado');
-                e.preventDefault();
-                return false;
-            }
-            
-            console.log('Form validation passed, eventId:', eventId);
-        });
-    }
-
-    // Tooltip initialization
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // View Event Details Logic
-    document.querySelectorAll('.view-event-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const title = this.getAttribute('data-event-title');
-            const date = this.getAttribute('data-event-date');
-            const time = this.getAttribute('data-event-time');
-            const location = this.getAttribute('data-event-location');
-            const description = this.getAttribute('data-event-description');
-            
-            document.getElementById('viewEventTitle').textContent = title;
-            document.getElementById('viewEventDate').textContent = date;
-            document.getElementById('viewEventTime').textContent = time;
-            document.getElementById('viewEventLocation').textContent = location;
-            document.getElementById('viewEventDescription').textContent = description;
-            
-            new bootstrap.Modal(document.getElementById('viewEventModal')).show();
-        });
-    });
-
-    // Debug: Verificar cuando se abre el modal de edición
-    const editEventModal = document.getElementById('editEventModal');
-    if (editEventModal) {
-        editEventModal.addEventListener('shown.bs.modal', function () {
-            const eventId = document.getElementById('editEventId').value;
-            console.log('Modal shown, current event ID:', eventId);
-            
-            // Verificar que todos los campos están presentes
-            const form = document.getElementById('editEventForm');
-            if (form) {
-                const formData = new FormData(form);
-                console.log('Current form data in modal:');
-                for (let [key, value] of formData.entries()) {
-                    console.log(`${key}: ${value}`);
-                }
-            }
-        });
-    }
-});
-</script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}

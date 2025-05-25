@@ -1,6 +1,6 @@
 // Script principal para la aplicación NetSchool con animaciones mejoradas
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('NetSchool - Sistema de Gestión de Contenidos cargado correctamente');
+    console.log('NetSchool - Sistema de Gestión de Contenidos cargado correctamente (main.js)');
     
     // ========================================
     // INICIALIZACIÓN DE COMPONENTES
@@ -454,6 +454,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     border: 1px solid var(--border) !important;
                 }
             }
+
+            /* Corrección de color para form-control-plaintext en tema oscuro */
+            .dark-theme .form-control-plaintext {
+                color:rgb(190, 190, 190); /* Color de texto blanco puro */
+            }
+            .dark-theme .form-label {
+                color:rgb(255, 255, 255); /* Color de texto blanco puro para las etiquetas */
+            }
         `;
         document.head.appendChild(style);
     }
@@ -493,8 +501,120 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // ========================================
+    // DASHBOARD SPECIFIC LOGIC (MOVED FROM dashboard.html)
+    // ========================================
+    // Solo ejecutar si estamos en una página con elementos del dashboard
+    const adminDashboardSpecificElementsPresent = document.getElementById('editEventModal') || 
+                                              document.querySelector('.edit-event-btn') || 
+                                              document.getElementById('addEventModal'); // Añadir otros selectores relevantes si es necesario
+
+    if (adminDashboardSpecificElementsPresent) {
+        console.log('CONSOLE LOG (from main.js): Dashboard-specific elements detected. Initializing dashboard event listeners.');
+
+        // Edit Event Modal Trigger Logic
+        document.querySelectorAll('.edit-event-btn').forEach(button => {
+            console.log('CONSOLE LOG (from main.js): Attaching click listener to an .edit-event-btn', button);
+            button.addEventListener('click', function() {
+                console.log('CONSOLE LOG (from main.js): .edit-event-btn clicked.', this);
+                const eventId = this.getAttribute('data-event-id');
+                console.log('CONSOLE LOG (from main.js): Retrieved data-event-id:', eventId);
+                if (!eventId) {
+                    console.error('ERROR (JS from main.js): data-event-id attribute not found or empty on edit button.');
+                    alert('Error en el cliente (JS): No se pudo obtener el ID del evento desde el botón.');
+                    return;
+                }
+                // Llama a la función setupEditModal (que está ahora en este mismo archivo main.js)
+                setupEditModal(eventId, this); 
+            });
+        });
+
+        const editForm = document.getElementById('editEventForm');
+        if (editForm) {
+            console.log('CONSOLE LOG (from main.js): Attaching submit listener to #editEventForm.');
+            editForm.addEventListener('submit', function(e) {
+                console.log('CONSOLE LOG (from main.js): Submit event triggered for #editEventForm.');
+                
+                const idFieldElement = document.getElementById('editEventId');
+                const idFromDom = idFieldElement ? idFieldElement.value : 'DOM ELEMENT NOT FOUND';
+                console.log('CONSOLE LOG (from main.js): Value of #editEventId from DOM at submit time:', idFromDom);
+
+                const formData = new FormData(this);
+                console.log('CONSOLE LOG (from main.js): Form data captured for #editEventForm:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`CONSOLE LOG (from main.js): FormData entry - ${key}: ${value}`);
+                }
+                
+                const eventIdFromFormData = formData.get('eventId');
+                console.log('CONSOLE LOG (from main.js): eventId extracted from FormData for #editEventForm:', eventIdFromFormData);
+
+                if (!eventIdFromFormData || eventIdFromFormData.trim() === '') {
+                    console.error('ERROR (JS from main.js): eventId is missing or empty from #editEventForm data! Submission blocked.');
+                    alert('Error en el cliente (JS): El ID del evento está ausente o vacío. No se puede enviar.');
+                    e.preventDefault();
+                    return false; 
+                }
+                
+                console.log('CONSOLE LOG (from main.js): Form validation passed for #editEventForm. eventId to be submitted:', eventIdFromFormData, '. Allowing native form submission to proceed.');
+            });
+        } else {
+            console.log('CONSOLE LOG (from main.js): #editEventForm not found. Submit listener not attached.');
+        }
+
+        // View Event Details Logic
+        document.querySelectorAll('.view-event-btn').forEach(button => {
+            console.log('CONSOLE LOG (from main.js): Attaching click listener to a .view-event-btn', button);
+            button.addEventListener('click', function() {
+                console.log('CONSOLE LOG (from main.js): .view-event-btn clicked', this);
+                const title = this.getAttribute('data-event-title');
+                const date = this.getAttribute('data-event-date');
+                const time = this.getAttribute('data-event-time');
+                const location = this.getAttribute('data-event-location');
+                const description = this.getAttribute('data-event-description');
+                
+                const viewEventTitle = document.getElementById('viewEventTitle');
+                const viewEventDate = document.getElementById('viewEventDate');
+                const viewEventTime = document.getElementById('viewEventTime');
+                const viewEventLocation = document.getElementById('viewEventLocation');
+                const viewEventDescription = document.getElementById('viewEventDescription');
+
+                if (viewEventTitle) viewEventTitle.textContent = title || '';
+                if (viewEventDate) viewEventDate.textContent = date || '';
+                if (viewEventTime) viewEventTime.textContent = time || '';
+                if (viewEventLocation) viewEventLocation.textContent = location || '';
+                if (viewEventDescription) viewEventDescription.textContent = description || '';
+                
+                const viewEventModalElement = document.getElementById('viewEventModal');
+                if (viewEventModalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    new bootstrap.Modal(viewEventModalElement).show();
+                } else {
+                     console.error('ERROR (JS from main.js): #viewEventModal or Bootstrap Modal not found for .view-event-btn.');
+                }
+            });
+        });
+        
+        const editEventModalElement = document.getElementById('editEventModal');
+        if (editEventModalElement) {
+            console.log('CONSOLE LOG (from main.js): Attaching shown.bs.modal listener to #editEventModal.');
+            editEventModalElement.addEventListener('shown.bs.modal', function () {
+                const eventIdFromField = document.getElementById('editEventId') ? document.getElementById('editEventId').value : 'ID FIELD NOT FOUND';
+                console.log('CONSOLE LOG (from main.js): #editEventModal shown, current event ID in field (#editEventId):', eventIdFromField);
+            });
+        } else {
+            console.log('CONSOLE LOG (from main.js): #editEventModal not found. shown.bs.modal listener not attached.');
+        }
+
+        // Aquí puedes añadir también la lógica para addEventForm si quieres moverla de admin.js o dashboard.html
+        // Por ejemplo:
+        // const addEventForm = document.getElementById('addEventForm');
+        // if (addEventForm) { ... lógica para addEventForm ... }
+
+    } else {
+        console.log('CONSOLE LOG (from main.js): Dashboard-specific elements not detected. Skipping dashboard event listeners initialization.');
+    }
     
-    console.log('NetSchool - Todas las funcionalidades cargadas correctamente');
+    console.log('NetSchool - Todas las funcionalidades cargadas correctamente (main.js DOMContentLoaded end)');
 });
 
 // ========================================
@@ -573,4 +693,44 @@ window.loadContent = function(url, container) {
             showNotification('Error al cargar el contenido', 'error');
         });
 };
+
+// Moved from dashboard.html - Needs to be accessible to listeners
+function setupEditModal(eventId, button) {
+    console.log('CONSOLE LOG (from main.js): setupEditModal called with ID:', eventId);
+    
+    const idField = document.getElementById('editEventId');
+    if (idField) {
+        idField.value = eventId;
+        console.log('CONSOLE LOG (from main.js): Event ID field (#editEventId) set to:', idField.value);
+    } else {
+        console.error('ERROR (JS from main.js): Could not find #editEventId field in setupEditModal!');
+    }
+    
+    const title = button.getAttribute('data-event-title') || '';
+    const date = button.getAttribute('data-event-date') || '';
+    const time = button.getAttribute('data-event-time') || '';
+    const location = button.getAttribute('data-event-location') || '';
+    const description = button.getAttribute('data-event-description') || '';
+
+    const titleField = document.getElementById('editEventTitle');
+    const dateField = document.getElementById('editEventDate');
+    const timeField = document.getElementById('editEventTime');
+    const locationField = document.getElementById('editEventLocation');
+    const descriptionField = document.getElementById('editEventDescription');
+
+    if (titleField) titleField.value = title;
+    if (dateField) dateField.value = date;
+    if (timeField) timeField.value = time;
+    if (locationField) locationField.value = location;
+    if (descriptionField) descriptionField.value = description;
+
+    console.log('CONSOLE LOG (from main.js): Form fields in setupEditModal after filling:', {
+        id: idField ? idField.value : 'ID FIELD NOT FOUND',
+        title: titleField ? titleField.value : 'TITLE FIELD NOT FOUND',
+        date: dateField ? dateField.value : 'DATE FIELD NOT FOUND',
+        time: timeField ? timeField.value : 'TIME FIELD NOT FOUND',
+        location: locationField ? locationField.value : 'LOCATION FIELD NOT FOUND',
+        description: descriptionField ? descriptionField.value : 'DESCRIPTION FIELD NOT FOUND'
+    });
+}
 
