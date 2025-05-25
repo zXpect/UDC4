@@ -9,8 +9,8 @@
         <h1>Bienvenidos a NetSchool</h1>
         <p>Sistema de Gestión de Contenidos del Colegio UDC</p>
         <div class="my-4"></div>
-        <p>Accede a información importante, eventos, noticias y recursos educativos.</p>
-        <a class="btn btn-primary btn-lg mt-4" href="#" role="button">
+        <p class="mt-3">Accede a información importante, eventos, noticias y recursos educativos.</p>
+        <a class="btn btn-primary btn-lg mt-5" href="#" role="button">
             <i class="fas fa-info-circle me-2"></i>
             Conocer más
         </a>
@@ -18,20 +18,20 @@
 </div>
 
 <!-- Eventos Section -->
-<section class="section">
+<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
     <div class="container">
         <h2 class="section-title">Próximos Eventos</h2>
-        <p class="section-subtitle">Mantente al día con todas las actividades y eventos importantes del colegio</p>
+        <p class="section-subtitle mb-5">Mantente al día con todas las actividades y eventos importantes del colegio</p>
         
-        <div class="row">
+        <div class="row gy-4" style="margin-bottom: 4rem;">
             {% if events %}
                 {% for event in events %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card hover-lift">
+                    <div class="col-md-4 mb-4 d-flex">
+                        <div class="card hover-lift w-100">
                             <div class="card-header">
                                 <h5 class="m-0">{{ event.title }}</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body d-flex flex-column">
                                 <div class="mb-4">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="far fa-calendar-alt me-3"></i>
@@ -46,9 +46,9 @@
                                         <span>{{ event.location }}</span>
                                     </div>
                                 </div>
-                                <p>{{ event.description }}</p>
+                                <p class="mb-4">{{ event.description }}</p>
                             </div>
-                            <div class="card-footer">
+                            <div class="card-footer mt-auto">
                                 <a href="#" class="btn btn-outline-primary">
                                     Ver detalles
                                     <i class="fas fa-arrow-right ms-2"></i>
@@ -69,7 +69,7 @@
             {% endif %}
         </div>
         
-        <div class="text-center mt-5">
+        <div class="text-center" style="margin-top: 3rem; padding-top: 2rem; margin-bottom: 3rem;">
             <a href="#" class="btn btn-outline-primary">
                 Ver todos los eventos
                 <i class="fas fa-calendar-alt ms-2"></i>
@@ -79,48 +79,62 @@
 </section>
 
 <!-- Servicios Section -->
-<section class="section" style="background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(10px);">
+<section class="section" style="background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(10px); padding-top: 4rem; padding-bottom: 4rem;">
     <div class="container">
         <h2 class="section-title">Nuestros Servicios</h2>
-        <p class="section-subtitle">Descubre todo lo que NetSchool tiene para ofrecer</p>
+        <p class="section-subtitle mb-5">Descubre todo lo que NetSchool tiene para ofrecer</p>
         
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
+        <div class="row gy-4" style="margin-bottom: 2rem;">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="service-card w-100">
                     <div class="service-icon">
                         <i class="fas fa-book"></i>
                     </div>
                     <h3 class="service-title">Información Académica</h3>
-                    <p class="service-description">Accede a información importante sobre horarios, calendarios y programas académicos.</p>
-                    <a href="#" class="service-link">
+                    <p class="service-description mb-4">Accede a información importante sobre horarios, calendarios y programas académicos.</p>
+                    <a href="{{ url_for('public.academic_info') }}" class="service-link mt-auto">
                         Explorar
                         <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
             
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="service-card w-100">
                     <div class="service-icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
                     <h3 class="service-title">Eventos Institucionales</h3>
-                    <p class="service-description">Mantente informado sobre todos los eventos y actividades del colegio.</p>
-                    <a href="#" class="service-link">
+                    <p class="service-description mb-4">Mantente informado sobre todos los eventos y actividades del colegio.</p>
+                    <a href="{{ url_for('public.events') }}" class="service-link mt-auto">
                         Ver eventos
                         <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
             
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="service-card w-100">
                     <div class="service-icon">
                         <i class="fas fa-file-alt"></i>
                     </div>
                     <h3 class="service-title">Documentos Institucionales</h3>
-                    <p class="service-description">Accede a circulares, comunicados y documentos importantes.</p>
-                    <a href="#" class="service-link">
+                    <p class="service-description mb-4">Accede a circulares, comunicados y documentos importantes.</p>
+                    {% if session.get('logged_in') %}
+                        {% if session.get('role') == 'admin' %}
+                            <a href="{{ url_for('admin.files') }}" class="service-link mt-auto">
+                        {% elif session.get('role') == 'teacher' %}
+                            <a href="{{ url_for('teacher.manage_files') }}" class="service-link mt-auto">
+                        {% elif session.get('role') == 'student' %}
+                            <a href="{{ url_for('student.view_files') }}" class="service-link mt-auto">
+                        {% elif session.get('role') == 'parent' %}
+                            <a href="{{ url_for('parent.academic_files') }}" class="service-link mt-auto">
+                        {% else %}
+                            <a href="{{ url_for('public.view_general_files') }}" class="service-link mt-auto">
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('public.view_general_files') }}" class="service-link mt-auto">
+                    {% endif %}
                         Ver documentos
                         <i class="fas fa-arrow-right ms-2"></i>
                     </a>
@@ -131,19 +145,19 @@
 </section>
 
 <!-- Noticias Section -->
-<section class="section">
+<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
     <div class="container">
         <h2 class="section-title">Noticias Recientes</h2>
-        <p class="section-subtitle">Mantente informado sobre las últimas novedades del colegio</p>
+        <p class="section-subtitle mb-5">Mantente informado sobre las últimas novedades del colegio</p>
         
-        <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card hover-lift">
-                    <div class="card-body">
+        <div class="row gy-4" style="margin-bottom: 4rem;">
+            <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                <div class="card hover-lift w-100">
+                    <div class="card-body d-flex flex-column">
                         <div class="badge badge-primary mb-3">Académico</div>
                         <h3 class="text-xl font-semibold mb-3">Nuevos programas académicos</h3>
-                        <p class="text-secondary mb-4">Conoce los nuevos programas académicos que estarán disponibles para el próximo año escolar.</p>
-                        <div class="d-flex align-items-center text-sm text-muted">
+                        <p class="text-secondary mb-4 flex-grow-1">Conoce los nuevos programas académicos que estarán disponibles para el próximo año escolar.</p>
+                        <div class="d-flex align-items-center text-sm text-muted mt-auto">
                             <i class="far fa-calendar me-2"></i>
                             <span>15 de mayo, 2025</span>
                         </div>
@@ -154,13 +168,13 @@
                 </div>
             </div>
             
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card hover-lift">
-                    <div class="card-body">
+            <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                <div class="card hover-lift w-100">
+                    <div class="card-body d-flex flex-column">
                         <div class="badge badge-success mb-3">Deportes</div>
                         <h3 class="text-xl font-semibold mb-3">Campeonato intercolegial</h3>
-                        <p class="text-secondary mb-4">Nuestro equipo de fútbol clasificó a la final del campeonato intercolegial. ¡Felicitaciones!</p>
-                        <div class="d-flex align-items-center text-sm text-muted">
+                        <p class="text-secondary mb-4 flex-grow-1">Nuestro equipo de fútbol clasificó a la final del campeonato intercolegial. ¡Felicitaciones!</p>
+                        <div class="d-flex align-items-center text-sm text-muted mt-auto">
                             <i class="far fa-calendar me-2"></i>
                             <span>10 de mayo, 2025</span>
                         </div>
@@ -171,13 +185,13 @@
                 </div>
             </div>
             
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card hover-lift">
-                    <div class="card-body">
+            <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                <div class="card hover-lift w-100">
+                    <div class="card-body d-flex flex-column">
                         <div class="badge badge-info mb-3">Tecnología</div>
                         <h3 class="text-xl font-semibold mb-3">Nuevos laboratorios</h3>
-                        <p class="text-secondary mb-4">Se inauguraron los nuevos laboratorios de informática con equipos de última generación.</p>
-                        <div class="d-flex align-items-center text-sm text-muted">
+                        <p class="text-secondary mb-4 flex-grow-1">Se inauguraron los nuevos laboratorios de informática con equipos de última generación.</p>
+                        <div class="d-flex align-items-center text-sm text-muted mt-auto">
                             <i class="far fa-calendar me-2"></i>
                             <span>5 de mayo, 2025</span>
                         </div>
@@ -189,7 +203,7 @@
             </div>
         </div>
         
-        <div class="text-center mt-5">
+        <div class="text-center" style="margin-top: 3rem; padding-top: 2rem; margin-bottom: 3rem;">
             <a href="#" class="btn btn-outline-primary">
                 Ver todas las noticias
                 <i class="fas fa-newspaper ms-2"></i>
@@ -199,13 +213,13 @@
 </section>
 
 <!-- Contacto Section -->
-<section class="section">
+<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="col-lg-6 mb-5 mb-lg-0">
                 <h2 class="text-3xl font-bold mb-4">¿Necesitas ayuda?</h2>
-                <p class="mb-4">Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
-                <div class="d-flex flex-wrap gap-3">
+                <p class="mb-5 pb-2">Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
+                <div class="d-flex flex-wrap gap-3" style="margin-top: 2rem;">
                     <a href="{{ url_for('public.contact') if url_for else '#' }}" class="btn btn-primary"> 
                         <i class="fas fa-envelope me-2"></i>
                         Contacto
@@ -217,23 +231,23 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="text-xl font-semibold mb-4">Horario de atención</h3>
-                        <div class="d-flex justify-content-between mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h3 class="text-xl font-semibold mb-5">Horario de atención</h3>
+                        <div class="d-flex justify-content-between mb-4">
                             <span>Lunes a Viernes</span>
                             <span>8:00 AM - 4:00 PM</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="d-flex justify-content-between mb-4">
                             <span>Sábados</span>
                             <span>9:00 AM - 12:00 PM</span>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between mb-4">
                             <span>Domingos y Feriados</span>
                             <span>Cerrado</span>
                         </div>
-                        <hr class="my-4">
-                        <div class="d-flex align-items-center mb-3">
+                        <hr class="my-5 py-1">
+                        <div class="d-flex align-items-center mb-4">
                             <i class="fas fa-phone-alt me-3"></i>
                             <span>(123) 456-7890</span>
                         </div>

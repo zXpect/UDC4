@@ -1,131 +1,92 @@
 {% extends 'base_student.html' %}
+
 {% block title %}Eventos - Estudiante{% endblock %}
-{% block page_title %}Calendario de Eventos{% endblock %}
+
+{% block page_title %}Próximos Eventos y Actividades{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header d-flex justify-content-between align-items-center custom-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-calendar-alt me-2"></i>
-                        Eventos Académicos
-                    </h5>
-                    <span class="badge bg-light text-dark">{{ events|length }} evento(s)</span>
-                </div>
-                <div class="card-body">
-                    {% if events %}
-                    <div class="row">
-                        {% for event in events %}
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-header bg-light">
-                                    <div class="d-flex align-items-center">
-                                        <div class="event-date me-3">
-                                            <div class="text-center">
-                                                <div class="fw-bold text-primary">{{ event.date|safe_date('%d') if
-                                                    event.date else '??' }}</div>
-                                                <small class="text-muted">{{ event.date|safe_date('%b') if event.date
-                                                    else 'MES' }}</small>
-                                            </div>
-                                        </div>
-                                        <h6 class="mb-0 fw-medium">{{ event.title }}</h6>
-                                    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-calendar-alt me-2"></i>Calendario de Eventos</h6>
+        </div>
+        <div class="card-body">
+            {% if events %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for event in events %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm event-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="event-date-badge me-3">
+                                        <span class="month">{{ (event.date.strftime('%b') if event.date else 'N/A') | upper }}</span>
+                                        <span class="day">{{ event.date.strftime('%d') if event.date else '-' }}</span>
+                                    </span>
+                                    <h5 class="card-title text-primary mb-0">{{ event.title }}</h5>
                                 </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <i class="fas fa-clock text-muted me-2"></i>
-                                            <span class="small">{{ event.time if event.time else 'Hora no especificada'
-                                                }}</span>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                                            <span class="small">{{ event.location if event.location else 'Ubicación no
-                                                especificada' }}</span>
-                                        </div>
-                                    </div>
-                                    <p class="card-text text-muted small">
-                                        {{ event.description[:100] if event.description else 'Sin descripción
-                                        disponible' }}
-                                        {% if event.description and event.description|length > 100 %}...{% endif %}
-                                    </p>
-                                </div>
-                                <div class="card-footer bg-transparent">
-                                    <small class="text-muted">
-                                        <i class="fas fa-calendar me-1"></i>
-                                        Creado: {{ event.created_at.strftime('%d/%m/%Y') if event.created_at else 'N/A'
-                                        }}
-                                    </small>
-                                </div>
+                                <p class="card-text text-muted"><small>{{ event.description }}</small></p>
+                            </div>
+                            <div class="card-footer bg-light border-top-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i> {{ event.time if event.time else 'Hora no especificada' }}
+                                    <span class="mx-2">|</span>
+                                    <i class="fas fa-map-marker-alt me-1"></i> {{ event.location if event.location else 'Lugar no especificado' }}
+                                </small>
                             </div>
                         </div>
-                        {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-calendar-alt fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">No hay eventos programados</h4>
-                        <p class="text-muted">Los eventos aparecerán aquí cuando sean creados por los administradores
-                        </p>
-                    </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No hay eventos programados.</h4>
+                    <p>Consulta esta sección regularmente para futuras actualizaciones.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
 <style>
-    /* Estilos base (modo claro por defecto) */
-    .card-header.bg-light {
-        background-color: #f8f9fa;
-        color: #212529;
-    }
-
-    .card-body {
-        color: #212529;
-    }
-
-    .card-body .text-muted {
-        color: #6c757d;
-    }
-
-    .badge.bg-light.text-dark {
-        background-color: #f8f9fa;
-        color: #212529;
-    }
-
-    /* Modo oscuro */
-    @media (prefers-color-scheme: dark) {
-        .card-header.bg-light {
-            background-color: #2c2f33 !important;
-            color: #f8f9fa !important;
-        }
-
-        .card-header.bg-light .text-muted {
-            color: #ccc !important;
-        }
-
-        .card-body {
-            background-color: #1e1e1e;
-            color: #f1f1f1 !important;
-        }
-
-        .card-body .text-muted,
-        .card-text.text-muted,
-        .small.text-muted {
-            color: #ccc !important;
-        }
-
-        .badge.bg-light.text-dark {
-            background-color: #444 !important;
-            color: #f8f9fa !important;
-        }
-
-        .card-footer.bg-transparent {
-            background-color: #1e1e1e !important;
-        }
-    }
+.event-card {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    border: 1px solid var(--bs-border-color-translucent);
+}
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15) !important;
+}
+.event-date-badge {
+    background-color: var(--bs-primary);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.375rem; /* Similar to Bootstrap's default radius */
+    text-align: center;
+    min-width: 60px; /* Ensure consistent width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.event-date-badge .month {
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: block;
+    line-height: 1;
+}
+.event-date-badge .day {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: block;
+    line-height: 1;
+}
+[data-theme="dark"] .event-date-badge {
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+}
+[data-theme="dark"] .card-footer.bg-light{
+    background-color: var(--bs-gray-dark) !important; /* Ajuste para tema oscuro */
+}
 </style>
 {% endblock %}

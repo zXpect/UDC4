@@ -1,136 +1,104 @@
 {% extends 'base_student.html' %}
-{% block title %}Mis Calificaciones{% endblock %}
-{% block page_title %}Mis Calificaciones{% endblock %}
+
+{% block title %}Mis Notas - Estudiante{% endblock %}
+
+{% block page_title %}Mis Notas y Calificaciones{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-star me-2"></i>
-                        Historial de Calificaciones
-                    </h5>
-                    <span class="badge bg-light text-dark">{{ grades|length }} calificación(es)</span>
-                </div>
-                <div class="card-body">
-                    {% if grades %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Materia</th>
-                                    <th>Tipo de Evaluación</th>
-                                    <th>Calificación</th>
-                                    <th>Fecha</th>
-                                    <th>Observaciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for grade in grades %}
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-book text-success me-2"></i>
-                                            <span class="fw-medium">{{ grade.course_name if grade.course_name else
-                                                'Materia no encontrada' }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {% set type_info = {
-                                        'parcial': {'name': 'Examen Parcial', 'icon': 'fas fa-file-alt', 'color':
-                                        'primary'},
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-star me-2"></i>Detalle de Calificaciones</h6>
+        </div>
+        <div class="card-body">
+            {% if grades %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="gradesTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Materia</th>
+                                <th scope="col">Tipo de Evaluación</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Calificación</th>
+                                <th scope="col">Fecha de Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in grades %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-book text-primary me-2"></i>
+                                        <span class="fw-medium">{{ grade.course_name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set type_info = {
+                                        'parcial': {'name': 'Examen Parcial', 'icon': 'fas fa-file-alt', 'color': 'primary'},
                                         'quiz': {'name': 'Quiz', 'icon': 'fas fa-question-circle', 'color': 'info'},
-                                        'tarea': {'name': 'Tarea', 'icon': 'fas fa-tasks', 'color': 'success'},
-                                        'proyecto': {'name': 'Proyecto', 'icon': 'fas fa-project-diagram', 'color':
-                                        'warning'},
-                                        'participacion': {'name': 'Participación', 'icon': 'fas fa-hand-paper', 'color':
-                                        'secondary'},
-                                        'laboratorio': {'name': 'Laboratorio', 'icon': 'fas fa-flask', 'color':
-                                        'danger'}
-                                        } %}
-                                        {% set grade_type_info = type_info.get(grade.grade_type, {'name':
-                                        grade.grade_type|title, 'icon': 'fas fa-clipboard', 'color': 'secondary'}) %}
-                                        <div class="d-flex align-items-center">
-                                            <i
-                                                class="{{ grade_type_info.icon }} text-{{ grade_type_info.color }} me-2"></i>
-                                            <span>{{ grade_type_info.name }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {% set grade_value = grade.grade_value|float %}
-                                        <span
-                                            class="badge fs-6 bg-{{ 'success' if grade_value >= 7 else 'warning' if grade_value >= 5 else 'danger' }}">
-                                            {{ "%.1f"|format(grade_value) }}/10
-                                        </span>
-                                        {% if grade_value >= 7 %}
-                                        <small class="text-success d-block">Excelente</small>
-                                        {% elif grade_value >= 5 %}
-                                        <small class="text-warning d-block">Aceptable</small>
-                                        {% else %}
-                                        <small class="text-danger d-block">Necesita mejorar</small>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="text-sm">
-                                            {{ grade.created_at.strftime('%d/%m/%Y') if grade.created_at else 'N/A' }}
-                                            <br>
-                                            <small class="text-muted">{{ grade.created_at.strftime('%H:%M') if
-                                                grade.created_at else '' }}</small>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {% if grade.description %}
-                                        <span class="text-muted">{{ grade.description[:50] }}{% if
-                                            grade.description|length > 50 %}...{% endif %}</span>
-                                        {% else %}
-                                        <span class="text-muted fst-italic">Sin observaciones</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Resumen estadístico -->
-                    <div class="row mt-4">
-                        <div class="col-md-4">
-                            <div class="card bg-success text-white">
-                                <div class="card-body text-center">
-                                    <h5>Promedio General</h5>
-                                    <h2>{{ "%.1f"|format(avg_grade) if avg_grade else 'N/A' }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card bg-info text-white">
-                                <div class="card-body text-center">
-                                    <h5>Total Evaluaciones</h5>
-                                    <h2>{{ grades|length }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body text-center">
-                                    <h5>Última Calificación</h5>
-                                    <h2>{{ "%.1f"|format(grades[0].grade_value|float) if grades else 'N/A' }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-star fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">No hay calificaciones disponibles</h4>
-                        <p class="text-muted">Las calificaciones aparecerán aquí cuando los profesores las registren</p>
-                    </div>
-                    {% endif %}
+                                        'tarea': {'name': 'Tarea', 'icon': 'fas fa-tasks', 'color': 'secondary'},
+                                        'proyecto': {'name': 'Proyecto', 'icon': 'fas fa-project-diagram', 'color': 'purple'},
+                                        'participacion': {'name': 'Participación', 'icon': 'fas fa-hand-paper', 'color': 'teal'},
+                                        'laboratorio': {'name': 'Laboratorio', 'icon': 'fas fa-flask', 'color': 'orange'}
+                                    } %}
+                                    {% set grade_type_key = grade.grade_type | lower | replace(' ', '') %}
+                                    {% set current_type = type_info.get(grade_type_key, {'name': grade.grade_type|title, 'icon': 'fas fa-clipboard', 'color': 'gray'}) %}
+                                    <span class="badge bg-{{ current_type.color }} bg-opacity-25 text-{{ current_type.color }} py-2 px-3">
+                                        <i class="{{ current_type.icon }} me-1"></i> {{ current_type.name }}
+                                    </span>
+                                </td> 
+                                <td class="small text-muted">{{ grade.description if grade.description else 'N/A' }}</td>
+                                <td>
+                                    {% set grade_value = grade.grade_value %}
+                                    <span class="badge fs-6 rounded-pill bg-{{ 'success' if grade_value >= 7 else ('warning' if grade_value >= 5 else 'danger') }}">
+                                        {{ "%.1f"|format(grade_value) }} / 10
+                                    </span>
+                                </td>
+                                <td class="small text-muted">{{ grade.created_at.strftime('%d/%m/%Y') if grade.created_at else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No tienes notas registradas.</h4>
+                    <p>Tus calificaciones aparecerán aquí una vez que sean publicadas por tus profesores.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<style>
+.badge.bg-opacity-25 {
+    --bs-bg-opacity: 0.25;
+}
+.bg-purple { background-color: #6f42c1 !important; }
+.text-purple { color: #6f42c1 !important; }
+.bg-teal { background-color: #20c997 !important; }
+.text-teal { color: #20c997 !important; }
+.bg-orange { background-color: #fd7e14 !important; }
+.text-orange { color: #fd7e14 !important; }
+.bg-gray { background-color: #6c757d !important; }
+.text-gray { color: #6c757d !important; }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet"> -->
+<!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script> -->
+<!-- <script>
+    // $(document).ready(function() {
+    //     $('#gradesTable').DataTable({
+    //         "language": {
+    //             "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+    //         },
+    //         "order": [[4, "desc"]]
+    //     });
+    // });
+</script> -->
 {% endblock %}

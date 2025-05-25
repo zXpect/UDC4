@@ -1,6 +1,8 @@
-{% extends 'base_parent.html' %}
-{% block title %}Archivos Académicos - {{ session.get('username', 'Padre') }}{% endblock %}
-{% block page_title %}Archivos Académicos y Generales{% endblock %}
+{% extends 'base_student.html' %}
+
+{% block title %}Mis Archivos - Estudiante{% endblock %}
+
+{% block page_title %}Materiales y Archivos Disponibles{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -10,12 +12,13 @@
                 <div class="card-header bg-white border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
-                            <i class="fas fa-folder-open me-2 text-purple"></i>Archivos Disponibles
+                            <i class="fas fa-folder-open me-2 text-success"></i>Lista de Archivos
                         </h5>
-                        <div class="btn-group" role="group" aria-label="Filtros de categoría de padre">
-                            <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="filterFilesParent('all')">Todos</button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesParent('academic')">Académicos</button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesParent('general')">General</button>
+                        <div class="btn-group" role="group" aria-label="Filtros de categoría de estudiante">
+                            <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="filterFilesStudent('all')">Todos</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesStudent('academic')">Académicos</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesStudent('tasks')">De Tareas</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesStudent('general')">General</button>
                         </div>
                     </div>
                 </div>
@@ -31,10 +34,10 @@
                                     <th class="text-center">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="filesTableParent">
+                            <tbody id="filesTableStudent">
                                 {% if files %}
                                     {% for file in files %}
-                                        <tr data-category-parent="{{ file.category }}">
+                                        <tr data-category-student="{{ file.category }}">
                                             <td class="align-middle">
                                                 <div class="d-flex align-items-center">
                                                     <div class="file-icon me-3">
@@ -44,7 +47,7 @@
                                                         {% elif file.file_type and ('excel' in file.file_type or 'officedocument.spreadsheetml' in file.file_type) %} {% set icon_class = 'fas fa-file-excel text-success fs-4' %}
                                                         {% elif file.file_type and ('powerpoint' in file.file_type or 'officedocument.presentationml' in file.file_type) %} {% set icon_class = 'fas fa-file-powerpoint text-warning fs-4' %}
                                                         {% elif file.file_type and ('image' in file.file_type) %} {% set icon_class = 'fas fa-file-image text-info fs-4' %}
-                                                        {% elif file.file_type and ('zip' in file.file_type or 'archive' in file.file_type) %} {% set icon_class = 'fas fa-file-archive text-deep-purple fs-4' %}
+                                                        {% elif file.file_type and ('zip' in file.file_type or 'archive' in file.file_type) %} {% set icon_class = 'fas fa-file-archive text-purple fs-4' %}
                                                         {% endif %}
                                                         <i class="{{ icon_class }}"></i>
                                                     </div>
@@ -59,6 +62,7 @@
                                             <td class="align-middle">
                                                 {% set category_display = {
                                                     'academic': {'name': 'Académico', 'color': 'primary'},
+                                                    'tasks': {'name': 'Tarea', 'color': 'info'},
                                                     'general': {'name': 'General', 'color': 'secondary'}
                                                 } %}
                                                 {% set cat_info = category_display.get(file.category, {'name': file.category|title, 'color': 'dark'}) %}
@@ -75,9 +79,9 @@
                                             </td>
                                             <td class="align-middle text-center">
                                                 <div class="btn-group">
-                                                    <a href="{{ url_for('parent.download_file', file_id_str=file._id) }}" class="btn btn-outline-primary btn-sm" title="Descargar" data-bs-toggle="tooltip"><i class="fas fa-download"></i></a>
+                                                    <a href="{{ url_for('student.download_file', file_id_str=file._id) }}" class="btn btn-outline-primary btn-sm" title="Descargar" data-bs-toggle="tooltip"><i class="fas fa-download"></i></a>
                                                     <button type="button" class="btn btn-outline-secondary btn-sm" title="Ver detalles" data-bs-toggle="tooltip"
-                                                            onclick='viewFileDetailsParent("{{ file._id|string }}")'>
+                                                            onclick='viewFileDetailsStudent("{{ file._id|string }}")'>
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 </div>
@@ -89,8 +93,8 @@
                                         <td colspan="5" class="text-center py-5">
                                             <div class="empty-state">
                                                 <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                                                <h5 class="text-muted">No hay archivos disponibles para usted.</h5>
-                                                <p class="text-muted">Los archivos de categoría académica o general aparecerán aquí.</p>
+                                                <h5 class="text-muted">No hay archivos disponibles.</h5>
+                                                <p class="text-muted">Los profesores y administradores subirán materiales aquí.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -110,14 +114,14 @@
 </div>
 
 <!-- Modal para detalles del archivo -->
-<div class="modal fade" id="fileDetailsModalParent" tabindex="-1" aria-labelledby="fileDetailsModalParentLabel" aria-hidden="true">
+<div class="modal fade" id="fileDetailsModalStudent" tabindex="-1" aria-labelledby="fileDetailsModalStudentLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="fileDetailsModalParentLabel"><i class="fas fa-info-circle me-2"></i>Detalles del Archivo</h5>
+                <h5 class="modal-title" id="fileDetailsModalStudentLabel"><i class="fas fa-info-circle me-2"></i>Detalles del Archivo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="fileDetailsContentParent">
+            <div class="modal-body" id="fileDetailsContentStudent">
                 <!-- Contenido se carga vía AJAX -->
             </div>
             <div class="modal-footer">
@@ -130,16 +134,16 @@
 
 {% block extra_js %}
 <script>
-function filterFilesParent(category) {
-    const rows = document.querySelectorAll('#filesTableParent tr[data-category-parent]');
-    const buttons = document.querySelectorAll('.btn-group[aria-label="Filtros de categoría de padre"] .btn');
+function filterFilesStudent(category) {
+    const rows = document.querySelectorAll('#filesTableStudent tr[data-category-student]');
+    const buttons = document.querySelectorAll('.btn-group[aria-label="Filtros de categoría de estudiante"] .btn');
 
     buttons.forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
 
     let visibleCount = 0;
     rows.forEach(row => {
-        if (category === 'all' || row.dataset.categoryParent === category) {
+        if (category === 'all' || row.dataset.categoryStudent === category) {
             row.style.display = '';
             visibleCount++;
         } else {
@@ -148,19 +152,20 @@ function filterFilesParent(category) {
     });
 }
 
-function viewFileDetailsParent(fileId) {
-    const modal = new bootstrap.Modal(document.getElementById('fileDetailsModalParent'));
-    const content = document.getElementById('fileDetailsContentParent');
+function viewFileDetailsStudent(fileId) {
+    const modal = new bootstrap.Modal(document.getElementById('fileDetailsModalStudent'));
+    const content = document.getElementById('fileDetailsContentStudent');
     content.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin me-2"></i>Cargando detalles...</div>';
     modal.show();
 
-    fetch(`{{ url_for('parent.get_parent_file_details_json', file_id_str='FILE_ID_PLACEHOLDER') }}`.replace('FILE_ID_PLACEHOLDER', fileId))
+    fetch(`{{ url_for('student.get_student_file_details_json', file_id_str='FILE_ID_PLACEHOLDER') }}`.replace('FILE_ID_PLACEHOLDER', fileId))
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 const file = data.file;
                 const categoryDisplay = {
                     'academic': 'Material Académico',
+                    'tasks': 'Archivo de Tarea',
                     'general': 'General'
                 };
                 content.innerHTML = `
@@ -182,7 +187,7 @@ function viewFileDetailsParent(fileId) {
                         
                         <dt class="col-sm-4">Subido por:</dt>
                         <dd class="col-sm-8">${file.uploader_name || 'N/A'} <small class="text-muted">(${file.uploader_role || ''})</small></dd>
-
+                        
                         <dt class="col-sm-4">ID Archivo:</dt>
                         <dd class="col-sm-8"><small class="text-muted">${file.id}</small></dd>
                     </dl>
@@ -206,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-.text-purple { color: #8b5cf6 !important; } /* Main purple for parent section consistent with header */
-.text-deep-purple { color: #673ab7 !important; } /* For specific icons like zip if needed */
+.text-purple { color: #6f42c1 !important; }
 </style>
-{% endblock %}
+{% endblock %} 

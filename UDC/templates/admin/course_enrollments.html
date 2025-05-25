@@ -1,0 +1,110 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Gestionar Inscripciones - {{ course.name }}{% endblock %}
+
+{% block page_title %}Gestionar Inscripciones: {{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- Course Details Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalles del Curso</h6>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Nombre del Curso:</dt>
+                <dd class="col-sm-9">{{ course.name }}</dd>
+
+                <dt class="col-sm-3">Descripción:</dt>
+                <dd class="col-sm-9" style="white-space: pre-line;">{{ course.description if course.description else 'N/A' }}</dd>
+
+                <dt class="col-sm-3">Nivel/Grado:</dt>
+                <dd class="col-sm-9">{{ course.grade_level }}</dd>
+
+                <dt class="col-sm-3">Profesor Asignado:</dt>
+                <dd class="col-sm-9">{{ course.teacher_name }} (ID: {{ course.teacher_id }})</dd>
+            </dl>
+            <a href="{{ url_for('admin.courses') }}" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Volver a Cursos</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Enrolled Students Card -->
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Estudiantes Inscritos ({{ enrolled_students|length }})</h6>
+                </div>
+                <div class="card-body">
+                    {% if enrolled_students %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Usuario</th>
+                                        <th>Email</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for enrollment in enrolled_students %}
+                                    <tr>
+                                        <td>{{ enrollment.student_first_name }} {{ enrollment.student_last_name }}</td>
+                                        <td>{{ enrollment.student_username }}</td>
+                                        <td>{{ enrollment.student_email }}</td>
+                                        <td>
+                                            <form method="POST" action="{{ url_for('admin.unenroll_student_from_course', course_id=course._id, student_id=enrollment.student_id) }}" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm btn-circle" title="Desinscribir" onclick="return confirm('¿Estás seguro de que quieres desinscribir a este estudiante del curso?');">
+                                                    <i class="fas fa-user-minus"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center text-muted">No hay estudiantes inscritos en este curso.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Enroll New Student Card -->
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Inscribir Nuevo Estudiante</h6>
+                </div>
+                <div class="card-body">
+                    {% if available_students %}
+                        <form method="POST" action="{{ url_for('admin.enroll_student_in_course', course_id=course._id) }}">
+                            <div class="mb-3">
+                                <label for="student_id" class="form-label">Seleccionar Estudiante:</label>
+                                <select name="student_id" id="student_id" class="form-select" required>
+                                    <option value="">-- Estudiantes Disponibles --</option>
+                                    {% for student in available_students %}
+                                        <option value="{{ student._id }}">
+                                            {{ student.first_name }} {{ student.last_name }} ({{ student.username }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block">
+                                <i class="fas fa-user-plus"></i> Inscribir Estudiante
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-center text-muted">Todos los estudiantes activos ya están inscritos o no hay estudiantes disponibles.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %} 

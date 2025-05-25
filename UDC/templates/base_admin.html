@@ -91,25 +91,26 @@
                     <div class="nav-group">
                         <h6 class="nav-group-title">Gestión</h6>
                         <ul class="nav-list">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item {% if request.endpoint == 'admin.students' %}active{% endif %}">
+                                <a href="{{ url_for('admin.students') }}" class="nav-link">
                                     <i class="fas fa-user-graduate"></i>
                                     <span>Estudiantes</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item {% if request.endpoint == 'admin.teachers' %}active{% endif %}">
+                                <a href="{{ url_for('admin.teachers') }}" class="nav-link">
                                     <i class="fas fa-chalkboard-teacher"></i>
                                     <span>Profesores</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item {% if request.endpoint == 'admin.courses' %}active{% endif %}">
+                                <a href="{{ url_for('admin.courses') }}" class="nav-link">
                                     <i class="fas fa-book"></i>
                                     <span>Cursos</span>
                                 </a>
                             </li>
-                                                            <a href="{{ url_for('admin.link_parent_child') }}" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'admin.link_parent_child' %}active{% endif %}">  
+                                <a href="{{ url_for('admin.link_parent_child') }}" class="nav-link">  
                                     <i class="fas fa-user-friends"></i>  
                                     <span>Vincular Padres/Hijos</span>  
                                 </a>  

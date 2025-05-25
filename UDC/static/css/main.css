@@ -344,10 +344,32 @@ input, button, textarea, select {
 p, h1, h2, h3, h4, h5, h6 {
     overflow-wrap: break-word;
     hyphens: auto;
+    margin-bottom: var(--space-4); /* Added default bottom margin */
+}
+
+h1, h2, h3, h4, h5, h6 { /* More specific margin for headings */
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+}
+
+p { /* Specific margin for paragraphs */
+    margin-bottom: var(--space-4);
+}
+
+/* Remove default margin for elements that might be used without spacing, allow utilities to control */
+.card-title, .card-text, .section-title, .section-subtitle, .jumbotron h1, .jumbotron p, .alert-title, .footer-title, .footer-text, .service-title, .service-description, .event-title, .event-description {
+    margin-bottom: 0; /* Reset and rely on specific classes or direct styling in templates */
+    margin-top: 0;
 }
 
 main {
     flex: 1;
+    transition: all var(--transition-normal), background-color var(--transition-theme), border-color var(--transition-theme);
+    overflow: hidden;
+    margin-bottom: var(--space-6); /* Default was var(--space-6), can be adjusted if needed globally, consider var(--space-8) if more space is desired */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 a {
@@ -769,7 +791,7 @@ ul, ol {
 .card-header {
     background-color: transparent;
     border-bottom: 1px solid var(--border);
-    padding: 1rem 1.25rem;
+    padding: var(--space-4) var(--space-5); /* Adjusted padding */
     font-weight: var(--font-semibold);
     font-size: var(--text-lg);
     color: var(--text-primary);
@@ -786,17 +808,21 @@ ul, ol {
 }
 
 .card-body {
-    padding: 1.25rem;
+    padding: var(--space-5); /* Adjusted padding */
     flex: 1;
 }
 
 .card-footer {
     background-color: transparent;
     border-top: 1px solid var(--border);
-    padding: 1rem 1.25rem;
+    padding: var(--space-4) var(--space-5); /* Adjusted padding */
     font-size: var(--text-sm);
     color: var(--text-secondary);
     transition: border-color var(--transition-theme), color var(--transition-theme);
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
 }
 
 .hover-lift {
@@ -1157,7 +1183,7 @@ ul, ol {
 .jumbotron h1 {
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4); /* Adjusted margin */
     letter-spacing: -0.025em;
     line-height: 1.2;
 }
@@ -1165,7 +1191,7 @@ ul, ol {
 .jumbotron p {
     font-size: clamp(1rem, 2vw, 1.25rem);
     font-weight: var(--font-normal);
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6); /* Adjusted margin, was var(--space-8) */
     opacity: 0.9;
     max-width: 700px;
     margin-left: auto;
@@ -1219,7 +1245,7 @@ ul, ol {
 
 .form-label {
     display: inline-block;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-2-5); /* Adjusted margin */
     font-weight: var(--font-medium);
     font-size: var(--text-sm);
     color: var(--text-primary);

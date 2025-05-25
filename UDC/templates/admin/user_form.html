@@ -1,0 +1,78 @@
+{% extends 'base_admin.html' %}
+
+{% set entity_name = 'Estudiante' if role == 'student' else 'Profesor' %}
+
+{% block title %}
+    {% if action == 'add' %}Agregar Nuevo {{ entity_name }}{% else %}Editar {{ entity_name }}{% endif %} - UDC
+{% endblock %}
+
+{% block page_title %}
+    {% if action == 'add' %}Agregar Nuevo {{ entity_name }}{% else %}Editar {{ entity_name }}: {{ user.username }}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Formulario de {% if action == 'add' %}Nuevo {{ entity_name }}{% else %}Edición de {{ entity_name }}{% endif %}
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{% if action == 'add' and role == 'student' %}{{ url_for('admin.add_student') }}{% elif action == 'add' and role == 'teacher' %}{{ url_for('admin.add_teacher') }}{% elif action == 'edit' and role == 'student' %}{{ url_for('admin.edit_student', user_id=user._id) }}{% elif action == 'edit' and role == 'teacher' %}{{ url_for('admin.edit_teacher', user_id=user._id) }}{% endif %}">
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="username" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username if user else form_data.username if form_data else '' }}" {% if action == 'edit' %}readonly{% endif %} required>
+                        {% if action == 'edit' %}<small class="form-text text-muted">El nombre de usuario no se puede cambiar.</small>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email if user else form_data.email if form_data else '' }}" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name" class="form-label">Nombres <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name if user else form_data.first_name if form_data else '' }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name" class="form-label">Apellidos <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name if user else form_data.last_name if form_data else '' }}" required>
+                    </div>
+                </div>
+                
+                <hr>
+                <h6 class="text-muted mb-3">Configuración de Contraseña</h6>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label">Contraseña {% if action == 'add' %}<span class="text-danger">*</span>{% endif %}</label>
+                        <input type="password" class="form-control" id="password" name="password" {% if action == 'add' %}required{% endif %}>
+                        {% if action == 'edit' %}<small class="form-text text-muted">Dejar en blanco para no cambiar la contraseña.</small>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="confirm_password" class="form-label">Confirmar Contraseña {% if action == 'add' %}<span class="text-danger">*</span>{% endif %}</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" {% if action == 'add' %}required{% endif %}>
+                    </div>
+                </div>
+                {% if action == 'add' %}
+                <small class="form-text text-muted mb-3">
+                    La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula y un número.
+                </small>
+                {% endif %}
+
+                <hr>
+                <button type="submit" class="btn btn-primary">
+                    {% if action == 'add' %}<i class="fas fa-plus-circle"></i> Crear {{ entity_name }}{% else %}<i class="fas fa-save"></i> Guardar Cambios{% endif %}
+                </button>
+                <a href="{% if role == 'student' %}{{ url_for('admin.students') }}{% else %}{{ url_for('admin.teachers') }}{% endif %}" class="btn btn-secondary">
+                    <i class="fas fa-times-circle"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

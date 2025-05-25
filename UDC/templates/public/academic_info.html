@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Información Académica - NetSchool UDC{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="page-header mb-5">
+        <h1 class="display-5">Información Académica</h1>
+        <p class="lead text-muted mb-4">Detalles sobre nuestros programas, calendarios y recursos educativos.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3"><i class="fas fa-calendar-alt me-2"></i>Calendario Académico</h5>
+                    <p class="card-text mb-3">Consulte las fechas importantes, periodos de exámenes, vacaciones y eventos escolares para el ciclo actual.</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm disabled">Ver Calendario (Próximamente)</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3"><i class="fas fa-book-open me-2"></i>Programas de Estudio</h5>
+                    <p class="card-text mb-3">Información detallada sobre los planes de estudio, materias por nivel y objetivos de aprendizaje.</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm disabled">Explorar Programas (Próximamente)</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Cuerpo Docente</h5>
+                    <p class="card-text mb-3">Conozca a nuestros dedicados profesores y su experiencia en cada área del conocimiento.</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm disabled">Ver Docentes (Próximamente)</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light p-3">
+                    <h5 class="mb-0"><i class="fas fa-link me-2"></i>Enlaces Rápidos</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('public.view_general_files') }}" class="list-group-item list-group-item-action p-3">
+                        <i class="fas fa-folder me-2"></i> Documentos Generales
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action p-3 disabled">
+                        <i class="fas fa-graduation-cap me-2"></i> Admisiones (Próximamente)
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action p-3 disabled">
+                        <i class="fas fa-question-circle me-2"></i> FAQ (Próximamente)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %} 

@@ -90,14 +90,14 @@
                     <div class="nav-group">  
                         <h6 class="nav-group-title">Académico</h6>  
                         <ul class="nav-list">  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'teacher.my_courses' %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.my_courses') }}" class="nav-link">  
                                     <i class="fas fa-book"></i>  
                                     <span>Mis Materias</span>  
                                 </a>  
                             </li>  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint in ['teacher.manage_tasks', 'teacher.add_task', 'teacher.edit_task'] %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.manage_tasks') }}" class="nav-link">  
                                     <i class="fas fa-tasks"></i>  
                                     <span>Asignar Tareas</span>  
                                 </a>  

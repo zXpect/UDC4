@@ -1,0 +1,63 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Administrar Cursos - UDC{% endblock %}
+
+{% block page_title %}Gestión de Cursos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Listado de Cursos</h6>
+            <a href="{{ url_for('admin.add_course') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus-circle"></i> Agregar Nuevo Curso
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableCourses" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre del Curso</th>
+                            <th>Descripción</th>
+                            <th>Nivel</th>
+                            <th>Profesor Asignado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course._id }}</td>
+                            <td>{{ course.name }}</td>
+                            <td>{{ course.description }}</td>
+                            <td>{{ course.grade_level }}</td>
+                            <td>{{ course.teacher_name }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.view_course', course_id=course._id) }}" class="btn btn-sm btn-info btn-circle" title="Ver Detalles">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('admin.edit_course', course_id=course._id) }}" class="btn btn-sm btn-warning btn-circle" title="Editar Curso">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('admin.manage_course_enrollments', course_id=course._id) }}" class="btn btn-sm btn-primary btn-circle" title="Gestionar Inscripciones">
+                                    <i class="fas fa-users-cog"></i>
+                                </a>
+                                <a href="{{ url_for('admin.delete_course', course_id=course._id) }}" class="btn btn-sm btn-danger btn-circle" title="Eliminar Curso" onclick="return confirm('¿Estás seguro de que quieres eliminar este curso?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">No hay cursos registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,58 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Administrar Profesores - UDC{% endblock %}
+
+{% block page_title %}Gestión de Profesores{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Listado de Profesores</h6>
+            <a href="{{ url_for('admin.add_teacher') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus-circle"></i> Agregar Nuevo Profesor
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableTeachers" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre de Usuario</th>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for teacher in teachers %}
+                        <tr>
+                            <td>{{ teacher._id }}</td>
+                            <td>{{ teacher.username }}</td>
+                            <td>{{ teacher.first_name }} {{ teacher.last_name }}</td>
+                            <td>{{ teacher.email }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.view_teacher', user_id=teacher._id) }}" class="btn btn-sm btn-info btn-circle" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('admin.edit_teacher', user_id=teacher._id) }}" class="btn btn-sm btn-warning btn-circle" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('admin.delete_teacher', user_id=teacher._id) }}" class="btn btn-sm btn-danger btn-circle" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este profesor?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">No hay profesores registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

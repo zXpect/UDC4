@@ -1,0 +1,56 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Detalles del Curso - {{ course.name }}{% endblock %}
+
+{% block page_title %}Detalles del Curso: {{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Información del Curso</h6>
+            <div>
+                <a href="{{ url_for('admin.edit_course', course_id=course._id) }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="{{ url_for('admin.courses') }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Volver al Listado
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">ID del Curso:</dt>
+                <dd class="col-sm-9">{{ course._id }}</dd>
+
+                <dt class="col-sm-3">Nombre del Curso:</dt>
+                <dd class="col-sm-9">{{ course.name }}</dd>
+
+                <dt class="col-sm-3">Descripción:</dt>
+                <dd class="col-sm-9" style="white-space: pre-line;">{{ course.description if course.description else 'N/A' }}</dd>
+
+                <dt class="col-sm-3">Nivel/Grado:</dt>
+                <dd class="col-sm-9">{{ course.grade_level }}</dd>
+
+                <dt class="col-sm-3">Profesor Asignado:</dt>
+                <dd class="col-sm-9">{{ course.teacher_name }} (ID: {{ course.teacher_id }})</dd>
+
+                <dt class="col-sm-3">Fecha de Creación:</dt>
+                <dd class="col-sm-9">{{ course.created_at.strftime('%Y-%m-%d %H:%M:%S') if course.created_at else 'N/A' }} UTC</dd>
+
+                <dt class="col-sm-3">Última Actualización:</dt>
+                <dd class="col-sm-9">{{ course.updated_at.strftime('%Y-%m-%d %H:%M:%S') if course.updated_at else 'N/A' }} UTC</dd>
+            
+                <dt class="col-sm-3">Estado:</dt>
+                <dd class="col-sm-9">
+                    {% if course.active %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactivo</span>
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %} 

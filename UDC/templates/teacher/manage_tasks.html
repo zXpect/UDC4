@@ -1,0 +1,136 @@
+{% extends 'base_teacher.html' %}
+
+{% block title %}Gestionar Tareas - Profesor{% endblock %}
+
+{% block page_title %}Gestión de Tareas y Asignaciones{% endblock %}
+
+{% block extra_css %}
+<style>
+.task-card {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+.task-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.10) !important;
+}
+.task-actions .btn {
+    margin-right: 0.25rem;
+}
+.status-badge-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.border-due-soon { border-left-color: var(--bs-warning); }
+.border-past-due { border-left-color: var(--bs-danger); }
+.border-active { border-left-color: var(--bs-success); }
+.border-default { border-left-color: var(--bs-gray-300); }
+
+[data-theme="dark"] .border-default {
+    border-left-color: var(--bs-gray-600);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Mis Tareas Asignadas</h1>
+        <a href="{{ url_for('teacher.add_task') }}" class="btn btn-warning">
+            <i class="fas fa-plus-circle me-2"></i>Crear Nueva Tarea
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-tasks me-2"></i>Listado de Tareas</h6>
+        </div>
+        <div class="card-body">
+            {% if tasks %}
+                <div class="row">
+                    {% for task in tasks %}
+                    {% set due_date = task.due_date %}
+                    {% set is_past_due = due_date < now %}
+                    {% set time_diff = due_date - now %}
+                    {% set is_due_soon = not is_past_due and time_diff.days < 3 %}
+                    {% set border_color_class = 'border-past-due' if is_past_due else 'border-due-soon' if is_due_soon else 'border-active' %}
+                    
+                    <div class="col-lg-6 mb-4">
+                        <div class="card task-card shadow-sm {{ border_color_class }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="card-title text-truncate" style="max-width: 300px;">
+                                            <a href="#" class="text-decoration-none stretched-link">{{ task.title }}</a>
+                                        </h5>
+                                        <h6 class="card-subtitle mb-2 text-muted small">
+                                            <i class="fas fa-book me-1"></i> {{ task.course_name if task.course_name else 'Materia no especificada' }}
+                                        </h6>
+                                    </div>
+                                    <div>
+                                        {% if is_past_due %}
+                                            <span class="badge bg-danger"><span class="status-badge-dot bg-white"></span>Vencida</span>
+                                        {% elif is_due_soon %}
+                                            <span class="badge bg-warning text-dark"><span class="status-badge-dot bg-dark"></span>Vence Pronto</span>
+                                        {% else %}
+                                            <span class="badge bg-success"><span class="status-badge-dot bg-white"></span>Activa</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mt-2" style="white-space: pre-line;">
+                                    {{ task.description | truncate(150, True) }}
+                                </p>
+                                <p class="small mb-2">
+                                    <i class="fas fa-calendar-alt me-1"></i> 
+                                    <strong>Entrega:</strong> {{ due_date.strftime('%d/%m/%Y a las %I:%M %p') if due_date else 'N/A' }}
+                                    {% if not is_past_due and time_diff.days >= 0 %}
+                                        <span class="text-muted fst-italic"> (faltan {{ time_diff.days }} día{{ 's' if time_diff.days != 1 else '' }})</span>
+                                    {% endif %}
+                                </p>
+                                {% if task.file_path %}
+                                <p class="small mb-3">
+                                    <a href="{{ url_for('teacher.download_task_attachment', task_id=task._id) }}" class="text-decoration-none">
+                                        <i class="fas fa-paperclip me-1"></i> Ver Archivo Adjunto
+                                    </a>
+                                </p>
+                                {% endif %}
+                                <div class="task-actions mt-auto border-top pt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-secondary" title="Ver Entregas"><i class="fas fa-eye me-1"></i>Entregas</a>
+                                    <a href="{{ url_for('teacher.edit_task', task_id=task._id) }}" class="btn btn-sm btn-outline-primary" title="Editar Tarea"><i class="fas fa-edit me-1"></i>Editar</a>
+                                    <form action="{{ url_for('teacher.delete_task', task_id=task._id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar Tarea"><i class="fas fa-trash-alt me-1"></i>Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if not tasks %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-folder-plus fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Aún no has creado ninguna tarea.</h4>
+                        <p>Utiliza el botón "Crear Nueva Tarea" para empezar a asignar actividades a tus estudiantes.</p>
+                    </div>
+                {% endif %}
+            
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-folder-plus fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Aún no has creado ninguna tarea.</h4>
+                <p>Utiliza el botón "Crear Nueva Tarea" para empezar a asignar actividades a tus estudiantes.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Potential JS for countdowns or dynamic updates -->
+{% endblock %} 
