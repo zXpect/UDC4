@@ -2119,3 +2119,9 @@
 .list-group-item {  
     transition: all 0.3s ease;  
 }
+
+[data-theme="dark"] .card-body dl,
+[data-theme="dark"] .card-body dt,
+[data-theme="dark"] .card-body dd {
+    color: var(--text-primary); /* Or a specific light color like #e0e0e0 */
+}

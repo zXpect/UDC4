@@ -3,74 +3,116 @@
 {% block title %}Inicio - NetSchool UDC{% endblock %}
 
 {% block content %}
+<!-- Main Content Wrapper -->
+<div class="main-wrapper">
 <!-- Hero Section -->
-<div class="jumbotron">
-    <div class="container">
-        <h1>Bienvenidos a NetSchool</h1>
-        <p>Sistema de Gestión de Contenidos del Colegio UDC</p>
-        <div class="my-4"></div>
-        <p class="mt-3">Accede a información importante, eventos, noticias y recursos educativos.</p>
-        <a class="btn btn-primary btn-lg mt-5" href="#" role="button">
-            <i class="fas fa-info-circle me-2"></i>
-            Conocer más
-        </a>
-    </div>
-</div>
+    <section class="hero-section">
+        <div class="hero-overlay" data-bg-url="{{ url_for('static', filename='img/school-bg.jpg') }}"></div>
+        <div class="hero-gradient-overlay"></div>
+        <!-- Formas decorativas -->
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+        <div class="container position-relative">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="hero-content">
+                        <h1 class="hero-title display-4 fw-bold mb-4 animate__animated animate__fadeInDown">
+                            Bienvenidos a 
+                            <span class="text-gradient">NetSchool</span>
+                        </h1>
+                        <p class="hero-subtitle lead mb-5 animate__animated animate__fadeInUp animate__delay-1s">
+                            Sistema de Gestión de Contenidos del Colegio UDC
+                            <span class="typing-cursor">|</span>
+                        </p>
+                        <div class="hero-actions d-flex justify-content-center gap-4 animate__animated animate__fadeInUp animate__delay-1.5s">
+                            <a class="btn btn-glow btn-lg" href="#features" role="button">
+                                <span class="btn-content">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Conocer más
+                                </span>
+                            </a>
+                            <a class="btn btn-outline-glow btn-lg" href="{{ url_for('auth.login') if url_for else '#' }}" role="button">
+                                <span class="btn-content">
+                                    <i class="fas fa-user-graduate me-2"></i>
+                                    Portal Estudiantil
+                                </span>
+                            </a>
+                        </div>
+                        <!-- Indicador de scroll -->
+                        <div class="scroll-indicator animate__animated animate__fadeInUp animate__delay-2s">
+                            <span class="mouse">
+                                <span class="wheel"></span>
+                            </span>
+                            <p>Desliza para explorar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 <!-- Eventos Section -->
-<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
+    <section class="section bg-light">
     <div class="container">
-        <h2 class="section-title">Próximos Eventos</h2>
-        <p class="section-subtitle mb-5">Mantente al día con todas las actividades y eventos importantes del colegio</p>
+        <div class="section-header text-center mb-5 animate__animated animate__fadeIn">
+            <h2 class="section-title">Próximos Eventos</h2>
+            <p class="section-subtitle">Mantente al día con todas las actividades y eventos importantes del colegio</p>
+        </div>
         
-        <div class="row gy-4" style="margin-bottom: 4rem;">
+        <div class="row g-4">
             {% if events %}
                 {% for event in events %}
-                    <div class="col-md-4 mb-4 d-flex">
-                        <div class="card hover-lift w-100">
-                            <div class="card-header">
-                                <h5 class="m-0">{{ event.title }}</h5>
+                    <div class="col-md-4">
+                            <div class="event-card animate__animated animate__fadeInUp hover-lift">
+                            <div class="event-card-header">
+                                <div class="event-date animate__animated animate__pulse animate__infinite animate__slow">
+                                    <span class="event-day">{{ event.date }}</span>
+                                </div>
+                                <h3 class="event-title">{{ event.title }}</h3>
                             </div>
-                            <div class="card-body d-flex flex-column">
-                                <div class="mb-4">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="far fa-calendar-alt me-3"></i>
-                                        <span>{{ event.date }}</span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="far fa-clock me-3"></i>
+                            <div class="event-card-body">
+                                <div class="event-details">
+                                    <div class="event-time hover-translate">
+                                        <i class="far fa-clock"></i>
                                         <span>{{ event.time }}</span>
                                     </div>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-map-marker-alt me-3"></i>
+                                    <div class="event-location hover-translate">
+                                        <i class="fas fa-map-marker-alt"></i>
                                         <span>{{ event.location }}</span>
                                     </div>
                                 </div>
-                                <p class="mb-4">{{ event.description }}</p>
+                                <p class="event-description">{{ event.description }}</p>
                             </div>
-                            <div class="card-footer mt-auto">
-                                <a href="#" class="btn btn-outline-primary">
+                            <div class="event-card-footer">
+                                <a href="#" class="btn-link hover-right">
                                     Ver detalles
-                                    <i class="fas fa-arrow-right ms-2"></i>
+                                    <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="col-12 text-center">
-                    <div class="alert alert-info">
+                <div class="col-12">
+                        <div class="alert alert-modern alert-info">
+                        <div class="alert-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
                         <div class="alert-content">
-                            <div class="alert-title">Sin eventos programados</div>
-                            <p>No hay eventos próximos programados en este momento.</p>
+                            <h4 class="alert-title">Sin eventos programados</h4>
+                            <p class="mb-0">No hay eventos próximos programados en este momento.</p>
                         </div>
                     </div>
                 </div>
             {% endif %}
         </div>
         
-        <div class="text-center" style="margin-top: 3rem; padding-top: 2rem; margin-bottom: 3rem;">
-            <a href="#" class="btn btn-outline-primary">
+            <div class="text-center mt-5">
+            <a href="#" class="btn btn-primary btn-lg hover-float">
                 Ver todos los eventos
                 <i class="fas fa-calendar-alt ms-2"></i>
             </a>
@@ -79,64 +121,69 @@
 </section>
 
 <!-- Servicios Section -->
-<section class="section" style="background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(10px); padding-top: 4rem; padding-bottom: 4rem;">
+<section class="section py-5">
     <div class="container">
-        <h2 class="section-title">Nuestros Servicios</h2>
-        <p class="section-subtitle mb-5">Descubre todo lo que NetSchool tiene para ofrecer</p>
+        <div class="section-header text-center mb-5 animate__animated animate__fadeIn">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <p class="section-subtitle">Descubre todo lo que NetSchool tiene para ofrecer</p>
+        </div>
         
-        <div class="row gy-4" style="margin-bottom: 2rem;">
-            <div class="col-md-4 mb-4 d-flex">
-                <div class="service-card w-100">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="service-card animate__animated animate__fadeInUp hover-lift" style="animation-delay: 0.2s">
                     <div class="service-icon">
                         <i class="fas fa-book"></i>
+                        <div class="service-icon-glow" style="opacity: 0.2; background: radial-gradient(circle at center, var(--primary-soft), transparent 70%);"></div>
                     </div>
                     <h3 class="service-title">Información Académica</h3>
-                    <p class="service-description mb-4">Accede a información importante sobre horarios, calendarios y programas académicos.</p>
-                    <a href="{{ url_for('public.academic_info') }}" class="service-link mt-auto">
+                    <p class="service-description">Accede a información importante sobre horarios, calendarios y programas académicos.</p>
+                    <a href="{{ url_for('public.academic_info') }}" class="service-link hover-right">
                         Explorar
-                        <i class="fas fa-arrow-right ms-2"></i>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
             
-            <div class="col-md-4 mb-4 d-flex">
-                <div class="service-card w-100">
+            <div class="col-md-4">
+                <div class="service-card animate__animated animate__fadeInUp hover-lift" style="animation-delay: 0.4s">
                     <div class="service-icon">
                         <i class="fas fa-calendar-alt"></i>
+                        <div class="service-icon-glow" style="opacity: 0.2; background: radial-gradient(circle at center, var(--primary-soft), transparent 70%);"></div>
                     </div>
                     <h3 class="service-title">Eventos Institucionales</h3>
-                    <p class="service-description mb-4">Mantente informado sobre todos los eventos y actividades del colegio.</p>
-                    <a href="{{ url_for('public.events') }}" class="service-link mt-auto">
+                    <p class="service-description">Mantente informado sobre todos los eventos y actividades del colegio.</p>
+                    <a href="{{ url_for('public.events') }}" class="service-link hover-right">
                         Ver eventos
-                        <i class="fas fa-arrow-right ms-2"></i>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
             
-            <div class="col-md-4 mb-4 d-flex">
-                <div class="service-card w-100">
+            <div class="col-md-4">
+                <div class="service-card animate__animated animate__fadeInUp hover-lift" style="animation-delay: 0.6s">
                     <div class="service-icon">
                         <i class="fas fa-file-alt"></i>
+                        <div class="service-icon-glow" style="opacity: 0.2; background: radial-gradient(circle at center, var(--primary-soft), transparent 70%);"></div>
                     </div>
                     <h3 class="service-title">Documentos Institucionales</h3>
-                    <p class="service-description mb-4">Accede a circulares, comunicados y documentos importantes.</p>
+                    <p class="service-description">Accede a circulares, comunicados y documentos importantes.</p>
                     {% if session.get('logged_in') %}
                         {% if session.get('role') == 'admin' %}
-                            <a href="{{ url_for('admin.files') }}" class="service-link mt-auto">
+                            <a href="{{ url_for('admin.files') }}" class="service-link hover-right">
                         {% elif session.get('role') == 'teacher' %}
-                            <a href="{{ url_for('teacher.manage_files') }}" class="service-link mt-auto">
+                            <a href="{{ url_for('teacher.manage_files') }}" class="service-link hover-right">
                         {% elif session.get('role') == 'student' %}
-                            <a href="{{ url_for('student.view_files') }}" class="service-link mt-auto">
+                            <a href="{{ url_for('student.view_files') }}" class="service-link hover-right">
                         {% elif session.get('role') == 'parent' %}
-                            <a href="{{ url_for('parent.academic_files') }}" class="service-link mt-auto">
+                            <a href="{{ url_for('parent.academic_files') }}" class="service-link hover-right">
                         {% else %}
-                            <a href="{{ url_for('public.view_general_files') }}" class="service-link mt-auto">
+                            <a href="{{ url_for('public.view_general_files') }}" class="service-link hover-right">
                         {% endif %}
                     {% else %}
-                        <a href="{{ url_for('public.view_general_files') }}" class="service-link mt-auto">
+                        <a href="{{ url_for('public.view_general_files') }}" class="service-link hover-right">
                     {% endif %}
                         Ver documentos
-                        <i class="fas fa-arrow-right ms-2"></i>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -145,66 +192,68 @@
 </section>
 
 <!-- Noticias Section -->
-<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
+<section class="section bg-light py-5">
     <div class="container">
-        <h2 class="section-title">Noticias Recientes</h2>
-        <p class="section-subtitle mb-5">Mantente informado sobre las últimas novedades del colegio</p>
+        <div class="section-header text-center mb-5 animate__animated animate__fadeIn">
+            <h2 class="section-title">Noticias Recientes</h2>
+            <p class="section-subtitle">Mantente informado sobre las últimas novedades del colegio</p>
+        </div>
         
-        <div class="row gy-4" style="margin-bottom: 4rem;">
-            <div class="col-lg-4 col-md-6 mb-4 d-flex">
-                <div class="card hover-lift w-100">
-                    <div class="card-body d-flex flex-column">
-                        <div class="badge badge-primary mb-3">Académico</div>
-                        <h3 class="text-xl font-semibold mb-3">Nuevos programas académicos</h3>
-                        <p class="text-secondary mb-4 flex-grow-1">Conoce los nuevos programas académicos que estarán disponibles para el próximo año escolar.</p>
-                        <div class="d-flex align-items-center text-sm text-muted mt-auto">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card hover-lift animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                    <div class="card-body">
+                        <div class="badge bg-primary mb-3 animate__animated animate__pulse animate__infinite animate__slow">Académico</div>
+                        <h3 class="h4 mb-3">Nuevos programas académicos</h3>
+                        <p class="text-secondary mb-4">Conoce los nuevos programas académicos que estarán disponibles para el próximo año escolar.</p>
+                        <div class="d-flex align-items-center text-muted">
                             <i class="far fa-calendar me-2"></i>
                             <span>15 de mayo, 2025</span>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Leer más</a>
+                    <div class="card-footer bg-transparent">
+                        <a href="#" class="btn btn-outline-primary btn-sm hover-float">Leer más</a>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-4 col-md-6 mb-4 d-flex">
-                <div class="card hover-lift w-100">
-                    <div class="card-body d-flex flex-column">
-                        <div class="badge badge-success mb-3">Deportes</div>
-                        <h3 class="text-xl font-semibold mb-3">Campeonato intercolegial</h3>
-                        <p class="text-secondary mb-4 flex-grow-1">Nuestro equipo de fútbol clasificó a la final del campeonato intercolegial. ¡Felicitaciones!</p>
-                        <div class="d-flex align-items-center text-sm text-muted mt-auto">
+            <div class="col-lg-4">
+                <div class="card hover-lift animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                    <div class="card-body">
+                        <div class="badge bg-success mb-3 animate__animated animate__pulse animate__infinite animate__slow">Deportes</div>
+                        <h3 class="h4 mb-3">Campeonato intercolegial</h3>
+                        <p class="text-secondary mb-4">Nuestro equipo de fútbol clasificó a la final del campeonato intercolegial. ¡Felicitaciones!</p>
+                        <div class="d-flex align-items-center text-muted">
                             <i class="far fa-calendar me-2"></i>
                             <span>10 de mayo, 2025</span>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Leer más</a>
+                    <div class="card-footer bg-transparent">
+                        <a href="#" class="btn btn-outline-primary btn-sm hover-float">Leer más</a>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-4 col-md-6 mb-4 d-flex">
-                <div class="card hover-lift w-100">
-                    <div class="card-body d-flex flex-column">
-                        <div class="badge badge-info mb-3">Tecnología</div>
-                        <h3 class="text-xl font-semibold mb-3">Nuevos laboratorios</h3>
-                        <p class="text-secondary mb-4 flex-grow-1">Se inauguraron los nuevos laboratorios de informática con equipos de última generación.</p>
-                        <div class="d-flex align-items-center text-sm text-muted mt-auto">
+            <div class="col-lg-4">
+                <div class="card hover-lift animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
+                    <div class="card-body">
+                        <div class="badge bg-info mb-3 animate__animated animate__pulse animate__infinite animate__slow">Tecnología</div>
+                        <h3 class="h4 mb-3">Nuevos laboratorios</h3>
+                        <p class="text-secondary mb-4">Se inauguraron los nuevos laboratorios de informática con equipos de última generación.</p>
+                        <div class="d-flex align-items-center text-muted">
                             <i class="far fa-calendar me-2"></i>
                             <span>5 de mayo, 2025</span>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Leer más</a>
+                    <div class="card-footer bg-transparent">
+                        <a href="#" class="btn btn-outline-primary btn-sm hover-float">Leer más</a>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="text-center" style="margin-top: 3rem; padding-top: 2rem; margin-bottom: 3rem;">
-            <a href="#" class="btn btn-outline-primary">
+        <div class="text-center mt-5 animate__animated animate__fadeInUp">
+            <a href="#" class="btn btn-primary btn-lg hover-float">
                 Ver todas las noticias
                 <i class="fas fa-newspaper ms-2"></i>
             </a>
@@ -213,46 +262,52 @@
 </section>
 
 <!-- Contacto Section -->
-<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
+<section class="section py-5">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <h2 class="text-3xl font-bold mb-4">¿Necesitas ayuda?</h2>
-                <p class="mb-5 pb-2">Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
-                <div class="d-flex flex-wrap gap-3" style="margin-top: 2rem;">
-                    <a href="{{ url_for('public.contact') if url_for else '#' }}" class="btn btn-primary"> 
-                        <i class="fas fa-envelope me-2"></i>
-                        Contacto
-                    </a>
-                    <a href="#" class="btn btn-outline-primary">
-                        <i class="fas fa-question-circle me-2"></i>
-                        Preguntas frecuentes
-                    </a>
+            <div class="col-lg-6">
+                <div class="pe-lg-5 animate__animated animate__fadeInLeft">
+                    <h2 class="h1 mb-4">¿Necesitas ayuda?</h2>
+                    <p class="lead mb-5">Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ url_for('public.contact') if url_for else '#' }}" class="btn btn-primary btn-lg hover-float"> 
+                            <i class="fas fa-envelope me-2"></i>
+                            Contacto
+                        </a>
+                        <a href="#" class="btn btn-outline-primary btn-lg hover-float">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Preguntas frecuentes
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card shadow-sm">
+                <div class="card shadow-lg animate__animated animate__fadeInRight">
                     <div class="card-body p-5">
-                        <h3 class="text-xl font-semibold mb-5">Horario de atención</h3>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span>Lunes a Viernes</span>
-                            <span>8:00 AM - 4:00 PM</span>
+                        <h3 class="h4 mb-4">Horario de atención</h3>
+                        <div class="d-flex justify-content-between mb-3 hover-translate">
+                            <span class="fw-medium">Lunes a Viernes</span>
+                            <span class="text-primary">8:00 AM - 4:00 PM</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span>Sábados</span>
-                            <span>9:00 AM - 12:00 PM</span>
+                        <div class="d-flex justify-content-between mb-3 hover-translate">
+                            <span class="fw-medium">Sábados</span>
+                            <span class="text-primary">9:00 AM - 12:00 PM</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span>Domingos y Feriados</span>
-                            <span>Cerrado</span>
+                        <div class="d-flex justify-content-between mb-4 hover-translate">
+                            <span class="fw-medium">Domingos y Feriados</span>
+                            <span class="text-muted">Cerrado</span>
                         </div>
-                        <hr class="my-5 py-1">
-                        <div class="d-flex align-items-center mb-4">
-                            <i class="fas fa-phone-alt me-3"></i>
+                        <hr class="my-4">
+                        <div class="d-flex align-items-center mb-3 hover-translate">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-phone-alt text-primary"></i>
+                            </div>
                             <span>(123) 456-7890</span>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-envelope me-3"></i>
+                        <div class="d-flex align-items-center hover-translate">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-envelope text-primary"></i>
+                            </div>
                             <span>info@netschool.edu</span>
                         </div>
                     </div>
@@ -261,4 +316,589 @@
         </div>
     </div>
 </section>
+
+<!-- Características del Sistema -->
+<section id="features" class="section section-features">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Características del Sistema</h2>
+            <p class="section-subtitle">Descubre todas las herramientas y funcionalidades que NetSchool tiene para ti</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Gestión Académica -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Gestión Académica</h3>
+                    <ul class="feature-list">
+                        <li>Registro y seguimiento de calificaciones</li>
+                        <li>Control de asistencia digital</li>
+                        <li>Calendario académico interactivo</li>
+                        <li>Reportes de rendimiento</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Comunicación -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Comunicación Efectiva</h3>
+                    <ul class="feature-list">
+                        <li>Mensajería interna entre usuarios</li>
+                        <li>Notificaciones en tiempo real</li>
+                        <li>Anuncios importantes</li>
+                        <li>Foros de discusión</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Recursos Educativos -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Recursos Educativos</h3>
+                    <ul class="feature-list">
+                        <li>Biblioteca digital</li>
+                        <li>Material de estudio descargable</li>
+                        <li>Videos educativos</li>
+                        <li>Recursos interactivos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Evaluaciones -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>Sistema de Evaluaciones</h3>
+                    <ul class="feature-list">
+                        <li>Exámenes en línea</li>
+                        <li>Tareas y asignaciones</li>
+                        <li>Retroalimentación inmediata</li>
+                        <li>Calificación automática</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Portal para Padres -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Portal para Padres</h3>
+                    <ul class="feature-list">
+                        <li>Seguimiento del progreso</li>
+                        <li>Comunicación con docentes</li>
+                        <li>Acceso a calificaciones</li>
+                        <li>Reportes de asistencia</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Herramientas Administrativas -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Herramientas Administrativas</h3>
+                    <ul class="feature-list">
+                        <li>Gestión de usuarios</li>
+                        <li>Reportes estadísticos</li>
+                        <li>Control de pagos</li>
+                        <li>Administración de recursos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+
+<style>
+/* Estilos principales */
+.main-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 0;
+    color: white;
+    margin-top: 0;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    transform: scale(1.1);
+    transition: transform 8s ease;
+}
+
+.hero-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(15, 23, 42, 0.9) 0%,
+        rgba(15, 23, 42, 0.8) 50%,
+        rgba(15, 23, 42, 0.7) 100%
+    );
+    z-index: 2;
+}
+
+/* Formas decorativas */
+.hero-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: morphing 15s ease-in-out infinite;
+}
+
+.shape-1 {
+    top: -15%;
+    left: -15%;
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(45deg, rgba(var(--primary-rgb), 0.2), rgba(var(--accent-rgb), 0.1));
+    animation-delay: -2s;
+}
+
+.shape-2 {
+    bottom: -15%;
+    right: -15%;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(-45deg, rgba(var(--primary-rgb), 0.1), rgba(var(--accent-rgb), 0.2));
+    animation-delay: -4s;
+}
+
+.shape-3 {
+    top: 40%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(45deg, rgba(var(--accent-rgb), 0.1), rgba(var(--primary-rgb), 0.2));
+    animation-delay: -6s;
+}
+
+.shape-4 {
+    top: 20%;
+    right: -10%;
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(-45deg, rgba(var(--accent-rgb), 0.2), rgba(var(--primary-rgb), 0.1));
+    animation-delay: -8s;
+}
+
+/* Contenido del Hero */
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+.hero-title {
+    font-size: 4rem;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.9;
+}
+
+/* Cursor de typing */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    animation: blink 1s infinite;
+    margin-left: 5px;
+}
+
+/* Botones con efecto glow */
+.btn-glow {
+    position: relative;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    opacity: 0.5;
+    filter: blur(15px);
+    transform: translateY(5px) scale(0.9);
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.btn-glow:hover {
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-glow:hover::before {
+    transform: translateY(3px) scale(1);
+    opacity: 0.7;
+}
+
+.btn-outline-glow {
+    position: relative;
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    padding: 1rem 2rem;
+    font-weight: 600;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.btn-outline-glow:hover {
+    color: var(--primary);
+    border-color: white;
+}
+
+.btn-outline-glow:hover::before {
+    opacity: 1;
+}
+
+/* Indicador de scroll con fade out */
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.scroll-indicator.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mouse {
+    width: 26px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.wheel {
+    width: 4px;
+    height: 8px;
+    background: white;
+    border-radius: 2px;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scroll 2s infinite;
+}
+
+.scroll-indicator p {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* Animaciones */
+@keyframes morphing {
+    0% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+    25% {
+        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+    }
+    50% {
+        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+    }
+    75% {
+        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+    }
+    100% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(15px);
+        opacity: 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .shape {
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .shape {
+        transform: scale(0.5);
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-glow,
+    .btn-outline-glow {
+        width: 100%;
+    }
+}
+
+/* Estilos para la sección de características */
+.section-features {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--surface), var(--surface-alt));
+}
+
+.feature-card {
+    background: var(--glass);
+    border-radius: 1rem;
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+    color: var(--text-light);
+}
+
+.feature-card h3 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-list li {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.feature-list li::before {
+    content: '✓';
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+/* Animación de entrada para las cards */
+.feature-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+.feature-card:nth-child(4) { animation-delay: 0.4s; }
+.feature-card:nth-child(5) { animation-delay: 0.5s; }
+.feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .feature-card {
+        margin-bottom: 1rem;
+    }
+    
+    .section-features {
+        padding: 3rem 0;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer imagen de fondo
+    const heroOverlay = document.querySelector('.hero-overlay');
+    if (heroOverlay) {
+        const bgUrl = heroOverlay.getAttribute('data-bg-url');
+        if (bgUrl) {
+            heroOverlay.style.backgroundImage = `url('${bgUrl}')`;
+        }
+    }
+
+    // Efecto parallax suave
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+            heroSection.style.transform = `translateY(${scrolled * 0.4}px)`;
+        }
+    });
+
+    // Efecto de typing para el subtítulo
+    const subtitle = document.querySelector('.hero-subtitle');
+    if (subtitle) {
+        const text = subtitle.textContent.trim();
+        subtitle.textContent = '';
+        let i = 0;
+        
+        function typeWriter() {
+            if (i < text.length) {
+                subtitle.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+        
+        typeWriter();
+    }
+
+    // Desvanecer el indicador de scroll después de 5 segundos
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (scrollIndicator) {
+        setTimeout(() => {
+            scrollIndicator.classList.add('fade-out');
+        }, 5000);
+
+        // También ocultar cuando el usuario empiece a hacer scroll
+        window.addEventListener('scroll', function() {
+            if (!scrollIndicator.classList.contains('fade-out')) {
+                scrollIndicator.classList.add('fade-out');
+            }
+        }, { once: true });
+    }
+});
+</script>
 {% endblock %}

@@ -110,65 +110,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Manejo del menú móvil
     const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarNavContainer = document.querySelector('.navbar-nav-container');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
     
-    if (navbarToggler && navbarNavContainer) {
-        // Crear overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'navbar-overlay';
-        document.body.appendChild(overlay);
-        
-        function toggleMobileMenu(show) {
-            if (show) {
-                navbarNavContainer.classList.add('show');
-                overlay.classList.add('show');
-                document.body.classList.add('menu-open');
-                navbarToggler.innerHTML = '<i class="fas fa-times"></i>';
-            } else {
-                navbarNavContainer.classList.remove('show');
-                overlay.classList.remove('show');
-                document.body.classList.remove('menu-open');
-                navbarToggler.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        }
-        
-        // Toggle button click
+    if (navbarToggler && navbarCollapse) {
         navbarToggler.addEventListener('click', function() {
             const isExpanded = this.getAttribute('aria-expanded') === 'true';
             this.setAttribute('aria-expanded', !isExpanded);
-            toggleMobileMenu(!isExpanded);
-        });
-        
-        // Overlay click
-        overlay.addEventListener('click', function() {
-            toggleMobileMenu(false);
-            navbarToggler.setAttribute('aria-expanded', 'false');
-        });
-        
-        // Close menu when clicking links
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth < 992) {
-                    toggleMobileMenu(false);
-                    navbarToggler.setAttribute('aria-expanded', 'false');
-                }
-            });
-        });
-        
-        // Close menu on window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 992) {
-                toggleMobileMenu(false);
-                navbarToggler.setAttribute('aria-expanded', 'false');
+            
+            if (!isExpanded) {
+                navbarCollapse.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            } else {
+                navbarCollapse.classList.remove('show');
+                document.body.style.overflow = '';
             }
         });
-        
-        // Handle escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && navbarNavContainer.classList.contains('show')) {
-                toggleMobileMenu(false);
+
+        // Cerrar menú al hacer clic en enlaces
+        const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navbarCollapse.classList.remove('show');
                 navbarToggler.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Cerrar menú al presionar Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navbarCollapse.classList.contains('show')) {
+                navbarCollapse.classList.remove('show');
+                navbarToggler.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
             }
         });
     }
@@ -503,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ========================================
-    // DASHBOARD SPECIFIC LOGIC (MOVED FROM dashboard.html)
+    // DASHBOARD SPECIFIC LOGIC
     // ========================================
     // Solo ejecutar si estamos en una página con elementos del dashboard
     const adminDashboardSpecificElementsPresent = document.getElementById('editEventModal') || 
@@ -605,16 +578,33 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('CONSOLE LOG (from main.js): #editEventModal not found. shown.bs.modal listener not attached.');
         }
 
-        // Aquí puedes añadir también la lógica para addEventForm si quieres moverla de admin.js o dashboard.html
-        // Por ejemplo:
-        // const addEventForm = document.getElementById('addEventForm');
-        // if (addEventForm) { ... lógica para addEventForm ... }
 
     } else {
         console.log('CONSOLE LOG (from main.js): Dashboard-specific elements not detected. Skipping dashboard event listeners initialization.');
     }
     
     console.log('NetSchool - Todas las funcionalidades cargadas correctamente (main.js DOMContentLoaded end)');
+
+    // Simple dropdown animation
+    const userMenuToggle = document.querySelector('.user-menu-toggle');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+
+    if (userMenuToggle && dropdownMenu) {
+        userMenuToggle.addEventListener('click', function() {
+            dropdownMenu.style.animation = 'dropdownSlide 0.3s ease';
+        });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.classList.remove('show');
+            }
+        }
+    });
 });
 
 // ========================================
@@ -733,4 +723,5 @@ function setupEditModal(eventId, button) {
         description: descriptionField ? descriptionField.value : 'DESCRIPTION FIELD NOT FOUND'
     });
 }
+
 
