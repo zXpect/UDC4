@@ -57,9 +57,20 @@ class Event:
     @staticmethod  
     def delete(event_id):  
         try:  
+            # Primero verificamos que el ID sea válido
+            if not ObjectId.is_valid(event_id):
+                return False
+                
+            # Verificamos que el evento exista antes de intentar eliminarlo
+            event = Event.collection.find_one({'_id': ObjectId(event_id)})
+            if not event:
+                return False
+                
+            # Intentamos eliminar el evento
             result = Event.collection.delete_one({'_id': ObjectId(event_id)})  
             return result.deleted_count > 0  
-        except:  
+        except Exception as e:
+            print(f"Error deleting event {event_id}: {str(e)}")  
             return False
 
 class User:  

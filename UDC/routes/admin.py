@@ -7,6 +7,7 @@ from flask import current_app
 import datetime  
 from routes.auth import admin_required
 from flask import send_file
+import bcrypt
 
   
 admin = Blueprint('admin', __name__)  
@@ -30,6 +31,11 @@ def dashboard():
         'users_count': users_count,  
         'files_count': 5  # Placeholder por ahora  
     }  
+      
+    # Convertir los ObjectId a string para que sean serializables
+    for event in events:
+        if '_id' in event:
+            event['_id'] = str(event['_id'])
       
     return render_template('admin/dashboard.html', events=events, stats=stats)
   
@@ -68,7 +74,7 @@ def edit_event(event_id):
       
     if not event:  
         flash('Evento no encontrado', 'error')  
-        return redirect(url_for('admin.events'))  
+        return redirect(url_for('admin.dashboard')) # Redirect to dashboard if not found
       
     if request.method == 'POST':  
         title = request.form.get('title')  
@@ -80,12 +86,18 @@ def edit_event(event_id):
         if title and date and time and location and description:  
             if Event.update(event_id, title, date, time, location, description):  
                 flash('Evento actualizado exitosamente', 'success')  
-                return redirect(url_for('admin.events'))  
+                return redirect(url_for('admin.dashboard')) # Redirect to dashboard on success
             else:  
                 flash('Error al actualizar el evento', 'error')  
+                # If update fails, we could re-render the modal with an error, 
+                # but for simplicity with current setup, redirect to dashboard to show flash.
+                return redirect(url_for('admin.dashboard'))
         else:  
-            flash('Todos los campos son obligatorios', 'error')  
+            flash('Todos los campos son obligatorios para editar el evento.', 'error')
+            # Ideally, re-render modal with error, for now redirect to dashboard.
+            return redirect(url_for('admin.dashboard'))
       
+    # For GET request, or if POST had issues and we want to show the separate form page:
     return render_template('admin/event_form.html', event=event)  
 @admin.route('/events/add-ajax', methods=['POST'])  
 @admin_required  
@@ -101,6 +113,7 @@ def add_event_ajax():
         if title and date and time and location and description:  
             event_id = Event.create(title, date, time, location, description)  
             if event_id:  
+                flash('Evento creado exitosamente desde el modal.', 'success')  
                 return jsonify({  
                     'success': True,  
                     'message': 'Evento creado exitosamente',  
@@ -114,20 +127,124 @@ def add_event_ajax():
                     }  
                 })  
             else:  
+                flash('Error al crear el evento desde el modal.', 'error')  
                 return jsonify({'success': False, 'message': 'Error al crear el evento'})  
         else:  
+            flash('Todos los campos son obligatorios para el evento desde el modal.', 'error')  
             return jsonify({'success': False, 'message': 'Todos los campos son obligatorios'})  
     except Exception as e:  
+        flash(f'Error inesperado al crear evento desde modal: {str(e)}', 'error')  
         return jsonify({'success': False, 'message': f'Error: {str(e)}'})
+
+@admin.route('/events/add-from-dashboard', methods=['POST'])
+@admin_required
+def add_event_from_dashboard_modal():
+    try:
+        title = request.form.get('eventTitle')
+        date = request.form.get('eventDate')
+        time = request.form.get('eventTime')
+        location = request.form.get('eventLocation')
+        description = request.form.get('eventDescription')
+
+        if title and date and time and location and description:
+            event_id = Event.create(title, date, time, location, description)
+            if event_id:
+                flash('Evento creado exitosamente desde el modal del dashboard.', 'success')
+            else:
+                flash('Error al crear el evento desde el modal del dashboard.', 'error')
+        else:
+            flash('Todos los campos son obligatorios para el evento.', 'error')
+    except Exception as e:
+        flash(f'Error inesperado al crear evento: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.dashboard'))
+
+@admin.route('/events/edit-modal/<event_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_event_modal(event_id):
+    # Validar que el ID sea válido
+    if not ObjectId.is_valid(event_id):
+        flash('ID de evento inválido.', 'error')
+        return redirect(url_for('admin.dashboard'))
+    
+    # Buscar el evento
+    event = Event.find_by_id(event_id)
+    if not event:
+        flash('Evento no encontrado.', 'error')
+        return redirect(url_for('admin.dashboard'))
+    
+    if request.method == 'POST':
+        try:
+            title = request.form.get('title')
+            date = request.form.get('date')
+            time = request.form.get('time')
+            location = request.form.get('location')
+            description = request.form.get('description')
+
+            # Validar que todos los campos estén presentes
+            if not all([title, date, time, location, description]):
+                flash('Todos los campos son obligatorios.', 'error')
+                return redirect(url_for('admin.dashboard'))
+
+            # Actualizar el evento
+            if Event.update(event_id, title, date, time, location, description):
+                flash('Evento actualizado exitosamente desde el modal.', 'success')
+            else:
+                flash('Error al actualizar el evento.', 'error')
+
+        except Exception as e:
+            current_app.logger.error(f"Error updating event from modal: {str(e)}")
+            flash(f'Error al actualizar el evento: {str(e)}', 'error')
+
+        return redirect(url_for('admin.dashboard'))
+    
+    # Si es GET, renderizar el dashboard con el evento seleccionado para edición
+    # (esto sería útil si quisieras mostrar el modal abierto con los datos)
+    events = Event.find_all()  
+    users_count = User.count_users()  
+    events_count = len(events)  
+      
+    stats = {  
+        'events_count': events_count,  
+        'users_count': users_count,  
+        'files_count': 5  
+    }
+    
+    return render_template('admin/dashboard.html', 
+                         events=events, 
+                         stats=stats, 
+                         edit_event=event)  # Pasar el evento a editar
 @admin.route('/events/delete/<event_id>')  
 @admin_required  
 def delete_event(event_id):  
-    if Event.delete(event_id):  
-        flash('Evento eliminado exitosamente', 'success')  
-    else:  
-        flash('Error al eliminar el evento', 'error')  
+    current_app.logger.info(f"--- Admin: Attempting to delete event with ID: {event_id} ---") # DIAGNOSTIC LOGGING
+    
+    # Validar que el ID sea válido
+    if not ObjectId.is_valid(event_id):
+        current_app.logger.error(f"Invalid event ID format: {event_id}")
+        flash('ID de evento inválido.', 'error')
+        return redirect(url_for('admin.dashboard'))
+        
+    try:
+        # Intentar encontrar el evento primero
+        event = Event.find_by_id(event_id)
+        if not event:
+            current_app.logger.error(f"Event not found with ID: {event_id}")
+            flash('Evento no encontrado en la base de datos.', 'error')
+            return redirect(url_for('admin.dashboard'))
+            
+        # Intentar eliminar el evento
+        if Event.delete(event_id):  
+            current_app.logger.info(f"Successfully deleted event with ID: {event_id}")
+            flash('Evento eliminado exitosamente', 'success')  
+        else:  
+            current_app.logger.error(f"Failed to delete event with ID: {event_id}")
+            flash('Error al eliminar el evento.', 'error') 
+    except Exception as e:
+        current_app.logger.error(f"Exception during event deletion {event_id}: {str(e)}")
+        flash(f'Error al procesar la eliminación: {str(e)}', 'error')
       
-    return redirect(url_for('admin.events'))
+    return redirect(url_for('admin.dashboard'))
 
 @admin.route('/files')  
 @admin_required  
@@ -705,3 +822,65 @@ def link_parent_child():
     students = list(User.collection.find({'role': 'student', 'active': True}))  
   
     return render_template('admin/link_parent_child.html', parents=parents, students=students)  
+
+@admin.route('/events/edit-from-dashboard', methods=['POST'])
+@admin_required
+def edit_event_from_dashboard():
+    try:
+        # Debug: imprimir todos los datos del formulario
+        current_app.logger.info(f"Form data received: {dict(request.form)}")
+        
+        event_id = request.form.get('eventId')
+        title = request.form.get('title')
+        date = request.form.get('date')
+        time = request.form.get('time')
+        location = request.form.get('location')
+        description = request.form.get('description')
+
+        # Debug: imprimir cada campo individualmente
+        current_app.logger.info(f"Event ID: '{event_id}'")
+        current_app.logger.info(f"Title: '{title}'")
+        current_app.logger.info(f"Date: '{date}'")
+        current_app.logger.info(f"Time: '{time}'")
+        current_app.logger.info(f"Location: '{location}'")
+        current_app.logger.info(f"Description: '{description}'")
+
+        # Verificar si algún campo está vacío o es None
+        missing_fields = []
+        if not event_id:
+            missing_fields.append('eventId')
+        if not title:
+            missing_fields.append('title')
+        if not date:
+            missing_fields.append('date')
+        if not time:
+            missing_fields.append('time')
+        if not location:
+            missing_fields.append('location')
+        if not description:
+            missing_fields.append('description')
+
+        if missing_fields:
+            current_app.logger.error(f"Missing fields: {missing_fields}")
+            flash(f'Los siguientes campos son obligatorios: {", ".join(missing_fields)}', 'error')
+            return redirect(url_for('admin.dashboard'))
+
+        # Verificar que el event_id sea un ObjectId válido
+        if not ObjectId.is_valid(event_id):
+            current_app.logger.error(f"Invalid ObjectId: {event_id}")
+            flash('ID de evento inválido.', 'error')
+            return redirect(url_for('admin.dashboard'))
+
+        # Intentar actualizar el evento
+        if Event.update(event_id, title, date, time, location, description):
+            current_app.logger.info(f"Event {event_id} updated successfully")
+            flash('Evento actualizado exitosamente desde el modal del dashboard.', 'success')
+        else:
+            current_app.logger.error(f"Failed to update event {event_id}")
+            flash('Error al actualizar el evento desde el modal del dashboard.', 'error')
+
+    except Exception as e:
+        current_app.logger.error(f"Exception in edit_event_from_dashboard: {str(e)}")
+        flash(f'Error al actualizar el evento: {str(e)}', 'error')
+
+    return redirect(url_for('admin.dashboard'))

@@ -75,8 +75,7 @@
             <div class="card-header">
                 <h5 class="card-title">Eventos Recientes</h5>
                 <div class="card-actions">
-                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#addEventModal">
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
                         <i class="fas fa-plus me-1"></i>Nuevo Evento
                     </button>
                 </div>
@@ -89,30 +88,15 @@
                                 <th>Título</th>
                                 <th>Fecha</th>
                                 <th>Ubicación</th>
-                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for event in events|default([
-                            {'title': 'Reunión de Padres', 'date': '2025-05-15', 'location': 'Auditorio
-                            Principal', 'status': 'Programado'},
-                            {'title': 'Día del Maestro', 'date': '2025-05-20', 'location': 'Patio Central',
-                            'status': 'Confirmado'},
-                            {'title': 'Feria de Ciencias', 'date': '2025-06-10', 'location': 'Laboratorios',
-                            'status': 'Pendiente'},
-                            {'title': 'Graduación', 'date': '2025-07-05', 'location': 'Auditorio Principal',
-                            'status': 'Programado'}
-                            ]) %}
+                            {% for event in events %}
                             <tr>
                                 <td>
                                     <div class="event-item">
-                                        <div class="event-icon 
-                                            {% if event.status == 'Confirmado' %}bg-success
-                                            {% elif event.status == 'Programado' %}bg-primary
-                                            {% elif event.status == 'Pendiente' %}bg-warning
-                                            {% else %}bg-secondary{% endif %}
-                                        ">
+                                        <div class="event-icon bg-primary">
                                             <i class="fas fa-calendar-day"></i>
                                         </div>
                                         <span>{{ event.title }}</span>
@@ -121,27 +105,31 @@
                                 <td>{{ event.date }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>
-                                    <span class="status-badge 
-                                        {% if event.status == 'Confirmado' %}success
-                                        {% elif event.status == 'Programado' %}primary
-                                        {% elif event.status == 'Pendiente' %}warning
-                                        {% else %}secondary{% endif %}
-                                    ">
-                                        {{ event.status }}
-                                    </span>
-                                </td>
-                                <td>
                                     <div class="table-actions">
-                                        <button class="action-btn edit" data-bs-toggle="tooltip"
-                                            title="Editar">
+                                        <button type="button" class="btn btn-sm btn-outline-primary edit-event-btn"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editEventModal"
+                                            onclick="setupEditModal('{{ event._id }}', this)"
+                                            data-event-title="{{ event.title }}"
+                                            data-event-date="{{ event.date }}"
+                                            data-event-time="{{ event.time|default('') }}"
+                                            data-event-location="{{ event.location }}"
+                                            data-event-description="{{ event.description|default('') }}">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="action-btn delete" data-bs-toggle="tooltip"
-                                            title="Eliminar">
+                                        <a href="{{ url_for('admin.delete_event', event_id=event._id) }}"
+                                            class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip"
+                                            title="Eliminar"
+                                            onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');">
                                             <i class="fas fa-trash"></i>
-                                        </button>
-                                        <button class="action-btn view" data-bs-toggle="tooltip"
-                                            title="Ver detalles">
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-info view-event-btn"
+                                            data-bs-toggle="tooltip" title="Ver Detalles"
+                                            data-event-title="{{ event.title }}"
+                                            data-event-date="{{ event.date }}"
+                                            data-event-time="{{ event.time|default('') }}"
+                                            data-event-location="{{ event.location }}"
+                                            data-event-description="{{ event.description|default('') }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -153,7 +141,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="#" class="btn-link">Ver todos los eventos</a>
+                <a href="{{ url_for('admin.events') }}" class="btn-link">Ver todos los eventos</a>
             </div>
         </div>
     </div>
@@ -283,7 +271,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addEventForm" method="POST" action="{{ url_for('admin.add_event_ajax') }}">
+                <form id="addEventForm" method="POST" action="{{ url_for('admin.add_event_from_dashboard_modal') }}">
                     <div class="mb-3">
                         <label for="eventTitle" class="form-label">Título del Evento</label>
                         <input type="text" class="form-control" id="eventTitle" name="eventTitle"
@@ -319,4 +307,208 @@
     </div>
 </div>
 
+<!-- Edit Event Modal -->
+<div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEventForm" method="POST" action="{{ url_for('admin.edit_event_from_dashboard') }}">
+        
+                    <input type="hidden" id="editEventId" name="eventId" value="">
+                    
+                    <div class="mb-3">
+                        <label for="editEventTitle" class="form-label">Título del Evento</label>
+                        <input type="text" class="form-control" id="editEventTitle" name="title"
+                            placeholder="Ingrese el título del evento" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editEventDate" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="editEventDate" name="date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEventTime" class="form-label">Hora</label>
+                            <input type="time" class="form-control" id="editEventTime" name="time" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEventLocation" class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="editEventLocation" name="location"
+                            placeholder="Ingrese la ubicación" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEventDescription" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="editEventDescription" name="description" rows="3"
+                            placeholder="Ingrese la descripción del evento" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="editEventForm" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- View Event Details Modal -->
+<div class="modal fade" id="viewEventModal" tabindex="-1" aria-labelledby="viewEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewEventModalLabel">Detalles del Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="viewEventForm">
+                    <div class="mb-3">
+                        <label class="form-label">Título del Evento</label>
+                        <p id="viewEventTitle" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha</label>
+                            <p id="viewEventDate" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Hora</label>
+                            <p id="viewEventTime" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ubicación</label>
+                        <p id="viewEventLocation" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <p id="viewEventDescription" class="form-control-plaintext" style="white-space: pre-wrap;"></p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setupEditModal(eventId, button) {
+    console.log('Setting up edit modal with ID:', eventId);
+    
+    // Establecer el ID del evento - ASEGURAR QUE SE ASIGNE CORRECTAMENTE
+    const idField = document.getElementById('editEventId');
+    if (idField) {
+        idField.value = eventId;
+        console.log('Event ID set to:', idField.value);
+    } else {
+        console.error('Could not find editEventId field!');
+    }
+    
+    // Obtener otros datos del botón
+    const title = button.getAttribute('data-event-title') || '';
+    const date = button.getAttribute('data-event-date') || '';
+    const time = button.getAttribute('data-event-time') || '';
+    const location = button.getAttribute('data-event-location') || '';
+    const description = button.getAttribute('data-event-description') || '';
+
+    // Llenar los campos del formulario
+    const titleField = document.getElementById('editEventTitle');
+    const dateField = document.getElementById('editEventDate');
+    const timeField = document.getElementById('editEventTime');
+    const locationField = document.getElementById('editEventLocation');
+    const descriptionField = document.getElementById('editEventDescription');
+
+    if (titleField) titleField.value = title;
+    if (dateField) dateField.value = date;
+    if (timeField) timeField.value = time;
+    if (locationField) locationField.value = location;
+    if (descriptionField) descriptionField.value = description;
+
+    // Debug: verificar que los campos se llenaron correctamente
+    console.log('Form fields after filling:', {
+        id: idField ? idField.value : 'NOT FOUND',
+        title: titleField ? titleField.value : 'NOT FOUND',
+        date: dateField ? dateField.value : 'NOT FOUND',
+        time: timeField ? timeField.value : 'NOT FOUND',
+        location: locationField ? locationField.value : 'NOT FOUND',
+        description: descriptionField ? descriptionField.value : 'NOT FOUND'
+    });
+}
+
+// Agregar evento de submit al formulario para debug
+document.addEventListener('DOMContentLoaded', function () {
+    const editForm = document.getElementById('editEventForm');
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            const formData = new FormData(this);
+            console.log('Form being submitted with data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            
+            // Verificar que eventId está presente
+            const eventId = formData.get('eventId');
+            if (!eventId) {
+                console.error('ERROR: eventId is missing from form data!');
+                alert('Error: ID del evento no encontrado');
+                e.preventDefault();
+                return false;
+            }
+            
+            console.log('Form validation passed, eventId:', eventId);
+        });
+    }
+
+    // Tooltip initialization
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // View Event Details Logic
+    document.querySelectorAll('.view-event-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const title = this.getAttribute('data-event-title');
+            const date = this.getAttribute('data-event-date');
+            const time = this.getAttribute('data-event-time');
+            const location = this.getAttribute('data-event-location');
+            const description = this.getAttribute('data-event-description');
+            
+            document.getElementById('viewEventTitle').textContent = title;
+            document.getElementById('viewEventDate').textContent = date;
+            document.getElementById('viewEventTime').textContent = time;
+            document.getElementById('viewEventLocation').textContent = location;
+            document.getElementById('viewEventDescription').textContent = description;
+            
+            new bootstrap.Modal(document.getElementById('viewEventModal')).show();
+        });
+    });
+
+    // Debug: Verificar cuando se abre el modal de edición
+    const editEventModal = document.getElementById('editEventModal');
+    if (editEventModal) {
+        editEventModal.addEventListener('shown.bs.modal', function () {
+            const eventId = document.getElementById('editEventId').value;
+            console.log('Modal shown, current event ID:', eventId);
+            
+            // Verificar que todos los campos están presentes
+            const form = document.getElementById('editEventForm');
+            if (form) {
+                const formData = new FormData(form);
+                console.log('Current form data in modal:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
