@@ -110,40 +110,46 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Manejo del menú móvil
     const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
+    const navbarCollapse = document.getElementById('navbarNav');
     
     if (navbarToggler && navbarCollapse) {
-        navbarToggler.addEventListener('click', function() {
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
-            
-            if (!isExpanded) {
-                navbarCollapse.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            } else {
-                navbarCollapse.classList.remove('show');
-                document.body.style.overflow = '';
-            }
+        // Event listener for when the collapse element is shown
+        navbarCollapse.addEventListener('show.bs.collapse', function () {
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            // Optional: Change toggler icon to 'X' if you have a specific class or structure for it
+            // Example: navbarToggler.querySelector('.toggler-icon').classList.add('is-active');
         });
 
-        // Cerrar menú al hacer clic en enlaces
+        // Event listener for when the collapse element is hidden
+        navbarCollapse.addEventListener('hide.bs.collapse', function () {
+            document.body.style.overflow = ''; // Restore scrolling
+            // Optional: Change toggler icon back to burger
+            // Example: navbarToggler.querySelector('.toggler-icon').classList.remove('is-active');
+        });
+
+        // Cerrar menú al hacer clic en enlaces dentro del menú desplegable
         const navLinks = navbarCollapse.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
-                navbarCollapse.classList.remove('show');
-                navbarToggler.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
+                const collapseInstance = bootstrap.Collapse.getInstance(navbarCollapse);
+                if (collapseInstance && navbarCollapse.classList.contains('show')) {
+                    collapseInstance.hide();
+                }
             });
         });
 
         // Cerrar menú al presionar Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && navbarCollapse.classList.contains('show')) {
-                navbarCollapse.classList.remove('show');
-                navbarToggler.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
+                const collapseInstance = bootstrap.Collapse.getInstance(navbarCollapse);
+                if (collapseInstance) {
+                    collapseInstance.hide();
+                }
             }
         });
+    } else {
+        if (!navbarToggler) console.warn('Navbar toggler (.navbar-toggler) not found.');
+        if (!navbarCollapse) console.warn('Navbar collapse element (#navbarNav) not found.');
     }
 
     // Manejar estado activo de los enlaces

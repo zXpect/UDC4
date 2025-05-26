@@ -632,15 +632,26 @@ ul, ol {
 
     .navbar-collapse {
         position: fixed;
-        top: var(--navbar-height, 70px);
+        top: 70px; 
         right: -100%;
         width: 280px;
-        height: calc(100vh - var(--navbar-height, 70px));
-        background: var(--bg-color);
-        transition: right 0.3s ease;
-        padding: 1rem;
+        height: calc(100vh - 70px); 
+        background: var(--bg-card);
+        border-left: 1px solid var(--border);
+        /* Revised padding for better top alignment */
+        padding-top: 0.25rem; /* Minimal top padding */
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 1rem;
         overflow-y: auto;
+        transition: right 0.3s ease;
         box-shadow: var(--shadow-lg);
+        z-index: 1045;
+        /* Flexbox properties to align content to the top */
+        display: flex; /* Ensure it's a flex container */
+        flex-direction: column; /* Stack children vertically */
+        align-items: flex-start; /* Align children to the start of the cross axis */
+        justify-content: flex-start; /* Align children to the start of the main axis */
     }
 
     .navbar-collapse.show {
@@ -648,18 +659,24 @@ ul, ol {
     }
 
     .navbar-nav {
-        flex-direction: column;
-        align-items: flex-start;
+        /* Force reset all margins and paddings */
+        margin: 0 !important; 
+        padding: 0 !important;
+        width: 100%; /* Ensure it takes full width */
+        list-style: none; 
+        /* flex-direction: column; is often inherited or default for .navbar-nav in Bootstrap mobile */
     }
 
     .nav-item {
         width: 100%;
-        margin: 0.25rem 0;
+        margin-bottom: 0.25rem; /* Or 0 if nav-links have enough padding */
     }
 
     .nav-link {
+        padding: 0.75rem 1rem !important; 
+        display: flex;
+        align-items: center;
         width: 100%;
-        padding: 0.75rem 1rem !important;
     }
 
     .main-content {
@@ -1091,6 +1108,7 @@ ul, ol {
 .btn-primary:hover {
     background-color: var(--primary-dark);
     border-color: var(--primary-dark);
+    color: var(--text-white);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -1823,20 +1841,27 @@ footer a:hover, .footer a:hover {
     .navbar-nav {
         flex-direction: column;
         width: 100%;
-        padding: 1rem 0;
+        margin-top: 0 !important; /* Ensure no top margin */
+        padding-top: 0 !important; /* Ensure no top padding */
+        padding-bottom: 0; 
+        padding-left: 0; 
+        padding-right: 0;
+        list-style: none; 
     }
 
     .nav-item {
-        width: 100%;
-        margin: 0.5rem 0;
+        width: 100%; /* Ensure nav items take full width for clean look */
+        margin: 0.25rem 0;
     }
 
     .nav-link {
-        padding: 0.75rem 1rem;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
+        /* Ensure nav-links within the collapsed menu have appropriate padding */
+        /* The parent .navbar-collapse already has padding: 1rem */
+        /* So, specific padding here is for the link itself within the item */
+        padding: 0.75rem 1rem !important; /* Adjust as needed, !important if overridden */
+        display: flex; /* Align icon and text */
+        align-items: center; /* Align icon and text */
+        width: 100%; /* Make the link clickable across the full width */
     }
 
     .navbar-toggler {
@@ -1859,20 +1884,21 @@ footer a:hover, .footer a:hover {
 
     .navbar-collapse {
         position: fixed;
-        top: 80px; /* Altura del navbar */
-        right: -100%; /* Inicialmente fuera de la pantalla */
-        width: 280px; /* Ancho fijo del sidebar */
-        height: calc(100vh - 80px);
-        background: var(--bg-color);
+        top: 70px; /* Match actual navbar height for mobile */
+        right: -100%;
+        width: 280px;
+        height: calc(100vh - 70px); /* Adjust height based on new top */
+        background: var(--bg-card); /* Ensure consistent background */
         border-left: 1px solid var(--border);
         padding: 1rem;
         overflow-y: auto;
         transition: right 0.3s ease;
         box-shadow: var(--shadow-lg);
+        z-index: 1045; /* Ensure it's above content */
     }
 
     .navbar-collapse.show {
-        right: 0; /* Se muestra desde la derecha */
+        right: 0;
     }
 
     .navbar-overlay {
@@ -2820,20 +2846,28 @@ a:focus {
 /* Responsive */
 @media (max-width: 991.98px) {
 .navbar-nav-container {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 280px;
-        height: 100vh;
-        background: var(--bg-card);
-        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1050;
-        padding: 1rem;
-        overflow-y: auto;
+        /* Removed properties that made this container an off-canvas element itself:
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-card);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1050;
+            padding: 1rem;
+            overflow-y: auto;
+        */
+        /* Simplified style for mobile: it just needs to contain the items or allow .navbar-collapse to be fixed*/
+        width: 100%; 
     }
 
     .navbar-nav-container.show {
-        right: 0;
+        /* Removed property that made this container an off-canvas element itself:
+            right: 0;
+        */
+        /* Simplified style for mobile: it just needs to contain the items or allow .navbar-collapse to be fixed*/
+        width: 100%; 
     }
 
     .nav-item {
@@ -3569,5 +3603,56 @@ a:focus {
 
     .nav-link {
         padding: 0.75rem 1rem !important;
+    }
+}
+
+.feature-card {
+    background: var(--glass);
+    border-radius: 1rem;
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    margin-bottom: var(--space-6); /* Added vertical separation */
+}
+
+.feature-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--accent);
+}
+
+/* Estilos para la sección de características */
+.section-features {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--surface), var(--surface-alt));
+}
+
+.feature-card {
+    background: var(--glass);
+    border-radius: 1rem;
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    margin-bottom: var(--space-6); /* Added vertical separation */
+}
+
+.feature-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--accent);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .feature-card {
+        margin-bottom: 1rem;
+    }
+    
+    .section-features {
+        padding: 3rem 0;
     }
 }
