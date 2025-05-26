@@ -8,6 +8,8 @@ import datetime
 from routes.auth import admin_required
 from flask import send_file
 import bcrypt
+import re  
+from datetime import datetime, date 
 
   
 admin = Blueprint('admin', __name__)  
@@ -39,26 +41,73 @@ def dashboard():
 def events():  
     events = Event.find_all()  
     return render_template('admin/events.html', events=events)  
-  
+
+def validate_event_data(title, date_str, time_str, location, description):  
+    #Validar datos del evento
+    errors = []  
+      
+    # Validar título  
+    if not title or len(title.strip()) < 3:  
+        errors.append("El título debe tener al menos 3 caracteres")  
+    elif len(title) > 100:  
+        errors.append("El título no puede exceder 100 caracteres")  
+      
+    # Validar fecha  
+    try:  
+        event_date = datetime.strptime(date_str, '%Y-%m-%d').date()  
+        if event_date < date.today():  
+            errors.append("La fecha del evento no puede ser anterior a hoy")  
+    except ValueError:  
+        errors.append("Formato de fecha inválido")  
+      
+    # Validar hora  
+    try:  
+        datetime.strptime(time_str, '%H:%M')  
+    except ValueError:  
+        errors.append("Formato de hora inválido")  
+      
+    # Validar ubicación  
+    if not location or len(location.strip()) < 3:  
+        errors.append("La ubicación debe tener al menos 3 caracteres")  
+    elif len(location) > 100:  
+        errors.append("La ubicación no puede exceder 100 caracteres")  
+      
+    # Validar descripción  
+    if not description or len(description.strip()) < 10:  
+        errors.append("La descripción debe tener al menos 10 caracteres")  
+    elif len(description) > 500:  
+        errors.append("La descripción no puede exceder 500 caracteres")  
+      
+    return errors  
+
 @admin.route('/events/add', methods=['GET', 'POST'])  
 @admin_required  
 def add_event():  
-    if request.method == 'POST':  
-        title = request.form.get('title')  
-        date = request.form.get('date')  
-        time = request.form.get('time')  
-        location = request.form.get('location')  
-        description = request.form.get('description')  
-          
-        if title and date and time and location and description:  
+    if request.method == 'POST': 
+        try: 
+            title = request.form.get('title', '').strip()   
+            date = request.form.get('date', '').strip()    
+            time = request.form.get('time', '').strip()    
+            location = request.form.get('location', '').strip()    
+            description = request.form.get('description', '').strip()    
+            
+            errors = validate_event_data(title, date, time, location, description)
+
+            if errors:
+                for error in errors:
+                    flash(error, 'error')
+                return render_template('admin/event_form.html')
+            
             event_id = Event.create(title, date, time, location, description)  
             if event_id:  
                 flash('Evento creado exitosamente', 'success')  
                 return redirect(url_for('admin.events'))  
             else:  
                 flash('Error al crear el evento', 'error')  
-        else:  
-            flash('Todos los campos son obligatorios', 'error')  
+        except Exception as e:
+            flash(f'Error inesperado: {str(e)}', 'error')  
+    else:  
+        flash('Todos los campos son obligatorios', 'error')  
       
     return render_template('admin/event_form.html')  
   
@@ -72,61 +121,67 @@ def edit_event(event_id):
         return redirect(url_for('admin.dashboard')) # Redirect to dashboard if not found
       
     if request.method == 'POST':  
-        title = request.form.get('title')  
-        date = request.form.get('date')  
-        time = request.form.get('time')  
-        location = request.form.get('location')  
-        description = request.form.get('description')  
-          
-        if title and date and time and location and description:  
-            if Event.update(event_id, title, date, time, location, description):  
-                flash('Evento actualizado exitosamente', 'success')  
-                return redirect(url_for('admin.dashboard')) # Redirect to dashboard on success
-            else:  
-                flash('Error al actualizar el evento', 'error')  
-                # If update fails, we could re-render the modal with an error, 
-                # but for simplicity with current setup, redirect to dashboard to show flash.
+        try:
+            title = request.form.get('title', '').strip()  
+            date = request.form.get('date', '').strip()  
+            time = request.form.get('time', '').strip()  
+            location = request.form.get('location', '').strip()  
+            description = request.form.get('description', '').strip()  
+            
+            errors = validate_event_data(title, date, time, location, description)
+            if errors:
+                for error in errors:
+                    flash(error, 'error')
+                return render_template('admin/event_form.html', event=event)
+
+            if Event.update(event_id, title, date, time, location, description):
+                flash('Evento actualizado exitosamente', 'success')
                 return redirect(url_for('admin.dashboard'))
-        else:  
-            flash('Todos los campos son obligatorios para editar el evento.', 'error')
-            # Ideally, re-render modal with error, for now redirect to dashboard.
+            else:
+                flash('Error al actualizar el evento', 'error')
+                return redirect(url_for('admin.dashboard'))
+            
+        except Exception as e:
+            flash(f'Error inesperado: {str(e)}', 'error')
             return redirect(url_for('admin.dashboard'))
       
     # For GET request, or if POST had issues and we want to show the separate form page:
     return render_template('admin/event_form.html', event=event)  
+
 @admin.route('/events/add-ajax', methods=['POST'])  
 @admin_required  
 def add_event_ajax():  
     try:  
         # Usar los nombres que están llegando desde el JavaScript
-        title = request.form.get('eventTitle')  
-        date = request.form.get('eventDate')  
-        time = request.form.get('eventTime')  
-        location = request.form.get('eventLocation')  
-        description = request.form.get('eventDescription')  
+        title = request.form.get('eventTitle', '').strip()    
+        date = request.form.get('eventDate', '').strip()    
+        time = request.form.get('eventTime', '').strip()    
+        location = request.form.get('eventLocation', '').strip()    
+        description = request.form.get('eventDescription', '').strip()    
         
-        if title and date and time and location and description:  
-            event_id = Event.create(title, date, time, location, description)  
-            if event_id:  
-                flash('Evento creado exitosamente desde el modal.', 'success')  
-                return jsonify({  
-                    'success': True,  
-                    'message': 'Evento creado exitosamente',  
-                    'event': {  
-                        'id': str(event_id),  
-                        'title': title,  
-                        'date': date,  
-                        'time': time,  
-                        'location': location,  
-                        'description': description  
-                    }  
-                })  
-            else:  
-                flash('Error al crear el evento desde el modal.', 'error')  
-                return jsonify({'success': False, 'message': 'Error al crear el evento'})  
+        errors = validate_event_data(title, date, time, location, description)  
+        if errors:  
+            return jsonify({'success': False, 'message': errors[0]})  
+        
+        event_id = Event.create(title, date, time, location, description)  
+        if event_id:  
+            flash('Evento creado exitosamente desde el modal.', 'success')  
+            return jsonify({  
+                'success': True,  
+                'message': 'Evento creado exitosamente',  
+                'event': {  
+                    'id': str(event_id),  
+                    'title': title,  
+                    'date': date,  
+                    'time': time,  
+                    'location': location,  
+                    'description': description  
+                }  
+            })  
         else:  
-            flash('Todos los campos son obligatorios para el evento desde el modal.', 'error')  
-            return jsonify({'success': False, 'message': 'Todos los campos son obligatorios'})  
+            flash('Error al crear el evento desde el modal.', 'error')  
+            return jsonify({'success': False, 'message': 'Error al crear el evento'}) 
+         
     except Exception as e:  
         flash(f'Error inesperado al crear evento desde modal: {str(e)}', 'error')  
         return jsonify({'success': False, 'message': f'Error: {str(e)}'})
@@ -135,20 +190,24 @@ def add_event_ajax():
 @admin_required
 def add_event_from_dashboard_modal():
     try:
-        title = request.form.get('eventTitle')
-        date = request.form.get('eventDate')
-        time = request.form.get('eventTime')
-        location = request.form.get('eventLocation')
-        description = request.form.get('eventDescription')
+        title = request.form.get('eventTitle', '').strip()
+        date = request.form.get('eventDate', '').strip()
+        time = request.form.get('eventTime', '').strip()
+        location = request.form.get('eventLocation', '').strip()
+        description = request.form.get('eventDescription', '').strip()
 
-        if title and date and time and location and description:
-            event_id = Event.create(title, date, time, location, description)
-            if event_id:
-                flash('Evento creado exitosamente desde el modal del dashboard.', 'success')
-            else:
-                flash('Error al crear el evento desde el modal del dashboard.', 'error')
+        errors = validate_event_data(title, date, time, location, description)
+        if errors:
+            for error in errors:  
+                    flash(error, 'error')  
+            return redirect(url_for('admin.dashboard'))
+        
+        event_id = Event.create(title, date, time, location, description)
+        if event_id:
+            flash('Evento creado exitosamente desde el modal del dashboard.', 'success')
         else:
-            flash('Todos los campos son obligatorios para el evento.', 'error')
+            flash('Error al crear el evento desde el modal del dashboard.', 'error')
+        
     except Exception as e:
         flash(f'Error inesperado al crear evento: {str(e)}', 'error')
     
@@ -170,18 +229,19 @@ def edit_event_modal(event_id):
     
     if request.method == 'POST':
         try:
-            title = request.form.get('title')
-            date = request.form.get('date')
-            time = request.form.get('time')
-            location = request.form.get('location')
-            description = request.form.get('description')
+            title = request.form.get('title', '').strip()
+            date = request.form.get('date', '').strip()
+            time = request.form.get('time', '').strip()
+            location = request.form.get('location', '').strip()
+            description = request.form.get('description', '').strip()
 
             # Validar que todos los campos estén presentes
-            if not all([title, date, time, location, description]):
-                flash('Todos los campos son obligatorios.', 'error')
+            errors = validate_event_data(title, date, time, location, description)
+            if errors:
+                for error in errors:  
+                    flash(error, 'error')  
                 return redirect(url_for('admin.dashboard'))
 
-            # Actualizar el evento
             if Event.update(event_id, title, date, time, location, description):
                 flash('Evento actualizado exitosamente desde el modal.', 'success')
             else:
