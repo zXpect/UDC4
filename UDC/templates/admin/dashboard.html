@@ -87,6 +87,7 @@
                             <tr>
                                 <th>Título</th>
                                 <th>Fecha</th>
+                                <th>Hora</th>
                                 <th>Ubicación</th>
                                 <th>Acciones</th>
                             </tr>
@@ -102,7 +103,8 @@
                                         <span>{{ event.title }}</span>
                                     </div>
                                 </td>
-                                <td>{{ event.date }}</td>
+                                <td>{{ event.date.strftime('%Y-%m-%d') if event.date }}</td>
+                                <td>{{ event.time }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>
                                     <div class="table-actions">
