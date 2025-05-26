@@ -3,136 +3,126 @@
 {% block title %}Contacto - NetSchool UDC{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Header Section -->
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2 class="section-title mb-3">Contacto</h2>
-            <p class="lead text-muted mb-4">Estamos aquí para ayudarte. Contáctanos a través de cualquiera de estos medios</p>
-            <hr class="w-25 mx-auto mb-5">
-        </div>
+<div class="container my-5">
+    <!-- Header de página -->
+    <div class="section-header fade-in-up">
+        <h1 class="section-title">Contacto</h1>
+        <p class="section-subtitle">Estamos aquí para ayudarte. Contáctanos para cualquier consulta o información que necesites.</p>
     </div>
 
-    <!-- Main Content Row -->
     <div class="row g-4">
-        <!-- Contact Information Card -->
-        <div class="col-lg-6 mb-4 d-flex flex-column">
-            <div class="card h-100 shadow-sm border-0 flex-grow-1">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center mb-4">
-                        <i class="fas fa-info-circle text-primary me-3 fa-lg"></i>
-                        <h3 class="card-title mb-0">Información de Contacto</h3>
+        <!-- Información de contacto -->
+        <div class="col-lg-4">
+            <div class="modern-card h-100 fade-in-up delay-100">
+                <div class="modern-card-header">
+                    <div class="icon-container">
+                        <i class="fas fa-info-circle"></i>
                     </div>
-                    
-                    <!-- Contact Details -->
+                    <h3 class="h4 mb-0">Información de Contacto</h3>
+                </div>
+                <div class="modern-card-body">
                     <div class="contact-info">
-                        <div class="d-flex align-items-start mb-4 p-3 bg-light rounded">
-                            <i class="fas fa-map-marker-alt me-3 mt-1 text-primary fa-lg"></i>
+                        <div class="d-flex align-items-center mb-4 hover-translate">
+                            <div class="icon-container me-3">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
                             <div>
-                                <strong class="d-block mb-1">Dirección:</strong>
-                                <span class="text-muted">Calle Principal #123, Ciudad</span>
+                                <h5 class="h6 mb-1">Dirección</h5>
+                                <p class="mb-0">Calle 8 Centro, Ubaté, Cundinamarca</p>
                             </div>
                         </div>
                         
-                        <div class="d-flex align-items-start mb-4 p-3 bg-light rounded">
-                            <i class="fas fa-phone me-3 mt-1 text-primary fa-lg"></i>
+                        <div class="d-flex align-items-center mb-4 hover-translate">
+                            <div class="icon-container me-3">
+                                <i class="fas fa-phone"></i>
+                            </div>
                             <div>
-                                <strong class="d-block mb-1">Teléfono:</strong>
-                                <a href="tel:+1234567890" class="text-decoration-none text-muted">(123) 456-7890</a>
+                                <h5 class="h6 mb-1">Teléfono</h5>
+                                <p class="mb-0">+57 (1) 825 4400</p>
                             </div>
                         </div>
                         
-                        <div class="d-flex align-items-start mb-4 p-3 bg-light rounded">
-                            <i class="fas fa-envelope me-3 mt-1 text-primary fa-lg"></i>
+                        <div class="d-flex align-items-center mb-4 hover-translate">
+                            <div class="icon-container me-3">
+                                <i class="fas fa-envelope"></i>
+                            </div>
                             <div>
-                                <strong class="d-block mb-1">Email:</strong>
-                                <a href="mailto:contacto@colegioudc.edu.co" class="text-decoration-none text-muted">contacto@colegioudc.edu.co</a>
+                                <h5 class="h6 mb-1">Email</h5>
+                                <p class="mb-0">info@netschool.ucundinamarca.edu.co</p>
                             </div>
                         </div>
                         
-                        <div class="d-flex align-items-start mb-4 p-3 bg-light rounded">
-                            <i class="fas fa-clock me-3 mt-1 text-primary fa-lg"></i>
-                            <div>
-                                <strong class="d-block mb-2">Horario de Atención:</strong>
-                                <div class="text-muted">
-                                    <div class="mb-1">Lunes a Viernes: 7:00 AM - 5:00 PM</div>
-                                    <div>Sábados: 8:00 AM - 12:00 PM</div>
-                                </div>
+                        <div class="d-flex align-items-center hover-translate">
+                            <div class="icon-container me-3">
+                                <i class="fas fa-clock"></i>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Social Media Section -->
-                    <div class="mt-5 pt-4 border-top">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="fas fa-share-alt text-primary me-3 fa-lg"></i>
-                            <h4 class="mb-0">Redes Sociales</h4>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <a href="#" class="btn btn-outline-primary d-flex align-items-center">
-                                <i class="fab fa-facebook-f me-2"></i>Facebook
-                            </a>
-                            <a href="#" class="btn btn-outline-info d-flex align-items-center">
-                                <i class="fab fa-twitter me-2"></i>Twitter
-                            </a>
-                            <a href="#" class="btn btn-outline-danger d-flex align-items-center">
-                                <i class="fab fa-instagram me-2"></i>Instagram
-                            </a>
+                            <div>
+                                <h5 class="h6 mb-1">Horario de Atención</h5>
+                                <p class="mb-0">Lunes a Viernes: 8:00 AM - 4:00 PM</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Contact Form Card -->
-        <div class="col-lg-6 mb-4 d-flex flex-column">
-            <div class="card h-100 shadow-sm border-0 flex-grow-1">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center mb-4">
-                        <i class="fas fa-paper-plane text-primary me-3 fa-lg"></i>
-                        <h3 class="card-title mb-0">Envíanos un Mensaje</h3>
+
+        <!-- Formulario de contacto -->
+        <div class="col-lg-8">
+            <div class="modern-card h-100 fade-in-up delay-200">
+                <div class="modern-card-header">
+                    <div class="icon-container">
+                        <i class="fas fa-paper-plane"></i>
                     </div>
-                    
-                    <form method="POST" action="{{ url_for('public.contact') }}">
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <label for="name" class="form-label fw-semibold">
-                                    <i class="fas fa-user me-2 text-muted"></i>Nombre
-                                </label>
-                                <input type="text" class="form-control form-control-lg" id="name" name="name" 
-                                       placeholder="Tu nombre completo" required>
+                    <h3 class="h4 mb-0">Envíanos un Mensaje</h3>
+                </div>
+                <div class="modern-card-body">
+                    <form id="contactForm" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" placeholder="Nombre" required>
+                                    <label for="name">Nombre</label>
+                                    <div class="invalid-feedback">
+                                        Por favor ingresa tu nombre
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="col-12 mb-3">
-                                <label for="email" class="form-label fw-semibold">
-                                    <i class="fas fa-envelope me-2 text-muted"></i>Correo Electrónico
-                                </label>
-                                <input type="email" class="form-control form-control-lg" id="email" name="email" 
-                                       placeholder="tu@email.com" required>
-                            </div>
-                            
-                            <div class="col-12 mb-3">
-                                <label for="subject" class="form-label fw-semibold">
-                                    <i class="fas fa-tag me-2 text-muted"></i>Asunto
-                                </label>
-                                <input type="text" class="form-control form-control-lg" id="subject" name="subject" 
-                                       placeholder="¿En qué podemos ayudarte?" required>
-                            </div>
-                            
-                            <div class="col-12 mb-4">
-                                <label for="message" class="form-label fw-semibold">
-                                    <i class="fas fa-comment me-2 text-muted"></i>Mensaje
-                                </label>
-                                <textarea class="form-control" id="message" name="message" rows="6" 
-                                          placeholder="Escribe tu mensaje aquí..." required></textarea>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" placeholder="Email" required>
+                                    <label for="email">Email</label>
+                                    <div class="invalid-feedback">
+                                        Por favor ingresa un email válido
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="col-12">
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
-                                    </button>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="subject" placeholder="Asunto" required>
+                                    <label for="subject">Asunto</label>
+                                    <div class="invalid-feedback">
+                                        Por favor ingresa un asunto
+                                    </div>
                                 </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="message" placeholder="Mensaje" style="height: 150px" required></textarea>
+                                    <label for="message">Mensaje</label>
+                                    <div class="invalid-feedback">
+                                        Por favor ingresa tu mensaje
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Enviar Mensaje
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -141,211 +131,464 @@
         </div>
     </div>
 
-    <!-- Map Section -->
-    <div class="row mt-5 pt-3">
-        <div class="col-12">  
-            <div class="card shadow-sm border-0">  
-                <div class="card-body p-4">  
-                    <div class="d-flex align-items-center mb-4">
-                        <i class="fas fa-map-marked-alt text-primary me-3 fa-lg"></i>
-                        <h3 class="card-title mb-0">Nuestra Ubicación</h3>
+    <!-- Mapa Section - Con más separación -->
+    <div class="row" style="margin-top: 5rem;">
+        <div class="col-12">
+            <div class="modern-card fade-in-up delay-300">
+                <div class="modern-card-header">
+                    <div class="icon-container">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <h3 class="h4 mb-0">Nuestra Ubicación</h3>
+                </div>
+                <div class="modern-card-body p-0">
+                    <!-- Loading indicator -->
+                    <div id="mapLoader" class="map-loader">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando mapa...</span>
+                        </div>
+                        <p class="mt-2 mb-0">Cargando mapa...</p>
                     </div>
                     
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="ratio ratio-16x9">  
-                                <div id="map" style="width: 100%; height: 100%; min-height: 450px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                                    <div class="text-center">
-                                        <div class="spinner-border text-primary mb-3" role="status">
-                                            <span class="visually-hidden">Cargando mapa...</span>
-                                        </div>
-                                        <p class="text-muted mb-0">Cargando mapa...</p>
-                                        <small class="text-muted">Por favor espera un momento</small>
-                                    </div>
-                                </div>  
+                    <!-- Map container -->
+                    <div class="map-container" id="mapContainer" style="display: none;">
+                        <div id="map" style="width: 100%; height: 450px;"></div>
+                    </div>
+                    
+                    <!-- Error fallback -->
+                    <div id="mapError" class="map-error" style="display: none;">
+                        <div class="text-center p-4">
+                            <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 2rem;"></i>
+                            <h5>Error al cargar el mapa</h5>
+                            <p class="text-muted mb-3">No se pudo cargar el mapa de Google Maps.</p>
+                            <button class="btn btn-primary" onclick="retryMapLoad()">
+                                <i class="fas fa-redo me-2"></i>
+                                Intentar de nuevo
+                            </button>
+                            <div class="mt-3">
+                                <a href="https://www.google.com/maps/place/5.30933,-73.81575" 
+                                   target="_blank" 
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-external-link-alt me-2"></i>
+                                    Ver en Google Maps
+                                </a>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Map Footer Info -->
-                    <div class="mt-3 p-3 bg-light rounded">
-                        <div class="row text-center">
-                            <div class="col-md-4 mb-2 mb-md-0">
-                                <small class="text-muted d-block">
-                                    <i class="fas fa-directions me-1"></i>
-                                    <strong>Fácil acceso</strong>
-                                </small>
-                                <small class="text-muted">Transporte público disponible</small>
-                            </div>
-                            <div class="col-md-4 mb-2 mb-md-0">
-                                <small class="text-muted d-block">
-                                    <i class="fas fa-parking me-1"></i>
-                                    <strong>Estacionamiento</strong>
-                                </small>
-                                <small class="text-muted">Espacios disponibles</small>
-                            </div>
-                            <div class="col-md-4">
-                                <small class="text-muted d-block">
-                                    <i class="fas fa-wheelchair me-1"></i>
-                                    <strong>Accesible</strong>
-                                </small>
-                                <small class="text-muted">Instalaciones adaptadas</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-            </div>  
-        </div>  
-    </div>  
-</div>
-{% endblock %}  
-  
-{% block extra_js %}  
-<script>  
-let map;
-let marker;
-let infoWindow;
-
-function initMap() {  
-    try {
-        const location = { lat: 5.309346, lng: -73.8177795 };  
-        
-        // Limpiar el contenido del div del mapa
-        document.getElementById("map").innerHTML = '';
-        
-        map = new google.maps.Map(document.getElementById("map"), {  
-            zoom: 15,  
-            center: location,  
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            styles: [
-                {
-                    "featureType": "administrative",
-                    "elementType": "labels.text.fill",
-                    "stylers": [{"color": "#444444"}]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "all",
-                    "stylers": [{"color": "#f2f2f2"}]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "all",
-                    "stylers": [{"visibility": "off"}]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "all",
-                    "stylers": [{"saturation": -100}, {"lightness": 45}]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "all",
-                    "stylers": [{"visibility": "simplified"}]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "labels.icon",
-                    "stylers": [{"visibility": "off"}]
-                },
-                {
-                    "featureType": "transit",
-                    "elementType": "all",
-                    "stylers": [{"visibility": "off"}]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "all",
-                    "stylers": [{"color": "#0f172a"}, {"visibility": "on"}]
-                }
-            ]
-        });  
-        
-        marker = new google.maps.Marker({  
-            position: location,  
-            map: map,  
-            title: "Colegio UDC",  
-            animation: google.maps.Animation.DROP  
-        });  
-        
-        infoWindow = new google.maps.InfoWindow({  
-            content: `  
-                <div style="padding: 15px; max-width: 250px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">  
-                    <h6 style="margin-top: 0; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Colegio UDC</h6>  
-                    <p style="margin-bottom: 10px; color: #666; line-height: 1.4;">
-                        <i class="fas fa-map-marker-alt" style="color: #3b82f6; margin-right: 5px;"></i>
-                        Calle Principal #123<br>  
-                        <i class="fas fa-phone" style="color: #3b82f6; margin-right: 5px;"></i>
-                        (123) 456-7890
-                    </p>
-                    <div style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
-                        <a href="https://maps.google.com/maps?daddr=5.309346,-73.8177795" target="_blank" 
-                           style="color: #3b82f6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center;">
-                            <i class="fas fa-directions" style="margin-right: 5px;"></i>
-                            Cómo llegar
-                        </a>
-                    </div>
-                </div>  
-            `  
-        });  
-        
-        marker.addListener("click", () => {  
-            infoWindow.open(map, marker);  
-        });
-
-        // Abrir InfoWindow por defecto después de un pequeño delay
-        setTimeout(() => {
-            infoWindow.open(map, marker);
-        }, 1000);
-
-        console.log('Mapa inicializado correctamente');
-        
-    } catch (error) {
-        console.error('Error al inicializar el mapa:', error);
-        document.getElementById("map").innerHTML = `
-            <div class="text-center p-5">
-                <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
-                <h5 class="text-muted mb-2">Error al cargar el mapa</h5>
-                <p class="text-muted mb-3">Por favor, recarga la página para intentar nuevamente.</p>
-                <button class="btn btn-outline-primary btn-sm" onclick="location.reload()">
-                    <i class="fas fa-refresh me-2"></i>Recargar página
-                </button>
+                </div>
             </div>
-        `;
-    }
-}  
+        </div>
+    </div>
+</div>
 
-function handleMapError() {
-    console.error('Error al cargar Google Maps API');
-    document.getElementById("map").innerHTML = `
-        <div class="text-center p-5">
-            <i class="fas fa-map-marked-alt text-muted fa-3x mb-3"></i>
-            <h5 class="text-muted mb-2">Mapa no disponible</h5>
-            <p class="text-muted mb-3">No se pudo cargar el mapa en este momento.</p>
-            <small class="text-muted d-block mb-3">Verifica tu conexión a internet e inténtalo nuevamente.</small>
-            <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-outline-primary btn-sm" onclick="location.reload()">
-                    <i class="fas fa-refresh me-2"></i>Reintentar
-                </button>
-                <a href="https://maps.google.com/maps?q=5.309346,-73.8177795" target="_blank" class="btn btn-outline-success btn-sm">
-                    <i class="fas fa-external-link-alt me-2"></i>Ver en Google Maps
+<script>
+// Variables globales para el mapa
+let map = null;
+let marker = null;
+let infoWindow = null;
+let mapInitialized = false;
+let mapLoadAttempts = 0;
+const maxLoadAttempts = 3;
+
+// Configuración del mapa
+const mapConfig = {
+    location: { lat: 5.30933, lng: -73.81575 },
+    zoom: 17,
+    mapTypeId: 'roadmap'
+};
+
+// Función para mostrar/ocultar elementos del mapa
+function toggleMapElements(showLoader = false, showMap = false, showError = false) {
+    const loader = document.getElementById('mapLoader');
+    const mapContainer = document.getElementById('mapContainer');
+    const mapError = document.getElementById('mapError');
+    
+    if (loader) loader.style.display = showLoader ? 'flex' : 'none';
+    if (mapContainer) mapContainer.style.display = showMap ? 'block' : 'none';
+    if (mapError) mapError.style.display = showError ? 'block' : 'none';
+}
+
+// Función para limpiar el mapa anterior
+function cleanupMap() {
+    if (marker) {
+        marker.setMap(null);
+        marker = null;
+    }
+    if (infoWindow) {
+        infoWindow.close();
+        infoWindow = null;
+    }
+    if (map) {
+        map = null;
+    }
+    mapInitialized = false;
+}
+
+// Función para crear el contenido de la ventana de información
+function createInfoWindowContent() {
+    return `
+        <div class="info-window-content" style="max-width: 280px; padding: 15px;">
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="background: #007bff; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; font-size: 14px;">
+                    UDC
+                </div>
+                <div>
+                    <h4 style="margin: 0; color: #007bff; font-size: 16px; font-weight: 600;">NetSchool UDC</h4>
+                    <p style="margin: 0; color: #6c757d; font-size: 12px;">Universidad de Cundinamarca</p>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #e9ecef; padding-top: 12px;">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="fas fa-map-marker-alt" style="color: #007bff; width: 16px; margin-right: 8px;"></i>
+                    <span style="font-size: 13px; color: #495057;">Calle 8 Centro, Ubaté, Cundinamarca</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="fas fa-phone" style="color: #007bff; width: 16px; margin-right: 8px;"></i>
+                    <span style="font-size: 13px; color: #495057;">+57 (1) 825 4400</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="fas fa-envelope" style="color: #007bff; width: 16px; margin-right: 8px;"></i>
+                    <span style="font-size: 13px; color: #495057;">info@netschool.ucundinamarca.edu.co</span>
+                </div>
+                
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-clock" style="color: #007bff; width: 16px; margin-right: 8px;"></i>
+                    <span style="font-size: 13px; color: #495057;">Lunes a Viernes: 8:00 AM - 4:00 PM</span>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #e9ecef; padding-top: 12px; margin-top: 12px;">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${mapConfig.location.lat},${mapConfig.location.lng}" 
+                   target="_blank" 
+                   style="display: inline-flex; align-items: center; background: #007bff; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500; transition: background 0.3s ease;"
+                   onmouseover="this.style.background='#0056b3'"
+                   onmouseout="this.style.background='#007bff'">
+                    <i class="fas fa-directions" style="margin-right: 6px;"></i>
+                    Cómo llegar
                 </a>
             </div>
         </div>
     `;
 }
 
-// Verificar si Google Maps está disponible
-window.addEventListener('load', function() {
-    if (typeof google === 'undefined') {
-        setTimeout(handleMapError, 5000); // Esperar 5 segundos antes de mostrar error
-    }
-});
-</script>  
+// Función principal para inicializar el mapa
+function initMap() {
+    try {
+        // Limpiar cualquier mapa anterior
+        cleanupMap();
+        
+        // Verificar que Google Maps esté disponible
+        if (typeof google === 'undefined' || !google.maps) {
+            throw new Error('Google Maps API no está disponible');
+        }
 
-<!-- Cargar Google Maps API con tu clave -->
-<script async defer   
-    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap&libraries=geometry"
-    onerror="handleMapError()">  
-</script>  
+        // Crear el mapa
+        const mapElement = document.getElementById("map");
+        if (!mapElement) {
+            throw new Error('Elemento del mapa no encontrado');
+        }
+
+        map = new google.maps.Map(mapElement, {
+            zoom: mapConfig.zoom,
+            center: mapConfig.location,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            gestureHandling: 'cooperative',
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: true,
+            rotateControl: false,
+            fullscreenControl: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
+        });
+
+        // Crear el marcador
+        marker = new google.maps.Marker({
+            position: mapConfig.location,
+            map: map,
+            title: "Universidad de Cundinamarca - NetSchool UDC",
+            animation: google.maps.Animation.DROP,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: '#007bff',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 3,
+                scale: 12
+            }
+        });
+
+        // Crear la ventana de información
+        infoWindow = new google.maps.InfoWindow({
+            content: createInfoWindowContent(),
+            pixelOffset: new google.maps.Size(0, -10)
+        });
+
+        // Event listeners
+        marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+        });
+
+        map.addListener("click", () => {
+            infoWindow.close();
+        });
+
+        // Mostrar el mapa y ocultar el loader
+        toggleMapElements(false, true, false);
+        
+        // Mostrar automáticamente la ventana de información
+        setTimeout(() => {
+            if (infoWindow && map && marker) {
+                infoWindow.open(map, marker);
+            }
+        }, 1000);
+
+        mapInitialized = true;
+        mapLoadAttempts = 0;
+        
+        console.log('Mapa inicializado exitosamente');
+
+    } catch (error) {
+        console.error('Error al inicializar el mapa:', error);
+        handleMapError();
+    }
+}
+
+// Función para manejar errores del mapa
+function handleMapError() {
+    mapLoadAttempts++;
+    
+    if (mapLoadAttempts < maxLoadAttempts) {
+        console.log(`Reintentando cargar el mapa (intento ${mapLoadAttempts + 1}/${maxLoadAttempts})`);
+        setTimeout(() => {
+            loadGoogleMaps();
+        }, 2000);
+    } else {
+        console.error('No se pudo cargar el mapa después de varios intentos');
+        toggleMapElements(false, false, true);
+    }
+}
+
+// Función para cargar la API de Google Maps
+function loadGoogleMaps() {
+    // Verificar si ya está cargada
+    if (typeof google !== 'undefined' && google.maps) {
+        initMap();
+        return;
+    }
+
+    // Mostrar loader
+    toggleMapElements(true, false, false);
+
+    // Crear script para cargar la API
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA6j7YaKesOKWEgaGTsNruStFRKH0pxeQY&callback=initMap&libraries=geometry`;
+    script.async = true;
+    script.defer = true;
+    
+    script.onerror = function() {
+        console.error('Error al cargar el script de Google Maps');
+        handleMapError();
+    };
+
+    // Remover script anterior si existe
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+        existingScript.remove();
+    }
+
+    document.head.appendChild(script);
+}
+
+// Función para reintentar cargar el mapa
+function retryMapLoad() {
+    mapLoadAttempts = 0;
+    cleanupMap();
+    loadGoogleMaps();
+}
+
+// Función para redimensionar el mapa
+function resizeMap() {
+    if (map && mapInitialized) {
+        google.maps.event.trigger(map, 'resize');
+        map.setCenter(mapConfig.location);
+    }
+}
+
+// Event listeners del documento
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuración del observador para animaciones
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos con animación fade-in-up
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
+    });
+
+    // Validación del formulario
+    const form = document.getElementById('contactForm');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+            } else {
+                // Aquí puedes agregar la lógica para enviar el formulario
+                alert('Formulario enviado correctamente (simulado)');
+            }
+            form.classList.add('was-validated');
+        });
+    }
+
+    // Cargar el mapa después de que el DOM esté listo
+    setTimeout(() => {
+        loadGoogleMaps();
+    }, 500);
+});
+
+// Event listener para redimensionar ventana
+window.addEventListener('resize', debounce(resizeMap, 250));
+
+// Función de debounce para optimizar el redimensionamiento
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Limpiar al salir de la página
+window.addEventListener('beforeunload', function() {
+    cleanupMap();
+});
+</script>
+
+<style>
+.map-container {
+    position: relative;
+    overflow: hidden;
+}
+
+#map {
+    border-radius: 0 0 12px 12px;
+}
+
+.map-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 450px;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+.map-error {
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos personalizados para la ventana de información */
+.gm-style .gm-style-iw-c {
+    padding: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.gm-style .gm-style-iw-d {
+    overflow: hidden !important;
+}
+
+.gm-style .gm-style-iw-t::after {
+    background: white !important;
+}
+
+/* Botón de cerrar personalizado */
+.gm-style .gm-style-iw-tc {
+    filter: invert(0.4);
+    right: 8px !important;
+    top: 8px !important;
+}
+
+.contact-info .icon-container {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.hover-translate {
+    transition: transform 0.3s ease;
+}
+
+.hover-translate:hover {
+    transform: translateX(10px);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--bs-primary);
+}
+
+.form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Responsive para el mapa */
+@media (max-width: 768px) {
+    #map {
+        height: 350px !important;
+    }
+    
+    .map-loader {
+        height: 350px !important;
+    }
+    
+    .info-window-content {
+        max-width: 250px !important;
+    }
+}
+
+/* Animación del spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
 {% endblock %}

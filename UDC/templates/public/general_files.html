@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ title }} - NetSchool UDC{% endblock %}
+{% block title %}Documentos Generales - NetSchool UDC{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -306,252 +306,373 @@
         color: var(--bs-gray-500) !important;
     }
 
+    .category-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        height: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .info-card {
+        background: var(--bs-light);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        height: 100%;
+    }
+
+    .hover-lift {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+
+    .icon-container {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bs-primary);
+        color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .table > tbody > tr {
+        transition: all 0.3s ease;
+    }
+
+    .table > tbody > tr:hover {
+        background-color: var(--bs-light);
+    }
+
+    .file-preview {
+        background: var(--bs-light);
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: var(--bs-primary);
+        color: white;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: var(--bs-primary);
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container my-5 public-files-page">
-    <div class="page-header">
-        <h1 class="display-5">{{ title }}</h1>
-        <p class="lead">Documentos e información de interés general para toda la comunidad.</p>
+<div class="container my-5">
+    <!-- Header de página -->
+    <div class="section-header fade-in-up">
+        <h1 class="section-title">Documentos Generales</h1>
+        <p class="section-subtitle">Accede a los documentos institucionales y recursos importantes</p>
     </div>
 
-    <div class="search-bar-container">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="publicFileSearchInput" class="form-control" placeholder="Buscar por título o descripción...">
-    </div>
-
-    <div class="row gy-5" id="publicFilesContainer">
-        {% if files %}
-            {% for file in files %}
-            <div class="col-md-6 col-lg-4 file-item d-flex">
-                <div class="card file-card w-100">
-                    <div class="file-card-icon-top">
-                        {% set icon_class = 'fas fa-file-alt text-secondary' %}
-                        {% if file.file_type and ('pdf' in file.file_type or file.file_type == 'application/pdf') %} {% set icon_class = 'fas fa-file-pdf text-danger' %}
-                        {% elif file.file_type and ('word' in file.file_type or 'officedocument.wordprocessingml' in file.file_type) %} {% set icon_class = 'fas fa-file-word text-primary' %}
-                        {% elif file.file_type and ('excel' in file.file_type or 'officedocument.spreadsheetml' in file.file_type) %} {% set icon_class = 'fas fa-file-excel text-success' %}
-                        {% elif file.file_type and ('powerpoint' in file.file_type or 'officedocument.presentationml' in file.file_type) %} {% set icon_class = 'fas fa-file-powerpoint text-warning' %}
-                        {% elif file.file_type and ('image' in file.file_type) %} {% set icon_class = 'fas fa-file-image text-info' %}
-                        {% elif file.file_type and ('zip' in file.file_type or 'archive' in file.file_type) %} {% set icon_class = 'fas fa-file-archive text-dark' %}
-                        {% endif %}
-                        <i class="{{ icon_class }}"></i>
+    <!-- Categorías de Documentos -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="modern-card fade-in-up delay-100">
+                <div class="modern-card-header">
+                    <div class="icon-container">
+                        <i class="fas fa-folder"></i>
                     </div>
-                    <div class="file-card-body">
-                        <h5 class="file-card-title card-title" data-search-title>{{ file.title }}</h5>
-                        <p class="file-card-description card-text" data-search-description>
-                            {{ file.description if file.description else 'Sin descripción disponible.' }}
-                        </p>
-                        <div class="file-card-meta">
-                            <span class="badge bg-light text-dark border text-uppercase">{{ file.file_type.split('/')[-1] if '/' in file.file_type else file.file_type if file.file_type else 'N/A' }}</span>
-                            <span><i class="far fa-calendar-alt me-1"></i> {{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}</span>
+                    <h3 class="h4 mb-0">Categorías de Documentos</h3>
+                </div>
+                <div class="modern-card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="category-card hover-lift">
+                                <div class="icon-container mx-auto mb-3">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <h4 class="h5 text-center mb-3">Documentos Institucionales</h4>
+                                <p class="text-muted text-center mb-0">Reglamentos, manuales y políticas institucionales</p>
+                            </div>
                         </div>
-                        <div class="file-card-actions">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Ver detalles" data-bs-toggle="tooltip"
-                                    onclick='viewFileDetailsPublic("{{ file._id|string }}")'>
-                                <i class="fas fa-eye"></i><span class="ms-1 d-none d-md-inline">Detalles</span>
-                            </button>
-                            <a href="{{ url_for('public.download_general_file', file_id_str=file._id) }}" class="btn btn-sm btn-primary" title="Descargar" data-bs-toggle="tooltip">
-                                <i class="fas fa-download"></i><span class="ms-1 d-none d-md-inline">Descargar</span>
-                            </a>
+                        
+                        <div class="col-md-4">
+                            <div class="category-card hover-lift">
+                                <div class="icon-container mx-auto mb-3">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <h4 class="h5 text-center mb-3">Calendarios</h4>
+                                <p class="text-muted text-center mb-0">Calendarios académicos y de actividades</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="category-card hover-lift">
+                                <div class="icon-container mx-auto mb-3">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <h4 class="h5 text-center mb-3">Formularios</h4>
+                                <p class="text-muted text-center mb-0">Formularios y documentos administrativos</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-        {% endif %}
+        </div>
     </div>
 
-    <div id="noPublicFilesMessageContainer" class="mt-4" style="display: none;">
-         <div class="empty-state-container">
-            <div class="empty-state">
-                <i class="fas fa-folder-open" id="emptyStateIcon"></i>
-                <h5 id="emptyStateTitle">No hay documentos generales disponibles.</h5>
-                <p id="emptyStateText" class="text-muted small">Cuando se publiquen archivos de interés general, aparecerán aquí.</p>
+    <!-- Lista de Documentos -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="modern-card fade-in-up delay-200">
+                <div class="modern-card-header">
+                    <div class="icon-container">
+                        <i class="fas fa-file-download"></i>
+                    </div>
+                    <h3 class="h4 mb-0">Documentos Disponibles</h3>
+                </div>
+                <div class="modern-card-body">
+                    {% if files %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre del Documento</th>
+                                        <th>Categoría</th>
+                                        <th>Fecha de Actualización</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for file in files %}
+                                    <tr class="hover-lift">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="icon-container me-3">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">{{ file.name }}</h6>
+                                                    <small class="text-muted">{{ file.description }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ file.category }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">{{ file.updated_at.strftime('%d/%m/%Y') }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ url_for('public.download_file', file_id=file.id) }}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-download me-1"></i>
+                                                    Descargar
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-info"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#previewModal{{ file.id }}">
+                                                    <i class="fas fa-eye me-1"></i>
+                                                    Vista Previa
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Modal para vista previa -->
+                                    <div class="modal fade" id="previewModal{{ file.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">{{ file.name }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="file-preview">
+                                                        <iframe src="{{ url_for('public.preview_file', file_id=file.id) }}" 
+                                                                width="100%" 
+                                                                height="500px" 
+                                                                frameborder="0">
+                                                        </iframe>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                    <a href="{{ url_for('public.download_file', file_id=file.id) }}" 
+                                                       class="btn btn-primary">
+                                                        <i class="fas fa-download me-1"></i>
+                                                        Descargar
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="icon-container mx-auto mb-4">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                            <h4 class="mb-3">No hay documentos disponibles</h4>
+                            <p class="text-muted mb-0">En este momento no hay documentos para mostrar.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-     <div id="publicFileCountFooterContainer" class="mt-3 text-center" {% if not files %}style="display:none;"{% endif %}>
-        <small class="text-muted" id="publicFileCountFooter">
-            {% if files %}Mostrando {{ files|length }} documento{{ 's' if files|length != 1 else '' }} público{{ 's' if files|length != 1 else '' }}.{% endif %}
-        </small>
+
+    <!-- Información Adicional -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="modern-card fade-in-up delay-300">
+                <div class="modern-card-header">
+                    <div class="icon-container">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h3 class="h4 mb-0">Información Importante</h3>
+                </div>
+                <div class="modern-card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h5 class="mb-3">Políticas de Uso</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>
+                                        <span>Los documentos son para uso exclusivo de la comunidad educativa</span>
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>
+                                        <span>No se permite la distribución o modificación sin autorización</span>
+                                    </li>
+                                    <li class="mb-0 d-flex align-items-start">
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>
+                                        <span>Mantener la confidencialidad de la información sensible</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h5 class="mb-3">Soporte Técnico</h5>
+                                <p class="text-muted mb-3">Si tienes problemas para acceder o descargar los documentos, contáctanos:</p>
+                                <div class="d-flex gap-3">
+                                    <a href="{{ url_for('public.contact') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-envelope me-2"></i>
+                                        Contactar Soporte
+                                    </a>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                        <i class="fas fa-question-circle me-2"></i>
+                                        Ayuda
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-
 </div>
 
-<div class="modal fade" id="fileDetailsModalPublic" tabindex="-1" aria-labelledby="fileDetailsModalPublicLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+<!-- Modal de Ayuda -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="fileDetailsModalPublicLabel"><i class="fas fa-info-circle me-2"></i>Detalles del Documento</h5>
+                <h5 class="modal-title">Ayuda y Preguntas Frecuentes</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="fileDetailsContentPublic" style="min-height: 150px;">
-                <div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2 mb-0">Cargando detalles...</p></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cerrar</button>
+            <div class="modal-body">
+                <div class="accordion" id="helpAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#help1">
+                                ¿Cómo descargar documentos?
+                            </button>
+                        </h2>
+                        <div id="help1" class="accordion-collapse collapse show" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <p>Para descargar un documento:</p>
+                                <ol>
+                                    <li>Busca el documento en la lista</li>
+                                    <li>Haz clic en el botón "Descargar"</li>
+                                    <li>El archivo se guardará en tu dispositivo</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#help2">
+                                ¿Qué formatos de archivo están disponibles?
+                            </button>
+                        </h2>
+                        <div id="help2" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <p>Los documentos están disponibles en los siguientes formatos:</p>
+                                <ul>
+                                    <li>PDF (Portable Document Format)</li>
+                                    <li>DOCX (Documentos de Word)</li>
+                                    <li>XLSX (Hojas de cálculo)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#help3">
+                                ¿Qué hacer si no puedo acceder a un documento?
+                            </button>
+                        </h2>
+                        <div id="help3" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <p>Si tienes problemas para acceder a un documento:</p>
+                                <ol>
+                                    <li>Verifica tu conexión a internet</li>
+                                    <li>Asegúrate de tener los permisos necesarios</li>
+                                    <li>Contacta al soporte técnico si el problema persiste</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-function viewFileDetailsPublic(fileId) {
-    const modal = new bootstrap.Modal(document.getElementById('fileDetailsModalPublic'));
-    const content = document.getElementById('fileDetailsContentPublic');
-    content.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2 mb-0">Cargando detalles...</p></div>';
-    modal.show();
-
-    fetch(`{{ url_for('public.get_public_file_details_json', file_id_str='FILE_ID_PLACEHOLDER') }}`.replace('FILE_ID_PLACEHOLDER', fileId))
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                const file = data.file;
-                let htmlContent = '<dl class="row gy-3">';
-                htmlContent += '<dt class="col-sm-4 text-muted">Título:</dt>';
-                htmlContent += '<dd class="col-sm-8">' + (file.title || 'N/A') + '</dd>';
-
-                htmlContent += '<dt class="col-sm-4 text-muted">Descripción:</dt>';
-                htmlContent += '<dd class="col-sm-8" style="white-space: pre-line; word-wrap: break-word;">' + (file.description || 'Sin descripción.') + '</dd>';
-
-                htmlContent += '<dt class="col-sm-4 text-muted">Tipo de Archivo:</dt>';
-                let fileTypeDisplay = 'N/A';
-                if (file.file_type) {
-                    fileTypeDisplay = file.file_type.includes('/') ? file.file_type.split('/')[1] : file.file_type;
-                }
-                htmlContent += '<dd class="col-sm-8 text-uppercase">' + fileTypeDisplay + '</dd>';
-
-                htmlContent += '<dt class="col-sm-4 text-muted">Fecha de Publicación:</dt>';
-                let createdAtDisplay = 'N/A';
-                if (file.created_at) {
-                    try {
-                        const date = new Date(file.created_at);
-                        createdAtDisplay = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                    } catch (e) {
-                        createdAtDisplay = file.created_at.split(' ')[0] || 'N/A';
-                    }
-                }
-                htmlContent += '<dd class="col-sm-8">' + createdAtDisplay + '</dd>';
-
-                htmlContent += '<dt class="col-sm-4 text-muted">ID Documento:</dt>';
-                htmlContent += '<dd class="col-sm-8"><small class="text-body-secondary">' + (file.id) + '</small></dd>';
-                htmlContent += '</dl>';
-                content.innerHTML = htmlContent;
-            } else {
-                content.innerHTML = '<div class="alert alert-danger mb-0">Error: ' + (data.error || 'No se pudieron cargar los detalles.') + '</div>';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching file details:', error);
-            content.innerHTML = '<div class="alert alert-danger mb-0">Error de conexión al cargar detalles. Por favor, intente más tarde.</div>';
-        });
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('publicFileSearchInput');
-    const filesContainer = document.getElementById('publicFilesContainer');
-    const noFilesMessageContainer = document.getElementById('noPublicFilesMessageContainer');
-    const emptyStateIcon = document.getElementById('emptyStateIcon');
-    const emptyStateTitle = document.getElementById('emptyStateTitle');
-    const emptyStateText = document.getElementById('emptyStateText');
-    const fileCountFooterContainer = document.getElementById('publicFileCountFooterContainer');
-    const fileCountFooterText = document.getElementById('publicFileCountFooter');
-    const initialPageLoad = true;
+    // Configuración del observador para animaciones
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
-    const allFileItems = Array.from(filesContainer.querySelectorAll('.file-item'));
-    const initialFileCount = allFileItems.length;
-
-    function updateFileDisplay(searchTerm = '') {
-        let visibleCount = 0;
-        searchTerm = searchTerm.toLowerCase().trim();
-
-        allFileItems.forEach(item => {
-            const titleElement = item.querySelector('[data-search-title]');
-            const descriptionElement = item.querySelector('[data-search-description]');
-            const title = (titleElement ? titleElement.textContent : '').toLowerCase();
-            const description = (descriptionElement ? descriptionElement.textContent : '').toLowerCase();
-
-            if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                item.style.display = '';
-                visibleCount++;
-            } else {
-                item.style.display = 'none';
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
             }
         });
+    }, observerOptions);
 
-        if (visibleCount === 0) {
-            noFilesMessageContainer.style.display = '';
-            filesContainer.style.display = 'none';
-             if (searchTerm) {
-                emptyStateIcon.className = 'fas fa-search fa-2x';
-                emptyStateTitle.textContent = 'No se encontraron documentos.';
-                emptyStateText.textContent = 'Intenta con diferentes palabras clave o revisa la ortografía.';
-            } else {
-                emptyStateIcon.className = 'fas fa-folder-open fa-2x';
-                emptyStateTitle.textContent = 'No hay documentos generales disponibles.';
-                emptyStateText.textContent = 'Cuando se publiquen archivos de interés general, aparecerán aquí.';
-            }
-        } else {
-            noFilesMessageContainer.style.display = 'none';
-            filesContainer.style.display = '';
-        }
-        
-        if (fileCountFooterContainer && fileCountFooterText) {
-            if (visibleCount > 0) {
-                let footerMsg = 'Mostrando ' + visibleCount + ' documento' + (visibleCount !== 1 ? 's' : '') + ' público' + (visibleCount !== 1 ? 's' : '');
-                if (searchTerm) {
-                    footerMsg += ' (filtrado)';
-                }
-                footerMsg += '.';
-                fileCountFooterText.textContent = footerMsg;
-                fileCountFooterContainer.style.display = '';
-            } else if (initialFileCount > 0 && searchTerm) {
-                fileCountFooterText.textContent = 'No se encontraron coincidencias.';
-                fileCountFooterContainer.style.display = '';
-            } else if (initialFileCount === 0 && !searchTerm) {
-                 fileCountFooterContainer.style.display = 'none';
-                 noFilesMessageContainer.style.display = '';
-                 filesContainer.style.display = 'none';
-                 emptyStateIcon.className = 'fas fa-folder-open fa-2x';
-                 emptyStateTitle.textContent = 'No hay documentos generales disponibles.';
-                 emptyStateText.textContent = 'Cuando se publiquen archivos de interés general, aparecerán aquí.';
-            } else {
-                 fileCountFooterContainer.style.display = 'none';
-            }
-        }
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            updateFileDisplay(this.value);
-        });
-    }
-
-    if (initialPageLoad) {
-        if (initialFileCount === 0) {
-            noFilesMessageContainer.style.display = '';
-            filesContainer.style.display = 'none';
-            if (fileCountFooterContainer) fileCountFooterContainer.style.display = 'none';
-            emptyStateIcon.className = 'fas fa-folder-open fa-2x';
-            emptyStateTitle.textContent = 'No hay documentos generales disponibles.';
-            emptyStateText.textContent = 'Cuando se publiquen archivos de interés general, aparecerán aquí.';
-        } else {
-            updateFileDisplay();
-        }
-    }
-
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+    // Observar elementos con animación fade-in-up
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
     });
 });
 </script>

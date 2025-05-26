@@ -14,6 +14,13 @@ class Event:
       
     @staticmethod  
     def create(title, date, time, location, description):  
+        # Convert date string to datetime object
+        try:
+            if isinstance(date, str):
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            raise ValueError("Invalid date format. Expected YYYY-MM-DD")
+            
         event = {  
             'title': title,  
             'date': date,  
@@ -38,7 +45,11 @@ class Event:
       
     @staticmethod  
     def update(event_id, title, date, time, location, description):  
-        try:  
+        try:
+            # Convert date string to datetime object
+            if isinstance(date, str):
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                
             result = Event.collection.update_one(  
                 {'_id': ObjectId(event_id)},  
                 {'$set': {  

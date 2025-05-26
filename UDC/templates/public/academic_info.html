@@ -1,59 +1,391 @@
-{% extends 'base.html' %}
-
-{% block title %}Información Académica - NetSchool UDC{% endblock %}
-
-{% block content %}
-<div class="container mt-5 mb-5">
-    <div class="page-header mb-5">
-        <h1 class="display-5">Información Académica</h1>
-        <p class="lead text-muted mb-4">Detalles sobre nuestros programas, calendarios y recursos educativos.</p>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <h5 class="card-title mb-3"><i class="fas fa-calendar-alt me-2"></i>Calendario Académico</h5>
-                    <p class="card-text mb-3">Consulte las fechas importantes, periodos de exámenes, vacaciones y eventos escolares para el ciclo actual.</p>
-                    <a href="#" class="btn btn-outline-primary btn-sm disabled">Ver Calendario (Próximamente)</a>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <h5 class="card-title mb-3"><i class="fas fa-book-open me-2"></i>Programas de Estudio</h5>
-                    <p class="card-text mb-3">Información detallada sobre los planes de estudio, materias por nivel y objetivos de aprendizaje.</p>
-                    <a href="#" class="btn btn-outline-primary btn-sm disabled">Explorar Programas (Próximamente)</a>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <h5 class="card-title mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Cuerpo Docente</h5>
-                    <p class="card-text mb-3">Conozca a nuestros dedicados profesores y su experiencia en cada área del conocimiento.</p>
-                    <a href="#" class="btn btn-outline-primary btn-sm disabled">Ver Docentes (Próximamente)</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-light p-3">
-                    <h5 class="mb-0"><i class="fas fa-link me-2"></i>Enlaces Rápidos</h5>
-                </div>
-                <div class="list-group list-group-flush">
-                    <a href="{{ url_for('public.view_general_files') }}" class="list-group-item list-group-item-action p-3">
-                        <i class="fas fa-folder me-2"></i> Documentos Generales
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action p-3 disabled">
-                        <i class="fas fa-graduation-cap me-2"></i> Admisiones (Próximamente)
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action p-3 disabled">
-                        <i class="fas fa-question-circle me-2"></i> FAQ (Próximamente)
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-{% endblock %} 
+{% extends 'base.html' %}  
+  
+{% block title %}Información Académica - NetSchool UDC{% endblock %}  
+  
+{% block extra_css %}  
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">  
+{% endblock %}  
+  
+{% block content %}  
+<div class="container my-5">  
+    <!-- Header de página -->  
+    <div class="section-header fade-in-up">  
+        <h1 class="section-title">Información Académica</h1>  
+        <p class="section-subtitle">Conoce nuestra oferta académica, programas y servicios educativos</p>  
+    </div>  
+      
+    <!-- Programas Académicos Section -->  
+    <div class="row g-4">  
+        <div class="col-12">  
+            <div class="modern-card fade-in-up delay-100">  
+                <div class="modern-card-header">  
+                    <div class="icon-container">  
+                        <i class="fas fa-graduation-cap"></i>  
+                    </div>  
+                    <h3 class="h4 mb-0">Programas Académicos</h3>  
+                </div>  
+                <div class="modern-card-body">  
+                    <div class="row g-4">  
+                        <div class="col-md-6">  
+                            <div class="program-card hover-lift">  
+                                <div class="d-flex align-items-start">  
+                                    <div class="icon-container me-3">  
+                                        <i class="fas fa-child"></i>  
+                                    </div>  
+                                    <div>  
+                                        <h4 class="h5 mb-3">Educación Inicial</h4>  
+                                        <ul class="list-unstyled mb-0">  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Desarrollo integral de habilidades</span>  
+                                            </li>  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Estimulación temprana</span>  
+                                            </li>  
+                                            <li class="mb-0 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Actividades lúdicas y recreativas</span>  
+                                            </li>  
+                                        </ul>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+                        
+                        <div class="col-md-6">  
+                            <div class="program-card hover-lift">  
+                                <div class="d-flex align-items-start">  
+                                    <div class="icon-container me-3">  
+                                        <i class="fas fa-book"></i>  
+                                    </div>  
+                                    <div>  
+                                        <h4 class="h5 mb-3">Educación Primaria</h4>  
+                                        <ul class="list-unstyled mb-0">  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Formación básica integral</span>  
+                                            </li>  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Desarrollo de competencias</span>  
+                                            </li>  
+                                            <li class="mb-0 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Programas de refuerzo académico</span>  
+                                            </li>  
+                                        </ul>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+                        
+                        <div class="col-md-6">  
+                            <div class="program-card hover-lift">  
+                                <div class="d-flex align-items-start">  
+                                    <div class="icon-container me-3">  
+                                        <i class="fas fa-laptop"></i>  
+                                    </div>  
+                                    <div>  
+                                        <h4 class="h5 mb-3">Educación Secundaria</h4>  
+                                        <ul class="list-unstyled mb-0">  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Preparación para la universidad</span>  
+                                            </li>  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Orientación vocacional</span>  
+                                            </li>  
+                                            <li class="mb-0 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Programas de tecnología e innovación</span>  
+                                            </li>  
+                                        </ul>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+                        
+                        <div class="col-md-6">  
+                            <div class="program-card hover-lift">  
+                                <div class="d-flex align-items-start">  
+                                    <div class="icon-container me-3">  
+                                        <i class="fas fa-microscope"></i>  
+                                    </div>  
+                                    <div>  
+                                        <h4 class="h5 mb-3">Programas Especializados</h4>  
+                                        <ul class="list-unstyled mb-0">  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Laboratorios de ciencias</span>  
+                                            </li>  
+                                            <li class="mb-2 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Programas de idiomas</span>  
+                                            </li>  
+                                            <li class="mb-0 d-flex align-items-center">  
+                                                <i class="fas fa-check-circle text-primary me-2"></i>  
+                                                <span>Actividades extracurriculares</span>  
+                                            </li>  
+                                        </ul>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- Servicios Académicos Section -->  
+    <div class="row mt-5 g-4">  
+        <div class="col-12">  
+            <div class="modern-card fade-in-up delay-200">  
+                <div class="modern-card-header">  
+                    <div class="icon-container">  
+                        <i class="fas fa-cogs"></i>  
+                    </div>  
+                    <h3 class="h4 mb-0">Servicios Académicos</h3>  
+                </div>  
+                <div class="modern-card-body">  
+                    <div class="row g-4">  
+                        <div class="col-md-4">  
+                            <div class="service-card text-center hover-lift">  
+                                <div class="icon-container mx-auto mb-3">  
+                                    <i class="fas fa-book-reader"></i>  
+                                </div>  
+                                <h4 class="h5 mb-3">Biblioteca</h4>  
+                                <p class="text-muted mb-0">Acceso a una amplia colección de libros, recursos digitales y espacios de estudio.</p>  
+                            </div>  
+                        </div>  
+                        
+                        <div class="col-md-4">  
+                            <div class="service-card text-center hover-lift">  
+                                <div class="icon-container mx-auto mb-3">  
+                                    <i class="fas fa-laptop-code"></i>  
+                                </div>  
+                                <h4 class="h5 mb-3">Laboratorio de Computación</h4>  
+                                <p class="text-muted mb-0">Equipos modernos y software especializado para el desarrollo de habilidades tecnológicas.</p>  
+                            </div>  
+                        </div>  
+                        
+                        <div class="col-md-4">  
+                            <div class="service-card text-center hover-lift">  
+                                <div class="icon-container mx-auto mb-3">  
+                                    <i class="fas fa-chalkboard-teacher"></i>  
+                                </div>  
+                                <h4 class="h5 mb-3">Tutorías</h4>  
+                                <p class="text-muted mb-0">Soporte académico personalizado para estudiantes que requieren refuerzo adicional.</p>  
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- Admisiones Section -->  
+    <div class="row mt-5">  
+        <div class="col-12">  
+            <div class="modern-card fade-in-up delay-300">  
+                <div class="modern-card-header">  
+                    <div class="icon-container">  
+                        <i class="fas fa-user-plus"></i>  
+                    </div>  
+                    <h3 class="h4 mb-0">Proceso de Admisión</h3>  
+                </div>  
+                <div class="modern-card-body">  
+                    <div class="row align-items-center">  
+                        <div class="col-lg-6 mb-4 mb-lg-0">  
+                            <div class="admission-steps">  
+                                <div class="step-item">  
+                                    <div class="step-number">1</div>  
+                                    <div class="step-content">  
+                                        <h5 class="mb-2">Solicitud de Admisión</h5>  
+                                        <p class="text-muted mb-0">Completa el formulario de solicitud y proporciona la documentación requerida.</p>  
+                                    </div>  
+                                </div>  
+                                
+                                <div class="step-item">  
+                                    <div class="step-number">2</div>  
+                                    <div class="step-content">  
+                                        <h5 class="mb-2">Evaluación</h5>  
+                                        <p class="text-muted mb-0">El estudiante será evaluado para determinar su nivel académico y necesidades.</p>  
+                                    </div>  
+                                </div>  
+                                
+                                <div class="step-item">  
+                                    <div class="step-number">3</div>  
+                                    <div class="step-content">  
+                                        <h5 class="mb-2">Entrevista</h5>  
+                                        <p class="text-muted mb-0">Reunión con los padres y el estudiante para conocer sus expectativas.</p>  
+                                    </div>  
+                                </div>  
+                                
+                                <div class="step-item">  
+                                    <div class="step-number">4</div>  
+                                    <div class="step-content">  
+                                        <h5 class="mb-2">Matrícula</h5>  
+                                        <p class="text-muted mb-0">Proceso de formalización de la matrícula y pago de cuotas.</p>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+                        
+                        <div class="col-lg-6">  
+                            <div class="admission-info p-4 bg-light rounded">  
+                                <h4 class="h5 mb-4">Requisitos de Admisión</h4>  
+                                <ul class="list-unstyled mb-0">  
+                                    <li class="mb-3 d-flex align-items-start">  
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>  
+                                        <span>Formulario de solicitud completo</span>  
+                                    </li>  
+                                    <li class="mb-3 d-flex align-items-start">  
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>  
+                                        <span>Certificado de nacimiento</span>  
+                                    </li>  
+                                    <li class="mb-3 d-flex align-items-start">  
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>  
+                                        <span>Certificados académicos anteriores</span>  
+                                    </li>  
+                                    <li class="mb-3 d-flex align-items-start">  
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>  
+                                        <span>Fotografías recientes</span>  
+                                    </li>  
+                                    <li class="mb-0 d-flex align-items-start">  
+                                        <i class="fas fa-check-circle text-primary me-2 mt-1"></i>  
+                                        <span>Documentos de identidad de los padres</span>  
+                                    </li>  
+                                </ul>  
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+  
+<script>  
+document.addEventListener('DOMContentLoaded', function() {  
+    // Configuración del observador para animaciones  
+    const observerOptions = {  
+        threshold: 0.1,  
+        rootMargin: '0px 0px -50px 0px'  
+    };  
+  
+    const observer = new IntersectionObserver((entries) => {  
+        entries.forEach(entry => {  
+            if (entry.isIntersecting) {  
+                entry.target.style.animationPlayState = 'running';  
+            }  
+        });  
+    }, observerOptions);  
+  
+    // Observar elementos con animación fade-in-up  
+    document.querySelectorAll('.fade-in-up').forEach(el => {  
+        el.style.animationPlayState = 'paused';  
+        observer.observe(el);  
+    });  
+});  
+</script>  
+  
+<style>  
+.program-card {  
+    background: white;  
+    border-radius: 0.5rem;  
+    padding: 1.5rem;  
+    height: 100%;  
+    transition: all 0.3s ease;  
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);  
+}  
+  
+.service-card {  
+    background: white;  
+    border-radius: 0.5rem;  
+    padding: 2rem;  
+    height: 100%;  
+    transition: all 0.3s ease;  
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);  
+}  
+  
+.hover-lift {  
+    transition: transform 0.3s ease;  
+}  
+  
+.hover-lift:hover {  
+    transform: translateY(-5px);  
+}  
+  
+.icon-container {  
+    width: 40px;  
+    height: 40px;  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+    background: var(--bs-primary);  
+    color: white;  
+    border-radius: 50%;  
+    transition: all 0.3s ease;  
+}  
+  
+.admission-steps {  
+    position: relative;  
+    padding-left: 2rem;  
+}  
+  
+.admission-steps::before {  
+    content: '';  
+    position: absolute;  
+    left: 1rem;  
+    top: 0;  
+    bottom: 0;  
+    width: 2px;  
+    background: var(--bs-primary);  
+    opacity: 0.2;  
+}  
+  
+.step-item {  
+    position: relative;  
+    padding-bottom: 2rem;  
+}  
+  
+.step-item:last-child {  
+    padding-bottom: 0;  
+}  
+  
+.step-number {  
+    position: absolute;  
+    left: -2rem;  
+    width: 2rem;  
+    height: 2rem;  
+    background: var(--bs-primary);  
+    color: white;  
+    border-radius: 50%;  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+    font-weight: bold;  
+}  
+  
+.step-content {  
+    padding-left: 1rem;  
+}  
+  
+.admission-info {  
+    background: var(--bs-light);  
+    border-radius: 0.5rem;  
+    padding: 1.5rem;  
+}  
+  
+.admission-info ul li {  
+    margin-bottom: 1rem;  
+}  
+  
+.admission-info ul li:last-child {  
+    margin-bottom: 0;  
+}  
+</style>  
+{% endblock %}

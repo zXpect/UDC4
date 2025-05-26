@@ -112,7 +112,7 @@
         </div>
         
             <div class="text-center">
-            <a href="#" class="btn btn-primary btn-lg hover-float" style="margin-top: 3rem;">
+            <a href="{{ url_for('public.events') }}" class="btn btn-primary btn-lg hover-float" style="margin-top: 3rem;">
                 Ver todos los eventos
                 <i class="fas fa-calendar-alt ms-2"></i>
             </a>
@@ -133,7 +133,7 @@
                 <div class="service-card animate__animated animate__fadeInUp hover-lift" style="animation-delay: 0.2s">
                     <div class="service-icon">
                         <i class="fas fa-book"></i>
-                        <div class="service-icon-glow" style="opacity: 0.2; background: radial-gradient(circle at center, var(--primary-soft), transparent 70%);"></div>
+                        <div class="service-icon-glow"></div>
                     </div>
                     <h3 class="service-title">Información Académica</h3>
                     <p class="service-description">Accede a información importante sobre horarios, calendarios y programas académicos.</p>
@@ -148,7 +148,7 @@
                 <div class="service-card animate__animated animate__fadeInUp hover-lift" style="animation-delay: 0.4s">
                     <div class="service-icon">
                         <i class="fas fa-calendar-alt"></i>
-                        <div class="service-icon-glow" style="opacity: 0.2; background: radial-gradient(circle at center, var(--primary-soft), transparent 70%);"></div>
+                        <div class="service-icon-glow"></div>
                     </div>
                     <h3 class="service-title">Eventos Institucionales</h3>
                     <p class="service-description">Mantente informado sobre todos los eventos y actividades del colegio.</p>
@@ -163,25 +163,11 @@
                 <div class="service-card animate__animated animate__fadeInUp hover-lift" style="animation-delay: 0.6s">
                     <div class="service-icon">
                         <i class="fas fa-file-alt"></i>
-                        <div class="service-icon-glow" style="opacity: 0.2; background: radial-gradient(circle at center, var(--primary-soft), transparent 70%);"></div>
+                        <div class="service-icon-glow"></div>
                     </div>
                     <h3 class="service-title">Documentos Institucionales</h3>
                     <p class="service-description">Accede a circulares, comunicados y documentos importantes.</p>
-                    {% if session.get('logged_in') %}
-                        {% if session.get('role') == 'admin' %}
-                            <a href="{{ url_for('admin.files') }}" class="service-link hover-right">
-                        {% elif session.get('role') == 'teacher' %}
-                            <a href="{{ url_for('teacher.manage_files') }}" class="service-link hover-right">
-                        {% elif session.get('role') == 'student' %}
-                            <a href="{{ url_for('student.view_files') }}" class="service-link hover-right">
-                        {% elif session.get('role') == 'parent' %}
-                            <a href="{{ url_for('parent.academic_files') }}" class="service-link hover-right">
-                        {% else %}
-                            <a href="{{ url_for('public.view_general_files') }}" class="service-link hover-right">
-                        {% endif %}
-                    {% else %}
-                        <a href="{{ url_for('public.view_general_files') }}" class="service-link hover-right">
-                    {% endif %}
+                    <a href="{{ url_for('public.view_general_files') }}" class="service-link hover-right">
                         Ver documentos
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -378,7 +364,7 @@
                     <h2 class="h1 mb-4">¿Necesitas ayuda?</h2>
                     <p class="lead mb-5">Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
                     <div class="d-flex flex-wrap gap-3">
-                        <a href="{{ url_for('public.contact') if url_for else '#' }}" class="btn btn-primary btn-lg hover-float"> 
+                        <a href="{{ url_for('public.contact') }}" class="btn btn-primary btn-lg hover-float"> 
                             <i class="fas fa-envelope me-2"></i>
                             Contacto
                         </a>
