@@ -87,7 +87,7 @@ def add_event():
         try: 
             title = request.form.get('title', '').strip()   
             date = request.form.get('date', '').strip()    
-            time = request.form.get('time', '').strip()    
+            time = request.form.get('time', '').strip()   
             location = request.form.get('location', '').strip()    
             description = request.form.get('description', '').strip()    
             
