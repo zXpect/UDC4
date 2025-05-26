@@ -13,6 +13,10 @@ from routes.teacher import teacher
   
 def create_app():  
     app = Flask(__name__)  
+    app.config['DEBUG'] = True
+    app.config['TESTING'] = True 
+    app.config['PROPAGATE_EXCEPTIONS'] = False
+    app.config['TRAP_HTTP_EXCEPTIONS'] = False
     app.config.from_object(Config)  
       
     # Configurar logging  
@@ -109,4 +113,4 @@ def create_app():
   
 if __name__ == '__main__':  
     app = create_app()
-    app.run(debug=False)
+    app.run(debug=True)
