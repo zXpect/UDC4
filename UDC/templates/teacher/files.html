@@ -1,0 +1,291 @@
+{% extends 'base_teacher.html' %}  
+{% block title %}Gestión de Archivos - Profesor{% endblock %}  
+{% block page_title %}Gestión de Archivos y Materiales{% endblock %}  
+  
+{% block content %}  
+<div class="container-fluid">  
+    <!-- Formulario de subida -->  
+    <div class="row mb-4">  
+        <div class="col-12">  
+            <div class="card shadow">  
+                <div class="card-header bg-warning text-white">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-cloud-upload-alt me-2"></i>  
+                        Subir Nuevo Archivo Educativo  
+                    </h5>  
+                </div>  
+                <div class="card-body">  
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>  
+                        <div class="row">  
+                            <div class="col-md-6 mb-3">  
+                                <label for="title" class="form-label fw-medium">Título del Archivo *</label>  
+                                <input type="text" class="form-control" id="title" name="title" required>  
+                                <div class="invalid-feedback">El título es obligatorio.</div>  
+                            </div>  
+                            <div class="col-md-6 mb-3">  
+                                <label for="category" class="form-label fw-medium">Categoría *</label>  
+                                <select class="form-select" id="category" name="category" required>  
+                                    <option value="" disabled selected>Seleccionar categoría...</option>  
+                                    <option value="academic">Material Académico (para estudiantes)</option>  
+                                    <option value="teacher_specific">Recurso para Profesores (privado)</option>  
+                                    <option value="general">General (visible para todos)</option>  
+                                    <!-- La categoría 'tasks' se maneja automáticamente al crear tareas -->
+                                </select>  
+                                <div class="invalid-feedback">Seleccione una categoría.</div>  
+                            </div>  
+                        </div>  
+                        <div class="mb-3">  
+                            <label for="description" class="form-label fw-medium">Descripción</label>  
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Breve descripción del contenido del archivo..."></textarea>  
+                        </div>  
+                        <div class="mb-3">  
+                            <label for="file" class="form-label fw-medium">Archivo *</label>  
+                            <input type="file" class="form-control" id="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.ppt,.pptx,.zip,.txt" required>  
+                            <div class="form-text">Formatos permitidos: PDF, Documentos, Hojas de cálculo, Presentaciones, Imágenes, ZIP, TXT.</div>  
+                            <div class="invalid-feedback">Seleccione un archivo válido.</div>  
+                        </div>  
+                        <div class="d-flex justify-content-end">  
+                            <button type="submit" class="btn btn-warning">  
+                                <i class="fas fa-upload me-2"></i>Subir Archivo  
+                            </button>  
+                        </div>  
+                    </form>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- Lista de archivos del profesor -->  
+    <div class="row">  
+        <div class="col-12">  
+            <div class="card shadow-sm">  
+                <div class="card-header bg-white border-bottom">  
+                    <div class="d-flex justify-content-between align-items-center">  
+                        <h5 class="card-title mb-0">  
+                            <i class="fas fa-folder-open me-2 text-warning"></i>Mis Archivos y Materiales  
+                        </h5>  
+                        <div class="btn-group" role="group" aria-label="Filtros de categoría de profesor">  
+                            <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="filterFilesTeacher('all')">Todos</button>  
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesTeacher('academic')">Académicos</button>  
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesTeacher('tasks')">De Tareas</button>  
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesTeacher('teacher_specific')">Para Profesores</button>  
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterFilesTeacher('general')">General</button>  
+                        </div>  
+                    </div>  
+                </div>  
+                <div class="card-body p-0">  
+                    <div class="table-responsive">  
+                        <table class="table table-hover mb-0">  
+                            <thead class="table-light">  
+                                <tr>  
+                                    <th style="width: 40%;">Archivo</th>  
+                                    <th>Categoría</th>  
+                                    <th>Tipo</th>  
+                                    <th>Fecha de Subida</th>  
+                                    <th class="text-center">Acciones</th>  
+                                </tr>  
+                            </thead>  
+                            <tbody id="filesTableTeacher">  
+                                {% if files %}  
+                                    {% for file in files %}  
+                                        <tr data-category-teacher="{{ file.category }}">  
+                                            <td class="align-middle">  
+                                                <div class="d-flex align-items-center">  
+                                                    <div class="file-icon me-3">  
+                                                        {% set icon_class = 'fas fa-file-alt text-secondary fs-4' %}
+                                                        {% if file.file_type and ('pdf' in file.file_type or file.file_type == 'application/pdf') %} {% set icon_class = 'fas fa-file-pdf text-danger fs-4' %}
+                                                        {% elif file.file_type and ('word' in file.file_type or 'officedocument.wordprocessingml' in file.file_type) %} {% set icon_class = 'fas fa-file-word text-primary fs-4' %}
+                                                        {% elif file.file_type and ('excel' in file.file_type or 'officedocument.spreadsheetml' in file.file_type) %} {% set icon_class = 'fas fa-file-excel text-success fs-4' %}
+                                                        {% elif file.file_type and ('powerpoint' in file.file_type or 'officedocument.presentationml' in file.file_type) %} {% set icon_class = 'fas fa-file-powerpoint text-warning fs-4' %}
+                                                        {% elif file.file_type and ('image' in file.file_type) %} {% set icon_class = 'fas fa-file-image text-info fs-4' %}
+                                                        {% elif file.file_type and ('zip' in file.file_type or 'archive' in file.file_type) %} {% set icon_class = 'fas fa-file-archive text-purple fs-4' %}
+                                                        {% endif %}
+                                                        <i class="{{ icon_class }}"></i>  
+                                                    </div>  
+                                                    <div>  
+                                                        <h6 class="mb-0 fw-medium text-truncate" style="max-width: 250px;">{{ file.title }}</h6>  
+                                                        {% if file.description %}  
+                                                            <small class="text-muted d-block text-truncate" style="max-width: 250px;">{{ file.description }}</small>  
+                                                        {% endif %}  
+                                                    </div>  
+                                                </div>  
+                                            </td>  
+                                            <td class="align-middle">  
+                                                {% set category_display = {
+                                                    'academic': {'name': 'Académico', 'color': 'primary'},  
+                                                    'tasks': {'name': 'Tarea', 'color': 'info'},
+                                                    'teacher_specific': {'name': 'Profesor', 'color': 'purple'},
+                                                    'general': {'name': 'General', 'color': 'secondary'}
+                                                } %}  
+                                                {% set cat_info = category_display.get(file.category, {'name': file.category|title, 'color': 'dark'}) %}  
+                                                <span class="badge bg-{{ cat_info.color }}">{{ cat_info.name }}</span>  
+                                            </td>  
+                                            <td class="align-middle">  
+                                                <span class="text-uppercase fw-medium">{{ file.file_type.split('/')[-1] if '/' in file.file_type else file.file_type }}</span>  
+                                            </td>  
+                                            <td class="align-middle">  
+                                                <div class="text-sm">  
+                                                    {{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}  
+                                                    <small class="text-muted d-block">{{ file.created_at.strftime('%H:%M') if file.created_at else '' }}</small>  
+                                                </div>  
+                                            </td>  
+                                            <td class="align-middle text-center">  
+                                                <div class="btn-group">  
+                                                    <a href="{{ url_for('teacher.download_file', file_id_str=file._id) }}" class="btn btn-outline-primary btn-sm" title="Descargar" data-bs-toggle="tooltip"><i class="fas fa-download"></i></a>  
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm" title="Ver detalles" data-bs-toggle="tooltip" 
+                                                            onclick='viewFileDetailsTeacher("{{ file._id|string }}")'>
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    {% if (file.uploaded_by == session.get('user_id') or session.get('role') == 'admin') and file.category != 'tasks' %}
+                                                        <form action="{{ url_for('admin.delete_file', file_id=file._id|string) }}" method="GET" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este archivo? Esta acción podría ser irreversible.');">
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar" data-bs-toggle="tooltip"><i class="fas fa-trash"></i></button>
+                                                        </form>
+                                                    {% elif file.category == 'tasks' %}
+                                                         <button type="button" class="btn btn-outline-danger btn-sm disabled" title="Eliminar archivo de tarea desde gestión de tareas" data-bs-toggle="tooltip"><i class="fas fa-trash"></i></button>
+                                                    {% endif %}
+                                                </div>  
+                                            </td>  
+                                        </tr>  
+                                    {% endfor %}  
+                                {% else %}  
+                                    <tr>  
+                                        <td colspan="5" class="text-center py-5">  
+                                            <div class="empty-state">  
+                                                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>  
+                                                <h5 class="text-muted">No has subido archivos aún.</h5>  
+                                                <p class="text-muted">Utiliza el formulario de arriba para compartir materiales.</p>  
+                                            </div>  
+                                        </td>  
+                                    </tr>  
+                                {% endif %}  
+                            </tbody>  
+                        </table>  
+                    </div>  
+                </div>  
+                {% if files and files|length > 0 %}  
+                <div class="card-footer bg-light border-top">  
+                    <small class="text-muted">Mostrando {{ files|length }} archivo{{ 's' if files|length != 1 else '' }}.</small>  
+                </div>  
+                {% endif %}  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+  
+<!-- Modal para detalles del archivo -->  
+<div class="modal fade" id="fileDetailsModalTeacher" tabindex="-1" aria-labelledby="fileDetailsModalTeacherLabel" aria-hidden="true">  
+    <div class="modal-dialog modal-dialog-centered">  
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h5 class="modal-title" id="fileDetailsModalTeacherLabel"><i class="fas fa-info-circle me-2"></i>Detalles del Archivo</h5>  
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>  
+            </div>  
+            <div class="modal-body" id="fileDetailsContentTeacher"></div>  
+            <div class="modal-footer">  
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}  
+  
+{% block extra_js %}  
+<script>  
+// Validación del formulario Bootstrap
+(function () {
+  'use strict'
+  var forms = document.querySelectorAll('.needs-validation')
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+})();
+
+function filterFilesTeacher(category) {
+    const rows = document.querySelectorAll('#filesTableTeacher tr[data-category-teacher]');
+    const buttons = document.querySelectorAll('.btn-group[aria-label="Filtros de categoría de profesor"] .btn');
+    
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    let visibleCount = 0;
+    rows.forEach(row => {
+        if (category === 'all' || row.dataset.categoryTeacher === category) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function viewFileDetailsTeacher(fileId) {
+    const modal = new bootstrap.Modal(document.getElementById('fileDetailsModalTeacher'));
+    const content = document.getElementById('fileDetailsContentTeacher');
+    content.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin me-2"></i>Cargando detalles...</div>';
+    modal.show();
+
+    fetch(`{{ url_for('teacher.get_file_details_json', file_id_str='FILE_ID_PLACEHOLDER') }}`.replace('FILE_ID_PLACEHOLDER', fileId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const file = data.file;
+                const categoryDisplay = {
+                    'academic': 'Material Académico',
+                    'tasks': 'Archivo de Tarea',
+                    'teacher_specific': 'Recurso para Profesores',
+                    'general': 'General'
+                };
+                content.innerHTML = `
+                    <dl class="row">
+                        <dt class="col-sm-4">Título:</dt>
+                        <dd class="col-sm-8">${file.title || 'N/A'}</dd>
+
+                        <dt class="col-sm-4">Descripción:</dt>
+                        <dd class="col-sm-8">${file.description || 'Sin descripción.'}</dd>
+
+                        <dt class="col-sm-4">Categoría:</dt>
+                        <dd class="col-sm-8">${categoryDisplay[file.category] || file.category}</dd>
+
+                        <dt class="col-sm-4">Tipo de Archivo:</dt>
+                        <dd class="col-sm-8 text-uppercase">${file.file_type ? (file.file_type.includes('/') ? file.file_type.split('/')[1] : file.file_type) : 'N/A'}</dd>
+
+                        <dt class="col-sm-4">Fecha de Subida:</dt>
+                        <dd class="col-sm-8">${file.created_at || 'N/A'}</dd>
+
+                        <dt class="col-sm-4">Subido por:</dt>
+                        <dd class="col-sm-8">${file.uploader_name || 'N/A'}</dd>
+                        
+                        <dt class="col-sm-4">ID Archivo:</dt>
+                        <dd class="col-sm-8"><small class="text-muted">${file.id}</small></dd>
+                    </dl>
+                `;
+            } else {
+                content.innerHTML = `<div class="alert alert-danger">Error: ${data.error || 'No se pudieron cargar los detalles.'}</div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching file details:', error);
+            content.innerHTML = '<div class="alert alert-danger">Error de conexión al cargar detalles.</div>';
+        });
+}
+
+// Inicializar tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>  
+<style>
+.text-purple { color: #6f42c1 !important; } /* For zip/archive icons */
+.bg-purple { background-color: #6f42c1 !important; color: white; }
+</style>
+{% endblock %}

@@ -1,145 +1,134 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from pymongo import MongoClient
+import datetime
+import bcrypt
 
-from pymongo import MongoClient  
-from config import Config  
-import bcrypt  
-import datetime  
-import sys
+# Conexión a la base de datos
+print("Conectando a la base de datos MongoDB...")
+client = MongoClient("mongodb://localhost:27017/")
+db = client.app_academia_test
+print("Conexión exitosa a la base de datos 'app_academia_test'.")
 
+# Insertar usuario docente
+print("\nInsertando usuario docente...")
+docente_id = db.usuarios.insert_one({
+    'username': 'doc.ana',
+    'password': bcrypt.hashpw('DocAna2024!'.encode('utf-8'), bcrypt.gensalt()),
+    'email': 'ana.gomez@academia.edu',
+    'first_name': 'Ana',
+    'last_name': 'Gómez',
+    'role': 'docente',
+    'created_at': datetime.datetime.utcnow(),
+    'updated_at': datetime.datetime.utcnow(),
+    'active': True
+}).inserted_id
+print(f"Docente insertado con ID: {docente_id}")
 
-  
-def init_database():  
-    """Inicializa la base de datos con colecciones y datos iniciales"""  
-      
-    try:  
-        # Conectar a MongoDB  
-        client = MongoClient(Config.MONGODB_URI)  
-        db = client.udc_netschool  
-          
-        print("Conectado a MongoDB Atlas exitosamente")  
-          
-        # Crear índices para optimizar consultas  
-        print("Creando índices...")  
-          
-        # Índices para usuarios  
-        db.users.create_index("username", unique=True)  
-        db.users.create_index("role")  
-          
-        # Índices para eventos  
-        db.events.create_index("date")  
-        db.events.create_index("title")  
-          
-        print("Índices creados exitosamente")  
-          
-        # Crear usuarios iniciales  
-        print("Creando usuarios iniciales...")  
-          
-        users = [  
-            {'username': 'admin', 'password': 'admin123', 'role': 'admin'},  
-            {'username': 'teacher', 'password': 'teacher123', 'role': 'teacher'},  
-            {'username': 'student', 'password': 'student123', 'role': 'student'}  
-        ]  
-          
-        for user_data in users:  
-            # Verificar si el usuario ya existe  
-            existing_user = db.users.find_one({'username': user_data['username']})  
-            if not existing_user:  
-                hashed_password = bcrypt.hashpw(user_data['password'].encode('utf-8'), bcrypt.gensalt())  
-                user = {  
-                    'username': user_data['username'],  
-                    'password': hashed_password,  
-                    'role': user_data['role'],  
-                    'created_at': datetime.datetime.utcnow(),  
-                    'active': True  
-                }  
-                db.users.insert_one(user)  
-                print(f"Usuario {user_data['username']} creado")  
-            else:  
-                print(f"Usuario {user_data['username']} ya existe")  
-          
-        # Crear eventos iniciales  
-        print("Creando eventos iniciales...")  
-          
-        events = [  
-            {  
-                'title': 'Reunión de Padres',  
-                'date': '2025-05-15',  
-                'time': '18:00',  
-                'location': 'Auditorio Principal',  
-                'description': 'Reunión informativa para padres de familia.',  
-                'created_at': datetime.datetime.utcnow()  
-            },  
-            {  
-                'title': 'Día del Maestro',  
-                'date': '2025-05-20',  
-                'time': '10:00',  
-                'location': 'Patio Central',  
-                'description': 'Celebración por el día del maestro.',  
-                'created_at': datetime.datetime.utcnow()  
-            },  
-            {  
-                'title': 'Exámenes Finales',  
-                'date': '2025-06-01',  
-                'time': '08:00',  
-                'location': 'Aulas 101-105',  
-                'description': 'Período de exámenes finales del semestre.',  
-                'created_at': datetime.datetime.utcnow()  
-            }  
-        ]  
-        
-          
-        # Verificar si ya existen eventos  
-        existing_events = db.events.count_documents({})  
-        if existing_events == 0:  
-            db.events.insert_many(events)  
-            print(f"{len(events)} eventos creados")  
-        else:  
-            print(f"Ya existen {existing_events} eventos en la base de datos")  
-          
-        # Mostrar estadísticas  
-        print("\n=== ESTADÍSTICAS DE LA BASE DE DATOS ===")  
-        print(f"Usuarios totales: {db.users.count_documents({})}")  
-        print(f"Eventos totales: {db.events.count_documents({})}")  
-          
-        # Mostrar usuarios por rol  
-        for role in ['admin', 'teacher', 'student']:  
-            count = db.users.count_documents({'role': role})  
-            print(f"Usuarios {role}: {count}")  
-          
-        print("\nBase de datos inicializada correctamente")  
-          
-    except Exception as e:  
-        print(f"Error al inicializar la base de datos: {e}")  
-        return False  
-      
-    return True  
-  
-def reset_database():  
-    """Elimina todas las colecciones y reinicia la base de datos"""  
-    try:  
-        client = MongoClient(Config.MONGODB_URI)  
-        db = client.udc_netschool  
-          
-        # Eliminar todas las colecciones  
-        db.users.drop()  
-        db.events.drop()  
-          
-        print("Base de datos reiniciada")  
-          
-        # Reinicializar  
-        return init_database()  
-          
-    except Exception as e:  
-        print(f"Error al reiniciar la base de datos: {e}")  
-        return False  
-  
-if __name__ == '__main__':  
-    import sys  
-      
-    if len(sys.argv) > 1 and sys.argv[1] == '--reset':  
-        reset_database()  
-    else:  
-        init_database()
+# Insertar usuario alumno
+print("\nInsertando usuario alumno...")
+alumno_id = db.usuarios.insert_one({
+    'username': 'alu.luis',
+    'password': bcrypt.hashpw('Luis2024!'.encode('utf-8'), bcrypt.gensalt()),
+    'email': 'luis.alumno@academia.edu',
+    'first_name': 'Luis',
+    'last_name': 'Martínez',
+    'role': 'alumno',
+    'created_at': datetime.datetime.utcnow(),
+    'updated_at': datetime.datetime.utcnow(),
+    'active': True
+}).inserted_id
+print(f"Alumno insertado con ID: {alumno_id}")
 
+# Insertar usuario tutor
+print("\nInsertando usuario tutor...")
+tutor_id = db.usuarios.insert_one({
+    'username': 'tutor.jorge',
+    'password': bcrypt.hashpw('Jorge2024!'.encode('utf-8'), bcrypt.gensalt()),
+    'email': 'jorge.tutor@academia.edu',
+    'first_name': 'Jorge',
+    'last_name': 'Martínez',
+    'role': 'tutor',
+    'created_at': datetime.datetime.utcnow(),
+    'updated_at': datetime.datetime.utcnow(),
+    'active': True
+}).inserted_id
+print(f"Tutor insertado con ID: {tutor_id}")
+
+# Relación alumno-tutor
+print("\nRelacionando alumno con tutor...")
+db.relaciones_tutor.insert_one({
+    'alumno_id': alumno_id,
+    'tutor_id': tutor_id,
+    'created_at': datetime.datetime.utcnow()
+})
+print("Relación alumno-tutor creada.")
+
+# Crear curso
+print("\nCreando curso de Ciencias Naturales...")
+curso_id = db.cursos.insert_one({
+    'nombre': 'Ciencias Naturales',
+    'descripcion': 'Curso introductorio a las ciencias naturales',
+    'docente_id': docente_id,
+    'nivel': 'Grado 7',
+    'created_at': datetime.datetime.utcnow(),
+    'active': True
+}).inserted_id
+print(f"Curso creado con ID: {curso_id}")
+
+# Registrar calificación
+print("\nInsertando calificación del alumno...")
+db.calificaciones.insert_one({
+    'alumno_id': alumno_id,
+    'curso_id': curso_id,
+    'docente_id': docente_id,
+    'valor': 4.8,
+    'tipo': 'Examen Final',
+    'descripcion': 'Evaluación final del trimestre',
+    'created_at': datetime.datetime.utcnow()
+})
+print("Calificación registrada correctamente.")
+
+# Cargar archivo institucional
+print("\nCargando archivo institucional...")
+db.archivos_institucionales.insert_one({
+    'titulo': 'Manual de Convivencia',
+    'descripcion': 'Guía de normas y comportamiento institucional',
+    'ruta_archivo': '/documentos/manual_convivencia.pdf',
+    'tipo_archivo': 'pdf',
+    'categoria': 'normas',
+    'cargado_por': docente_id,
+    'created_at': datetime.datetime.utcnow(),
+    'active': True
+})
+print("Archivo institucional cargado exitosamente.")
+
+# Crear evento institucional
+print("\nCreando evento institucional...")
+db.eventos.insert_one({
+    'titulo': 'Feria de Ciencias',
+    'fecha': '2025-09-10',
+    'hora': '08:30',
+    'lugar': 'Salón Principal',
+    'descripcion': 'Presentación de proyectos científicos escolares',
+    'created_at': datetime.datetime.utcnow()
+})
+print("Evento creado correctamente.")
+
+# Enviar notificación
+print("\nEnviando notificación al alumno...")
+db.notificaciones.insert_one({
+    'usuario_id': alumno_id,
+    'titulo': 'Invitación a Feria de Ciencias',
+    'mensaje': 'Participa en la feria este 10 de septiembre.',
+    'tipo': 'evento',
+    'datos': {},
+    'leido': False,
+    'created_at': datetime.datetime.utcnow()
+})
+print("Notificación enviada correctamente.")
+
+# Finalización
+print("\n>>> TODOS LOS DATOS HAN SIDO INSERTADOS CORRECTAMENTE.")
+print(f"ID del Docente: {docente_id}")
+print(f"ID del Alumno: {alumno_id}")
+print(f"ID del Tutor: {tutor_id}")
+print(f"ID del Curso: {curso_id}")

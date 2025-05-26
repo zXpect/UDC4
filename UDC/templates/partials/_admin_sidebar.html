@@ -1,0 +1,32 @@
+<div class="profile-sidebar mb-4">
+    <nav class="nav flex-column nav-pills" id="adminSidebarMenu" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="admin-dashboard-tab" data-bs-toggle="pill" href="#admin-dashboard" role="tab" aria-controls="admin-dashboard" aria-selected="true">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <a class="nav-link" id="system-activity-tab" data-bs-toggle="pill" href="#system-activity" role="tab" aria-controls="system-activity" aria-selected="false">
+            <i class="fas fa-history me-2"></i>Actividad del Sistema
+        </a>
+        <a class="nav-link" id="user-management-tab" data-bs-toggle="pill" href="#user-management" role="tab" aria-controls="user-management" aria-selected="false">
+            <i class="fas fa-users-cog me-2"></i>Gestión de Usuarios
+        </a>
+        <a class="nav-link" id="course-management-tab" data-bs-toggle="pill" href="#course-management" role="tab" aria-controls="course-management" aria-selected="false">
+            <i class="fas fa-book-medical me-2"></i>Gestión de Cursos
+        </a>
+        <a class="nav-link" id="institutional-settings-tab" data-bs-toggle="pill" href="#institutional-settings" role="tab" aria-controls="institutional-settings" aria-selected="false">
+            <i class="fas fa-cogs me-2"></i>Configuración Institucional
+        </a>
+        <a class="nav-link" id="reports-analytics-tab" data-bs-toggle="pill" href="#reports-analytics" role="tab" aria-controls="reports-analytics" aria-selected="false">
+            <i class="fas fa-chart-bar me-2"></i>Reportes y Analíticas
+        </a>
+        <a class="nav-link" id="admin-personal-info-tab" data-bs-toggle="pill" href="#admin-personal-info" role="tab" aria-controls="admin-personal-info" aria-selected="false">
+            <i class="fas fa-user-shield me-2"></i>Mi Información
+        </a>
+        <hr>
+        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">
+            <i class="fas fa-sliders-h me-2"></i>Preferencias
+        </a>
+        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+        </a>
+    </nav>
+</div> 

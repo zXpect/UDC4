@@ -1,0 +1,41 @@
+{% extends 'base_admin.html' %}  
+  
+{% block title %}Vincular Padres e Hijos - Admin{% endblock %}  
+{% block page_title %}Vincular Padres e Hijos{% endblock %}  
+  
+{% block content %}  
+<div class="container-fluid">  
+    <div class="row">  
+        <div class="col-lg-12">  
+            <div class="card shadow mb-4">  
+                <div class="card-header py-3">  
+                    <h6 class="m-0 font-weight-bold text-primary">Vincular Padre con Hijo</h6>  
+                </div>  
+                <div class="card-body">  
+                    <form method="POST" action="{{ url_for('admin.link_parent_child') }}">  
+                        <div class="mb-3">  
+                            <label for="parent_id" class="form-label">Seleccionar Padre:</label>  
+                            <select class="form-select" id="parent_id" name="parent_id" required>  
+                                <option value="">-- Seleccione un Padre --</option>  
+                                {% for parent in parents %}  
+                                <option value="{{ parent._id }}">{{ parent.first_name }} {{ parent.last_name }} ({{ parent.username }})</option>  
+                                {% endfor %}  
+                            </select>  
+                        </div>  
+                        <div class="mb-3">  
+                            <label for="student_id" class="form-label">Seleccionar Hijo (Estudiante):</label>  
+                            <select class="form-select" id="student_id" name="student_id" required>  
+                                <option value="">-- Seleccione un Estudiante --</option>  
+                                {% for student in students %}  
+                                <option value="{{ student._id }}">{{ student.first_name }} {{ student.last_name }} ({{ student.username }})</option>  
+                                {% endfor %}  
+                            </select>  
+                        </div>  
+                        <button type="submit" class="btn btn-primary">Vincular</button>  
+                    </form>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}

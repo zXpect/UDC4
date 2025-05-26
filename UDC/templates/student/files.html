@@ -1,0 +1,78 @@
+{% extends 'base_student.html' %}  
+{% block title %}Archivos Académicos - Estudiante{% endblock %}  
+{% block page_title %}Archivos Académicos{% endblock %}  
+  
+{% block content %}  
+<div class="container-fluid">  
+    <div class="row">  
+        <div class="col-12">  
+            <div class="card shadow">  
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">  
+                    <h5 class="mb-0">  
+                        <i class="fas fa-file-alt me-2"></i>  
+                        Materiales de Estudio Disponibles  
+                    </h5>  
+                    <span class="badge bg-light text-dark">{{ files|length }} archivo(s)</span>  
+                </div>  
+                <div class="card-body">  
+                    {% if files %}  
+                        <div class="row">  
+                            {% for file in files %}  
+                                <div class="col-lg-4 col-md-6 mb-4">  
+                                    <div class="card h-100 border-0 shadow-sm">  
+                                        <div class="card-body">  
+                                            <div class="d-flex align-items-center mb-3">  
+                                                <div class="file-icon me-3">  
+                                                    {% if file.file_type == 'pdf' %}  
+                                                        <i class="fas fa-file-pdf text-danger fs-2"></i>  
+                                                    {% elif file.file_type in ['doc', 'docx'] %}  
+                                                        <i class="fas fa-file-word text-primary fs-2"></i>  
+                                                    {% elif file.file_type in ['xls', 'xlsx'] %}  
+                                                        <i class="fas fa-file-excel text-success fs-2"></i>  
+                                                    {% elif file.file_type in ['ppt', 'pptx'] %}  
+                                                        <i class="fas fa-file-powerpoint text-warning fs-2"></i>  
+                                                    {% elif file.file_type in ['jpg', 'jpeg', 'png'] %}  
+                                                        <i class="fas fa-file-image text-info fs-2"></i>  
+                                                    {% else %}  
+                                                        <i class="fas fa-file-alt text-secondary fs-2"></i>  
+                                                    {% endif %}  
+                                                </div>  
+                                                <div class="flex-grow-1">  
+                                                    <h6 class="card-title mb-1">{{ file.title }}</h6>  
+                                                    <small class="text-muted text-uppercase">{{ file.file_type }}</small>  
+                                                </div>  
+                                            </div>  
+                                              
+                                            <p class="card-text text-muted small">  
+                                                {{ file.description[:100] if file.description else 'Sin descripción disponible' }}  
+                                                {% if file.description and file.description|length > 100 %}...{% endif %}  
+                                            </p>  
+                                              
+                                            <div class="d-flex justify-content-between align-items-center mt-3">  
+                                                <small class="text-muted">  
+                                                    <i class="fas fa-calendar me-1"></i>  
+                                                    {{ file.created_at.strftime('%d/%m/%Y') if file.created_at else 'N/A' }}  
+                                                </small>  
+                                                <a href="{{ url_for('student.download_file', file_id=file._id) }}"   
+                                                   class="btn btn-success btn-sm">  
+                                                    <i class="fas fa-download me-1"></i>Descargar  
+                                                </a>  
+                                            </div>  
+                                        </div>  
+                                    </div>  
+                                </div>  
+                            {% endfor %}  
+                        </div>  
+                    {% else %}  
+                        <div class="text-center py-5">  
+                            <i class="fas fa-file-alt fa-4x text-muted mb-4"></i>  
+                            <h4 class="text-muted">No hay archivos académicos disponibles</h4>  
+                            <p class="text-muted">Los archivos aparecerán aquí cuando los profesores los suban</p>  
+                        </div>  
+                    {% endif %}  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+{% endblock %}

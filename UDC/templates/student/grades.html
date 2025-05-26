@@ -1,31 +1,104 @@
-{% extends 'base.html' %}  
-{% block title %}Mis Notas{% endblock %}  
-{% block content %}  
-<div class="container py-4">  
-    <h2>Mis Calificaciones</h2>  
-    <div class="table-responsive">  
-        <table class="table table-striped">  
-            <thead>  
-                <tr>  
-                    <th>Materia</th>  
-                    <th>Tipo</th>  
-                    <th>Nota</th>  
-                    <th>Fecha</th>  
-                    <th>Observaciones</th>  
-                </tr>  
-            </thead>  
-            <tbody>  
-                {% for grade in grades %}  
-                    <tr>  
-                        <td>{{ grade.course_id }}</td>  
-                        <td>{{ grade.grade_type }}</td>  
-                        <td><span class="badge bg-primary">{{ grade.grade_value }}</span></td>  
-                        <td>{{ grade.created_at.strftime('%d/%m/%Y') }}</td>  
-                        <td>{{ grade.description }}</td>  
-                    </tr>  
-                {% endfor %}  
-            </tbody>  
-        </table>  
-    </div>  
-</div>  
+{% extends 'base_student.html' %}
+
+{% block title %}Mis Notas - Estudiante{% endblock %}
+
+{% block page_title %}Mis Notas y Calificaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-star me-2"></i>Detalle de Calificaciones</h6>
+        </div>
+        <div class="card-body">
+            {% if grades %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="gradesTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Materia</th>
+                                <th scope="col">Tipo de Evaluación</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Calificación</th>
+                                <th scope="col">Fecha de Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in grades %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-book text-primary me-2"></i>
+                                        <span class="fw-medium">{{ grade.course_name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set type_info = {
+                                        'parcial': {'name': 'Examen Parcial', 'icon': 'fas fa-file-alt', 'color': 'primary'},
+                                        'quiz': {'name': 'Quiz', 'icon': 'fas fa-question-circle', 'color': 'info'},
+                                        'tarea': {'name': 'Tarea', 'icon': 'fas fa-tasks', 'color': 'secondary'},
+                                        'proyecto': {'name': 'Proyecto', 'icon': 'fas fa-project-diagram', 'color': 'purple'},
+                                        'participacion': {'name': 'Participación', 'icon': 'fas fa-hand-paper', 'color': 'teal'},
+                                        'laboratorio': {'name': 'Laboratorio', 'icon': 'fas fa-flask', 'color': 'orange'}
+                                    } %}
+                                    {% set grade_type_key = grade.grade_type | lower | replace(' ', '') %}
+                                    {% set current_type = type_info.get(grade_type_key, {'name': grade.grade_type|title, 'icon': 'fas fa-clipboard', 'color': 'gray'}) %}
+                                    <span class="badge bg-{{ current_type.color }} bg-opacity-25 text-{{ current_type.color }} py-2 px-3">
+                                        <i class="{{ current_type.icon }} me-1"></i> {{ current_type.name }}
+                                    </span>
+                                </td> 
+                                <td class="small text-muted">{{ grade.description if grade.description else 'N/A' }}</td>
+                                <td>
+                                    {% set grade_value = grade.grade_value %}
+                                    <span class="badge fs-6 rounded-pill bg-{{ 'success' if grade_value >= 7 else ('warning' if grade_value >= 5 else 'danger') }}">
+                                        {{ "%.1f"|format(grade_value) }} / 10
+                                    </span>
+                                </td>
+                                <td class="small text-muted">{{ grade.created_at.strftime('%d/%m/%Y') if grade.created_at else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No tienes notas registradas.</h4>
+                    <p>Tus calificaciones aparecerán aquí una vez que sean publicadas por tus profesores.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.badge.bg-opacity-25 {
+    --bs-bg-opacity: 0.25;
+}
+.bg-purple { background-color: #6f42c1 !important; }
+.text-purple { color: #6f42c1 !important; }
+.bg-teal { background-color: #20c997 !important; }
+.text-teal { color: #20c997 !important; }
+.bg-orange { background-color: #fd7e14 !important; }
+.text-orange { color: #fd7e14 !important; }
+.bg-gray { background-color: #6c757d !important; }
+.text-gray { color: #6c757d !important; }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet"> -->
+<!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script> -->
+<!-- <script>
+    // $(document).ready(function() {
+    //     $('#gradesTable').DataTable({
+    //         "language": {
+    //             "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+    //         },
+    //         "order": [[4, "desc"]]
+    //     });
+    // });
+</script> -->
 {% endblock %}

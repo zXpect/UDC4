@@ -1,25 +1,180 @@
-{% extends 'base.html' %}  
-{% block title %}Dashboard Profesor{% endblock %}  
-{% block content %}  
-<div class="container py-4">  
-    <h2>Dashboard del Profesor</h2>  
-    <div class="row">  
-        <div class="col-md-6">  
-            <h3>Mis Cursos</h3>  
-            {% for course in courses %}  
-                <div class="card mb-2">  
-                    <div class="card-body">  
-                        <h5>{{ course.name }}</h5>  
-                        <p>{{ course.description }}</p>  
-                    </div>  
-                </div>  
-            {% endfor %}  
-        </div>  
-        <div class="col-md-6">  
-            <h3>Acciones Rápidas</h3>  
-            <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-primary mb-2 d-block">Registrar Notas</a>  
-            <a href="{{ url_for('teacher.manage_files') }}" class="btn btn-secondary mb-2 d-block">Gestionar Archivos</a>  
-        </div>  
-    </div>  
-</div>  
+{% extends 'base_teacher.html' %}
+{% block title %}Dashboard Profesor{% endblock %}
+{% block page_title %}Panel de Profesor{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Tarjetas de resumen con datos reales -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estudiantes Asignados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_students }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Materias Impartidas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_courses }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Tareas por Calificar</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.pending_grades }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Promedio General</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.avg_grade }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal con datos reales -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Mis Cursos</h6>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                    <div class="row">
+                        {% for course in courses %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-left-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ course.name }}</h5>
+                                    <p class="card-text">{{ course.description if course.description else 'Sin
+                                        descripción disponible' }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-layer-group me-1"></i>
+                                        Nivel: {{ course.level if course.level else 'No especificado' }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay cursos asignados</h5>
+                        <p class="text-muted">Contacte al administrador para asignar cursos</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-warning">
+                            <i class="fas fa-star me-2"></i>Registrar Notas
+                        </a>
+                        <a href="{{ url_for('teacher.manage_files') }}" class="btn btn-info">
+                            <i class="fas fa-file-upload me-2"></i>Subir Archivos
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-users me-2"></i>Ver Estudiantes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Últimas Calificaciones Registradas</h6>
+                </div>
+                <div class="card-body">
+                    {% if recent_grades %}
+                    {% for grade in recent_grades[:5] %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                        <div>
+                            <h6 class="mb-1">{{ grade.student_name if grade.student_name else 'Estudiante' }}</h6>
+                            <small class="text-muted">{{ grade.course_name if grade.course_name else 'Curso' }}</small>
+                        </div>
+                        <div class="text-end">
+                            {% set grade_value = grade.grade_value|safe_float %}
+                            <span
+                                class="badge bg-{{ 'success' if grade_value >= 7 else 'warning' if grade_value >= 5 else 'danger' }}">
+                                {{ "%.1f"|format(grade_value) }}/10
+                            </span>
+                            <br>
+                            <small class="text-muted">{{ grade.grade_type if grade.grade_type else 'Evaluación'
+                                }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if recent_grades|length > 5 %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-sm btn-outline-warning">
+                            Ver todas las calificaciones
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-clipboard-list fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No hay calificaciones registradas</p>
+                        <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-sm btn-warning mt-2">
+                            Registrar primera calificación
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+    {% if action == 'add' %}Agregar Curso{% else %}Editar Curso{% endif %} - UDC
+{% endblock %}
+
+{% block page_title %}
+    {% if action == 'add' %}Agregar Nuevo Curso{% else %}Editar Curso: {{ course.name }}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {% if action == 'add' %}Formulario de Nuevo Curso{% else %}Formulario de Edición de Curso{% endif %}
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{% if action == 'add' %}{{ url_for('admin.add_course') }}{% else %}{{ url_for('admin.edit_course', course_id=course._id) }}{% endif %}">
+                
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre del Curso <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ course.name if course else '' }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descripción</label>
+                    <textarea class="form-control" id="description" name="description" rows="3">{{ course.description if course else '' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="grade_level" class="form-label">Nivel/Grado <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="grade_level" name="grade_level" value="{{ course.grade_level if course else '' }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="teacher_id" class="form-label">Profesor Asignado <span class="text-danger">*</span></label>
+                    <select class="form-select" id="teacher_id" name="teacher_id" required>
+                        <option value="">Seleccione un profesor...</option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher._id }}" {% if course and course.teacher_id == teacher._id %}selected{% endif %}>
+                                {{ teacher.first_name }} {{ teacher.last_name }} ({{ teacher.username }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <hr>
+                <button type="submit" class="btn btn-primary">
+                    {% if action == 'add' %}<i class="fas fa-plus-circle"></i> Crear Curso{% else %}<i class="fas fa-save"></i> Guardar Cambios{% endif %}
+                </button>
+                <a href="{{ url_for('admin.courses') }}" class="btn btn-secondary">
+                    <i class="fas fa-times-circle"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

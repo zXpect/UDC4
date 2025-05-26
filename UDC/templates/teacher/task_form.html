@@ -1,0 +1,106 @@
+{% extends 'base_teacher.html' %}
+
+{% block title %}{{ 'Crear Nueva' if not task._id else 'Editar' }} Tarea - Profesor{% endblock %}
+
+{% block page_title %}
+    <i class="fas fa-{{ 'plus-circle' if not task._id else 'edit' }} me-2"></i> 
+    {{ 'Crear Nueva Tarea' if not task._id else 'Editar Tarea' }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        Formulario de Tarea
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ action }}" enctype="multipart/form-data" id="taskForm">
+                        
+                        <div class="mb-3">
+                            <label for="course_id" class="form-label">Materia Asignada <span class="text-danger">*</span></label>
+                            <select class="form-select" id="course_id" name="course_id" required>
+                                <option value="" disabled {{ 'selected' if not task.course_id else '' }}>Selecciona una materia...</option>
+                                {% for course in courses %}
+                                    <option value="{{ course._id }}" 
+                                            {{ 'selected' if task.course_id == course._id|string or task.course_id == course._id else '' }}>
+                                        {{ course.name }} ({{ course.grade_level }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título de la Tarea <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ task.get('title', '') }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción Detallada <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="5" required>{{ task.get('description', '') }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="due_date" class="form-label">Fecha y Hora de Entrega <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
+                                   value="{{ task.due_date.strftime('%Y-%m-%dT%H:%M') if task.due_date else '' }}" required>
+                            <small class="form-text text-muted">Asegúrate de que la fecha y hora sean futuras.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="task_file" class="form-label">Archivo Adjunto (Opcional)</label>
+                            <input type="file" class="form-control" id="task_file" name="task_file">
+                            {% if task.file_path %}
+                                <small class="form-text text-muted mt-2">
+                                    Archivo actual: 
+                                    <a href="{{ url_for('teacher.download_task_attachment', task_id=task._id) }}" target="_blank">
+                                        <i class="fas fa-paperclip"></i> {{ task.file_path.split('/')[-1] }}
+                                    </a>
+                                    (Subir un nuevo archivo lo reemplazará).
+                                </small>
+                            {% endif %}
+                             <small class="d-block mt-1 form-text text-muted">Tipos permitidos: PDF, DOC, DOCX, TXT, PPT, PPTX, XLS, XLSX, PNG, JPG, ZIP.</small>
+                        </div>
+                        
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('teacher.manage_tasks') }}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-{{ 'save' if not task._id else 'edit' }} me-2"></i> 
+                                {{ 'Guardar Tarea' if not task._id else 'Actualizar Tarea' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dueDateInput = document.getElementById('due_date');
+    if (dueDateInput) {
+        // Set min attribute to current date and time if not already set (for new tasks)
+        if (!dueDateInput.value) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for local timezone
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mi = String(now.getMinutes()).padStart(2, '0');
+            dueDateInput.min = `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+        }
+    }
+});
+</script>
+{% endblock %} 

@@ -1,32 +1,252 @@
-{% extends 'base.html' %}  
-{% block title %}Dashboard Estudiante{% endblock %}  
-{% block content %}  
-<div class="container py-4">  
-    <h2>Dashboard del Estudiante</h2>  
-    <div class="row">  
-        <div class="col-md-6">  
-            <h3>Próximos Eventos</h3>  
-            {% for event in events %}  
-                <div class="card mb-3">  
-                    <div class="card-body">  
-                        <h5 class="card-title">{{ event.title }}</h5>  
-                        <p class="card-text">{{ event.description }}</p>  
-                        <small class="text-muted">{{ event.date }} - {{ event.time }}</small>  
-                    </div>  
-                </div>  
-            {% endfor %}  
-        </div>  
-        <div class="col-md-6">  
-            <h3>Mis Notas Recientes</h3>  
-            {% for grade in grades %}  
-                <div class="card mb-2">  
-                    <div class="card-body">  
-                        <span class="badge bg-primary">{{ grade.grade_value }}</span>  
-                        <span>{{ grade.grade_type }}</span>  
-                    </div>  
-                </div>  
-            {% endfor %}  
-        </div>  
-    </div>  
-</div>  
+{% extends 'base_student.html' %}
+
+{% block title %}Dashboard - Estudiante{% endblock %}
+
+{% block page_title %}Mi Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Bienvenido, {{ session.get('first_name', 'Estudiante') }}!</h1>
+
+    <!-- Tarjetas de resumen con datos reales -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Promedio General</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ stats.avg_grade if stats.avg_grade else 'N/A' }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total de Notas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_grades }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Archivos Disponibles</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.available_files }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Eventos Próximos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.upcoming_events }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal con datos reales -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Mis Últimas Calificaciones</h6>
+                </div>
+                <div class="card-body">
+                    {% if recent_grades %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Materia</th>
+                                    <th>Evaluación</th>
+                                    <th>Nota</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in recent_grades %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-book text-primary me-2"></i>
+                                            <span class="fw-medium">{{ grade.course_name if grade.course_name else 'Materia' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% set type_info = {
+                                        'parcial': {'name': 'Examen Parcial', 'icon': 'fas fa-file-alt'},
+                                        'quiz': {'name': 'Quiz', 'icon': 'fas fa-question-circle'},
+                                        'tarea': {'name': 'Tarea', 'icon': 'fas fa-tasks'},
+                                        'proyecto': {'name': 'Proyecto', 'icon': 'fas fa-project-diagram'},
+                                        'participacion': {'name': 'Participación', 'icon': 'fas fa-hand-paper'},
+                                        'laboratorio': {'name': 'Laboratorio', 'icon': 'fas fa-flask'}
+                                        } %}
+                                        {% set grade_type_info = type_info.get(grade.grade_type, {'name': grade.grade_type|title, 'icon': 'fas fa-clipboard'}) %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="{{ grade_type_info.icon }} text-muted me-2"></i>
+                                            <span>{{ grade_type_info.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% set grade_value = grade.grade_value | string | replace(",", ".") | float %}
+                                        <span class="badge fs-6 bg-{{ 'success' if grade_value >= 7 else 'warning' if grade_value >= 5 else 'danger' }}">
+                                            {{ "%.1f"|format(grade_value) }}/10
+                                        </span>
+                                    </td>
+                                    <td>{{ grade.created_at.strftime('%d/%m/%Y') if grade.created_at else 'N/A' }}</td>
+                                </tr>   
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if recent_grades|length > 0 %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('student.grades') }}" class="btn btn-success">
+                            <i class="fas fa-star me-2"></i>Ver todas mis notas
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay calificaciones disponibles</h5>
+                        <p class="text-muted">Las calificaciones aparecerán aquí cuando los profesores las registren.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Próximos Eventos</h6>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events and upcoming_events|length > 0 %}
+                    <div class="list-group list-group-flush">
+                        {% for event in upcoming_events %}
+                        <div class="list-group-item d-flex justify-content-between align-items-start px-0">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">{{ event.title }}</div>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ event.date.strftime('%d de %B') if event.date else 'Fecha no disponible' }}
+                                    <br>
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ event.time if event.time else 'Hora no especificada' }}
+                                </small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Próximo</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                     {% if upcoming_events|length > 0 %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('student.events') }}" class="btn btn-info">
+                            <i class="fas fa-calendar-alt me-2"></i>Ver todos los eventos
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-calendar-check fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No hay eventos próximos.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('student.my_courses') }}" class="btn btn-primary">
+                            <i class="fas fa-book me-2"></i>Mis Materias
+                        </a>
+                        <a href="{{ url_for('student.view_files') }}" class="btn btn-secondary">
+                            <i class="fas fa-file-alt me-2"></i>Archivos Académicos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+/* Estilos para modo oscuro en los items de la lista de eventos */
+/* Estilos para modo claro (por defecto) */
+.list-group-item {
+  background-color: var(--bs-card-bg, #fff); /* Usar variable de Bootstrap para fondo de card si está disponible */
+  color: var(--bs-body-color, #212529);
+  border-color: var(--bs-border-color, #dee2e6);
+}
+
+.list-group-item .text-muted {
+  color: var(--bs-secondary-color, #6c757d) !important;
+}
+
+/* Tema oscuro */
+[data-theme="dark"] .list-group-item,
+.dark-theme .list-group-item {
+  background-color: var(--bs-dark-bg-subtle, #1a202c) !important; 
+  color: var(--bs-light-text-emphasis, #f8f9fa) !important;
+  border-color: var(--bs-dark-border-subtle, #495057) !important;
+}
+
+[data-theme="dark"] .list-group-item .text-muted,
+.dark-theme .list-group-item .text-muted {
+  color: var(--bs-light-text-emphasis, #adb5bd) !important; 
+}
+
+[data-theme="dark"] .list-group-item small i,
+.dark-theme .list-group-item small i {
+  color: var(--bs-light-text-emphasis, #adb5bd) !important;
+}
+
+[data-theme="dark"] .list-group-item .badge.bg-primary,
+.dark-theme .list-group-item .badge.bg-primary {
+  background-color: var(--bs-primary-bg-subtle, #0d6efd) !important; 
+  color: var(--bs-primary-text-emphasis, #fff) !important;
+}
+</style>
 {% endblock %}

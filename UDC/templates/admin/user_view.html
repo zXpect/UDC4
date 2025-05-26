@@ -1,0 +1,61 @@
+{% extends 'base_admin.html' %}
+
+{% set entity_name = 'Estudiante' if role == 'student' else 'Profesor' %}
+
+{% block title %}Detalles del {{ entity_name }} - {{ user.username }}{% endblock %}
+
+{% block page_title %}Detalles del {{ entity_name }}: {{ user.first_name }} {{ user.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Información del {{ entity_name }}</h6>
+            <div>
+                <a href="{% if role == 'student' %}{{ url_for('admin.edit_student', user_id=user._id) }}{% else %}{{ url_for('admin.edit_teacher', user_id=user._id) }}{% endif %}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="{% if role == 'student' %}{{ url_for('admin.students') }}{% else %}{{ url_for('admin.teachers') }}{% endif %}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Volver al Listado
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">ID de Usuario:</dt>
+                <dd class="col-sm-9">{{ user._id }}</dd>
+
+                <dt class="col-sm-3">Nombre de Usuario:</dt>
+                <dd class="col-sm-9">{{ user.username }}</dd>
+
+                <dt class="col-sm-3">Nombres:</dt>
+                <dd class="col-sm-9">{{ user.first_name }}</dd>
+
+                <dt class="col-sm-3">Apellidos:</dt>
+                <dd class="col-sm-9">{{ user.last_name }}</dd>
+
+                <dt class="col-sm-3">Correo Electrónico:</dt>
+                <dd class="col-sm-9">{{ user.email }}</dd>
+
+                <dt class="col-sm-3">Rol:</dt>
+                <dd class="col-sm-9"><span class="badge bg-info">{{ user.role | title }}</span></dd>
+
+                <dt class="col-sm-3">Fecha de Creación:</dt>
+                <dd class="col-sm-9">{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else 'N/A' }} UTC</dd>
+
+                <dt class="col-sm-3">Última Actualización:</dt>
+                <dd class="col-sm-9">{{ user.updated_at.strftime('%Y-%m-%d %H:%M:%S') if user.updated_at else 'N/A' }} UTC</dd>
+            
+                <dt class="col-sm-3">Estado:</dt>
+                <dd class="col-sm-9">
+                    {% if user.active %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactivo/Eliminado</span>
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,26 +1,217 @@
-{% extends 'base.html' %}  
-{% block title %}Dashboard Padre{% endblock %}  
-{% block content %}  
-<div class="container py-4">  
-    <h2>Dashboard de Padre de Familia</h2>  
-    <div class="row">  
-        <div class="col-12">  
-            <h3>Mis Hijos</h3>  
-            {% for child in children %}  
-                <div class="card mb-3">  
-                    <div class="card-body">  
-                        <h5 class="card-title">{{ child.first_name }} {{ child.last_name }}</h5>  
-                        <p class="card-text">Usuario: {{ child.username }}</p>  
-                        <a href="{{ url_for('parent.child_grades', child_id=child._id) }}" class="btn btn-primary">Ver Notas</a>  
-                    </div>  
-                </div>  
-            {% endfor %}  
-        </div>  
-    </div>  
-    <div class="row mt-4">  
-        <div class="col-12">  
-            <a href="{{ url_for('parent.academic_files') }}" class="btn btn-info">Ver Archivos Académicos</a>  
-        </div>  
-    </div>  
-</div>  
+{% extends 'base_parent.html' %}
+{% block title %}Dashboard Padre{% endblock %}
+{% block page_title %}Panel de Padre de Familia{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Tarjetas de resumen con datos reales -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-purple shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-purple text-uppercase mb-1">
+                                Hijos Registrados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ children|length if children else 0 }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-child fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Promedio General</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.avg_grade if stats.avg_grade
+                                else 'N/A' }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Calificaciones</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_grades }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Eventos Próximos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.upcoming_events }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal con datos reales -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Mis Hijos</h6>
+                </div>
+                <div class="card-body">
+                    {% if children %}
+                    <div class="row">
+                        {% for child in children %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-left-purple">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title mb-1">{{ child.first_name }} {{ child.last_name }}
+                                            </h5>
+                                            <p class="card-text text-muted mb-2">{{ child.username }}</p>
+                                            <div class="d-flex gap-2">
+                                                <a href="{{ url_for('parent.child_grades', child_id=child._id) }}"
+                                                    class="btn btn-sm btn-purple">
+                                                    <i class="fas fa-star me-1"></i>Ver Notas
+                                                </a>
+                                                <span class="badge bg-success">
+                                                    Promedio: {{ child.avg_grade if child.avg_grade else 'N/A' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-child fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay hijos registrados en el sistema</h5>
+                        <p class="text-muted">Contacte al administrador para vincular a sus hijos</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('parent.academic_files') }}" class="btn btn-purple">
+                            <i class="fas fa-file-alt me-2"></i>Archivos Académicos
+                        </a>
+                        <a href="#" class="btn btn-info">
+                            <i class="fas fa-calendar-alt me-2"></i>Eventos Escolares
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-comments me-2"></i>Comunicaciones
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Próximos Eventos</h6>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events %}
+                    <div class="list-group list-group-flush">
+                        {% for event in upcoming_events %}
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">{{ event.title }}</div>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ event.date|safe_date('%d de %B') if event.date else 'Fecha no disponible' }}
+                                    <br>
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ event.time if event.time else 'Hora no especificada' }}
+                                </small>
+                            </div>
+                            <span class="badge bg-warning rounded-pill">Próximo</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-calendar-alt fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No hay eventos próximos</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-purple {
+        border-left: 0.25rem solid #8b5cf6 !important;
+    }
+
+    .text-purple {
+        color: #8b5cf6 !important;
+    }
+
+    .btn-purple {
+        background-color: #8b5cf6;
+        border-color: #8b5cf6;
+        color: white;
+    }
+
+    .btn-purple:hover {
+        background-color: #7c3aed;
+        border-color: #7c3aed;
+        color: white;
+    }
+
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #8b5cf6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+</style>
 {% endblock %}
