@@ -13,7 +13,7 @@ from datetime import datetime, date
 
   
 admin = Blueprint('admin', __name__)  
-
+# Configuración para archivos
 # Configuración para archivos  
 UPLOAD_FOLDER = 'uploads'  
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx'}  
