@@ -10,6 +10,7 @@ from routes.admin import admin
 from routes.student import student  
 from routes.parent import parent  
 from routes.teacher import teacher  
+from datetime import datetime
   
 def create_app():  
     app = Flask(__name__)  
@@ -108,6 +109,30 @@ def create_app():
         abort(403)
       
     return app
+
+def safe_date_filter(date_value):
+    """
+    Safely format date values, handling None and various date formats
+    """
+    if date_value is None:
+        return "N/A"
+    
+    try:
+        if isinstance(date_value, str):
+            # Try to parse string dates
+            try:
+                date_value = datetime.fromisoformat(date_value.replace('Z', '+00:00'))
+            except:
+                return date_value  # Return as-is if can't parse
+        
+        if isinstance(date_value, datetime):
+            return date_value.strftime('%d/%m/%Y')
+        
+        return str(date_value)
+    except Exception as e:
+        print(f"Error formatting date: {e}")
+        return "N/A"
+
 
 
   

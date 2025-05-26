@@ -489,25 +489,74 @@ document.addEventListener('DOMContentLoaded', function() {
                                               document.querySelector('.edit-event-btn') || 
                                               document.getElementById('addEventModal'); // Añadir otros selectores relevantes si es necesario
 
-    if (adminDashboardSpecificElementsPresent) {
-        console.log('CONSOLE LOG (from main.js): Dashboard-specific elements detected. Initializing dashboard event listeners.');
-
-        // Edit Event Modal Trigger Logic
-        document.querySelectorAll('.edit-event-btn').forEach(button => {
-            console.log('CONSOLE LOG (from main.js): Attaching click listener to an .edit-event-btn', button);
-            button.addEventListener('click', function() {
-                console.log('CONSOLE LOG (from main.js): .edit-event-btn clicked.', this);
-                const eventId = this.getAttribute('data-event-id');
-                console.log('CONSOLE LOG (from main.js): Retrieved data-event-id:', eventId);
-                if (!eventId) {
-                    console.error('ERROR (JS from main.js): data-event-id attribute not found or empty on edit button.');
-                    alert('Error en el cliente (JS): No se pudo obtener el ID del evento desde el botón.');
-                    return;
+if (adminDashboardSpecificElementsPresent) {
+    console.log('CONSOLE LOG (from main.js): Dashboard-specific elements detected. Initializing dashboard event listeners.');
+    
+    // Edit Event Modal Trigger Logic
+    document.querySelectorAll('.edit-event-btn').forEach(button => {
+        console.log('CONSOLE LOG (from main.js): Attaching click listener to an .edit-event-btn', button);
+        
+        button.addEventListener('click', function() {
+            console.log('CONSOLE LOG (from main.js): .edit-event-btn clicked.', this);
+            
+            // Intentar obtener el ID de diferentes maneras
+            let eventId = null;
+            
+            // Método 1: data-event-id directo
+            eventId = this.getAttribute('data-event-id');
+            
+            // Método 2: Si no está en el botón, buscar en el elemento padre
+            if (!eventId) {
+                const parentRow = this.closest('tr, .event-row, .event-item');
+                if (parentRow) {
+                    eventId = parentRow.getAttribute('data-event-id');
+                    console.log('CONSOLE LOG (from main.js): Found event-id in parent element:', eventId);
                 }
-                // Llama a la función setupEditModal (que está ahora en este mismo archivo main.js)
-                setupEditModal(eventId, this); 
-            });
+            }
+            
+            // Método 3: Buscar en el contenedor del evento
+            if (!eventId) {
+                const eventContainer = this.closest('[data-event-id]');
+                if (eventContainer) {
+                    eventId = eventContainer.getAttribute('data-event-id');
+                    console.log('CONSOLE LOG (from main.js): Found event-id in event container:', eventId);
+                }
+            }
+            
+            // Método 4: Extraer de una URL o href si existe
+            if (!eventId) {
+                const href = this.getAttribute('href');
+                if (href) {
+                    const match = href.match(/event[_-]?id[=\/](\d+)/i);
+                    if (match) {
+                        eventId = match[1];
+                        console.log('CONSOLE LOG (from main.js): Extracted event-id from href:', eventId);
+                    }
+                }
+            }
+            
+            console.log('CONSOLE LOG (from main.js): Final retrieved event-id:', eventId);
+            
+            // Validar que tenemos un ID válido
+            if (!eventId || eventId.trim() === '') {
+                console.error('ERROR (JS from main.js): No se pudo obtener el ID del evento.');
+                console.error('Button element:', this);
+                console.error('Button HTML:', this.outerHTML);
+                
+                
+                return;
+            }
+            
+            // Validar que el ID es numérico (opcional)
+            if (!/^\d+$/.test(eventId)) {
+                console.warn('WARNING (JS from main.js): Event ID no es numérico:', eventId);
+            }
+            
+            // Llamar a la función setupEditModal
+            setupEditModal(eventId, this);
         });
+    });
+}
 
         const editForm = document.getElementById('editEventForm');
         if (editForm) {
@@ -584,12 +633,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('CONSOLE LOG (from main.js): #editEventModal not found. shown.bs.modal listener not attached.');
         }
 
-
-    } else {
-        console.log('CONSOLE LOG (from main.js): Dashboard-specific elements not detected. Skipping dashboard event listeners initialization.');
-    }
-    
-    console.log('NetSchool - Todas las funcionalidades cargadas correctamente (main.js DOMContentLoaded end)');
 
     // Simple dropdown animation
     const userMenuToggle = document.querySelector('.user-menu-toggle');

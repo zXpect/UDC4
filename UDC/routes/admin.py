@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify  
-from models import Event, User, InstitutionalInfo, InstitutionalFile, StudentParentRelation, Course, CourseEnrollment # Asegúrate de que StudentParentRelation esté aquí  
+from models import Event, User, InstitutionalInfo, InstitutionalFile, StudentParentRelation, Course, CourseEnrollment 
 import os  
 from bson import ObjectId  
 from werkzeug.utils import secure_filename  
@@ -31,11 +31,6 @@ def dashboard():
         'users_count': users_count,  
         'files_count': 5  # Placeholder por ahora  
     }  
-      
-    # Convertir los ObjectId a string para que sean serializables
-    for event in events:
-        if '_id' in event:
-            event['_id'] = str(event['_id'])
       
     return render_template('admin/dashboard.html', events=events, stats=stats)
   

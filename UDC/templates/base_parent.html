@@ -106,6 +106,30 @@
                     </div>  
   
                     <div class="nav-group">  
+                        <h6 class="nav-group-title">Navegación</h6>  
+                        <ul class="nav-list">  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('public.index') }}" class="nav-link">  
+                                    <i class="fas fa-home"></i>  
+                                    <span>Inicio</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('public.about') }}" class="nav-link">  
+                                    <i class="fas fa-info-circle"></i>  
+                                    <span>Nosotros</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('public.contact') }}" class="nav-link">  
+                                    <i class="fas fa-envelope"></i>  
+                                    <span>Contacto</span>  
+                                </a>  
+                            </li>  
+                        </ul>  
+                    </div>  
+  
+                    <div class="nav-group">  
                         <h6 class="nav-group-title">Configuración</h6>  
                         <ul class="nav-list">  
                             <li class="nav-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">  
@@ -128,7 +152,7 @@
   
         <!-- Main Content -->  
         <main class="admin-main-full">  
-            <!-- Header -->  
+            <!-- Header sin navegación adicional -->  
             <header class="admin-header">  
                 <div class="header-left">  
                     <button class="sidebar-toggle-header" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">  
@@ -137,19 +161,6 @@
                     <div class="header-title">  
                         <h4>{% block page_title %}Panel Familiar{% endblock %}</h4>  
                     </div>  
-  
-                    <!-- Navegación Principal -->  
-                    <nav class="dashboard-nav">  
-                        <a href="{{ url_for('public.index') }}" class="nav-link">  
-                            <i class="fas fa-home"></i> Inicio  
-                        </a>  
-                        <a href="{{ url_for('public.about') }}" class="nav-link">  
-                            <i class="fas fa-info-circle"></i> Nosotros  
-                        </a>  
-                        <a href="{{ url_for('public.contact') }}" class="nav-link">  
-                            <i class="fas fa-envelope"></i> Contacto  
-                        </a>  
-                    </nav>  
                 </div>  
   
                 <div class="header-right">  
@@ -193,9 +204,9 @@
                             <a class="dropdown-item" href="{{ url_for('auth.profile') if url_for else '#' }}">  
                                 <i class="fas fa-user-circle"></i> Mi Perfil  
                             </a>  
-<a class="dropdown-item" href="{{ url_for('parent.dashboard') if url_for else '#' }}">
-    <i class="fas fa-users"></i> Mis Hijos
-</a>
+                            <a class="dropdown-item" href="{{ url_for('parent.dashboard') if url_for else '#' }}">  
+                                <i class="fas fa-users"></i> Mis Hijos  
+                            </a>  
                             <a class="dropdown-item" href="{{ url_for('parent.academic_files') if url_for else '#' }}">  
                                 <i class="fas fa-file-alt"></i> Archivos Académicos  
                             </a>  
@@ -204,19 +215,6 @@
                                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión  
                             </a>  
                         </div>  
-                    </div>  
-  
-                    <!-- Mobile Navigation -->  
-                    <div class="dashboard-nav-mobile d-lg-none">  
-                        <a href="{{ url_for('public.index') }}" class="nav-link">  
-                            <i class="fas fa-home"></i> Inicio  
-                        </a>  
-                        <a href="{{ url_for('public.about') }}" class="nav-link">  
-                            <i class="fas fa-info-circle"></i> Nosotros  
-                        </a>  
-                        <a href="{{ url_for('public.contact') }}" class="nav-link">  
-                            <i class="fas fa-envelope"></i> Contacto  
-                        </a>  
                     </div>  
                 </div>  
             </header>  
@@ -259,13 +257,13 @@
     </div>  
   
     <!-- Scripts -->  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>  
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>  
     {% block extra_js %}{% endblock %}  
   
+    <!-- Estilos CSS específicos para padres -->  
     <style>  
-        /* Variables CSS específicas para padres */  
         :root {  
             --sidebar-bg: #ffffff;  
             --sidebar-color: #374151;  
@@ -409,12 +407,12 @@
   
         .status-badge {  
             position: absolute;  
-            bottom: 2px;  
-            right: 2px;  
-            width: 16px;  
-            height: 16px;  
+            bottom: 0;  
+            right: 0;  
+            width: 18px;  
+            height: 18px;  
             border-radius: 50%;  
-            border: 2px solid var(--status-badge-border);  
+            border: 3px solid var(--status-badge-border);  
         }  
   
         .status-badge.online {  
@@ -434,11 +432,6 @@
             margin: 0;  
         }  
   
-        .sidebar-nav {  
-            padding: 1rem 0;  
-            flex: 1;  
-        }  
-  
         .nav-group {  
             margin-bottom: 2rem;  
         }  
@@ -447,9 +440,10 @@
             font-size: 0.75rem;  
             font-weight: 600;  
             text-transform: uppercase;  
+            letter-spacing: 0.05em;  
             color: var(--nav-group-title-color);  
-            padding: 0 1.5rem;  
             margin-bottom: 0.75rem;  
+            padding: 0 1.5rem;  
         }  
   
         .nav-list {  
@@ -490,6 +484,18 @@
             text-align: center;  
         }  
   
+        @media (min-width: 768px) {  
+            .sidebar-toggle-btn {  
+                display: none;  
+            }  
+        }  
+  
+        @media (max-width: 767px) {  
+            .sidebar-toggle-header {  
+                display: inline-block;  
+            }  
+        }  
+  
         @media (prefers-color-scheme: dark) {  
             :root:not([data-theme="light"]) {  
                 --sidebar-bg: #1e293b;  
@@ -508,18 +514,6 @@
   
             :root:not([data-theme="light"]) .admin-sidebar-offcanvas .btn-close {  
                 filter: invert(1) grayscale(100%) brightness(200%);  
-            }  
-        }  
-  
-        @media (min-width: 768px) {  
-            .sidebar-toggle-btn {  
-                display: none;  
-            }  
-        }  
-  
-        @media (max-width: 767px) {  
-            .sidebar-toggle-header {  
-                display: inline-block;  
             }  
         }  
   

@@ -118,6 +118,30 @@
                     </div>  
   
                     <div class="nav-group">  
+                        <h6 class="nav-group-title">Navegación</h6>  
+                        <ul class="nav-list">  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('public.index') }}" class="nav-link">  
+                                    <i class="fas fa-home"></i>  
+                                    <span>Inicio</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('public.about') }}" class="nav-link">  
+                                    <i class="fas fa-info-circle"></i>  
+                                    <span>Nosotros</span>  
+                                </a>  
+                            </li>  
+                            <li class="nav-item">  
+                                <a href="{{ url_for('public.contact') }}" class="nav-link">  
+                                    <i class="fas fa-envelope"></i>  
+                                    <span>Contacto</span>  
+                                </a>  
+                            </li>  
+                        </ul>  
+                    </div>  
+  
+                    <div class="nav-group">  
                         <h6 class="nav-group-title">Configuración</h6>  
                         <ul class="nav-list">  
                             <li class="nav-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">  
@@ -140,7 +164,7 @@
   
         <!-- Main Content -->  
         <main class="admin-main-full">  
-            <!-- Header -->  
+            <!-- Header sin navegación adicional -->  
             <header class="admin-header">  
                 <div class="header-left">  
                     <button class="sidebar-toggle-header" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">  
@@ -149,19 +173,6 @@
                     <div class="header-title">  
                         <h4>{% block page_title %}Panel Docente{% endblock %}</h4>  
                     </div>  
-  
-                    <!-- Navegación Principal -->  
-                    <nav class="dashboard-nav">  
-                        <a href="{{ url_for('public.index') }}" class="nav-link">  
-                            <i class="fas fa-home"></i> Inicio  
-                        </a>  
-                        <a href="{{ url_for('public.about') }}" class="nav-link">  
-                            <i class="fas fa-info-circle"></i> Nosotros  
-                        </a>  
-                        <a href="{{ url_for('public.contact') }}" class="nav-link">  
-                            <i class="fas fa-envelope"></i> Contacto  
-                        </a>  
-                    </nav>  
                 </div>  
   
                 <div class="header-right">  
@@ -217,19 +228,6 @@
                             </a>  
                         </div>  
                     </div>  
-  
-                    <!-- Mobile Navigation -->  
-                    <div class="dashboard-nav-mobile d-lg-none">  
-                        <a href="{{ url_for('public.index') }}" class="nav-link">  
-                            <i class="fas fa-home"></i> Inicio  
-                        </a>  
-                        <a href="{{ url_for('public.about') }}" class="nav-link">  
-                            <i class="fas fa-info-circle"></i> Nosotros  
-                        </a>  
-                        <a href="{{ url_for('public.contact') }}" class="nav-link">  
-                            <i class="fas fa-envelope"></i> Contacto  
-                        </a>  
-                    </div>  
                 </div>  
             </header>  
   
@@ -276,8 +274,8 @@
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>  
     {% block extra_js %}{% endblock %}  
   
+    <!-- Estilos CSS específicos para profesores -->  
     <style>  
-        /* Variables CSS específicas para profesores */  
         :root {  
             --sidebar-bg: #ffffff;  
             --sidebar-color: #374151;  
@@ -316,7 +314,7 @@
             --toggle-btn-border: #4b5563;  
         }  
   
-        /* Reutilizar todos los estilos del admin con las nuevas variables */  
+        /* Aplicar los mismos estilos base del admin */  
         .admin-sidebar-offcanvas {  
             width: 280px;  
             background: var(--sidebar-bg);  
@@ -421,12 +419,12 @@
   
         .status-badge {  
             position: absolute;  
-            bottom: 2px;  
-            right: 2px;  
-            width: 16px;  
-            height: 16px;  
+            bottom: 0;  
+            right: 0;  
+            width: 18px;  
+            height: 18px;  
             border-radius: 50%;  
-            border: 2px solid var(--status-badge-border);  
+            border: 3px solid var(--status-badge-border);  
         }  
   
         .status-badge.online {  
@@ -446,11 +444,6 @@
             margin: 0;  
         }  
   
-        .sidebar-nav {  
-            padding: 1rem 0;  
-            flex: 1;  
-        }  
-  
         .nav-group {  
             margin-bottom: 2rem;  
         }  
@@ -459,9 +452,10 @@
             font-size: 0.75rem;  
             font-weight: 600;  
             text-transform: uppercase;  
+            letter-spacing: 0.05em;  
             color: var(--nav-group-title-color);  
-            padding: 0 1.5rem;  
             margin-bottom: 0.75rem;  
+            padding: 0 1.5rem;  
         }  
   
         .nav-list {  
@@ -502,6 +496,18 @@
             text-align: center;  
         }  
   
+        @media (min-width: 768px) {  
+            .sidebar-toggle-btn {  
+                display: none;  
+            }  
+        }  
+  
+        @media (max-width: 767px) {  
+            .sidebar-toggle-header {  
+                display: inline-block;  
+            }  
+        }  
+  
         @media (prefers-color-scheme: dark) {  
             :root:not([data-theme="light"]) {  
                 --sidebar-bg: #1e293b;  
@@ -520,18 +526,6 @@
   
             :root:not([data-theme="light"]) .admin-sidebar-offcanvas .btn-close {  
                 filter: invert(1) grayscale(100%) brightness(200%);  
-            }  
-        }  
-  
-        @media (min-width: 768px) {  
-            .sidebar-toggle-btn {  
-                display: none;  
-            }  
-        }  
-  
-        @media (max-width: 767px) {  
-            .sidebar-toggle-header {  
-                display: inline-block;  
             }  
         }  
   
@@ -556,5 +550,5 @@
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;  
         }  
     </style>  
-</body>
+</body>  
 </html>

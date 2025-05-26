@@ -2,114 +2,102 @@
   
 {% block title %}Información Institucional - NetSchool UDC{% endblock %}  
   
+{% block page_title %}Información Institucional{% endblock %}  
+  
 {% block extra_css %}  
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
 {% endblock %}  
   
 {% block content %}  
-<div class="row mb-4">  
-    <div class="col-12">  
-        <h2>Información Institucional</h2>  
-        <hr>  
-    </div>  
-</div>  
-  
-<div class="row">  
-    <div class="col-md-3 mb-4">  
-        <div class="list-group">  
-            <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">  
-                <i class="fas fa-tachometer-alt me-2"></i>Dashboard  
-            </a>  
-            <a href="{{ url_for('admin.events') }}" class="list-group-item list-group-item-action">  
-                <i class="fas fa-calendar-alt me-2"></i>Eventos  
-            </a>  
-            <a href="{{ url_for('admin.files') }}" class="list-group-item list-group-item-action">  
-                <i class="fas fa-file-alt me-2"></i>Archivos Institucionales  
-            </a>  
-            <a href="{{ url_for('admin.institutional_info') }}" class="list-group-item list-group-item-action active">  
-                <i class="fas fa-info-circle me-2"></i>Información Institucional  
-            </a>  
+<div class="container-fluid">  
+    <!-- Header de página -->  
+    <div class="row mb-4">  
+        <div class="col-12">  
+            <div class="page-header">  
+                <div class="d-flex justify-content-between align-items-center">  
+                    <div>  
+                        <h2 class="h4 mb-1">Información Institucional</h2>  
+                        <p class="text-muted mb-0">Gestiona la información general del colegio</p>  
+                    </div>  
+                    <button class="btn btn-primary" onclick="document.getElementById('infoForm').scrollIntoView({behavior: 'smooth'})">  
+                        <i class="fas fa-edit me-2"></i>Editar Información  
+                    </button>  
+                </div>  
+            </div>  
         </div>  
     </div>  
       
-    <div class="col-md-9">  
-        <div class="row">  
-            <!-- Formulario para agregar/editar información -->  
-            <div class="col-lg-6 mb-4">  
-                <div class="card">  
-                    <div class="card-header custom-header">
-                        <h5 class="mb-0">Agregar/Editar Información</h5>  
-                    </div>  
-                    <div class="card-body">  
-                        <form method="post" id="infoForm">  
-                            <div class="mb-3">  
-                                <label for="key" class="form-label">Clave *</label>  
-                                <select class="form-select" id="key" name="key" required>  
-                                    <option value="">Seleccionar información</option>  
-                                    <option value="institution_name">Nombre de la Institución</option>  
-                                    <option value="address">Dirección</option>  
-                                    <option value="phone">Teléfono</option>  
-                                    <option value="email">Email</option>  
-                                    <option value="website">Sitio Web</option>  
-                                    <option value="mission">Misión</option>  
-                                    <option value="vision">Visión</option>  
-                                    <option value="schedule">Horarios de Atención</option>  
-                                    <option value="director">Director</option>  
-                                    <option value="founded_year">Año de Fundación</option>  
-                                </select>  
+    <!-- Contenido principal -->  
+    <div class="row">  
+        <div class="col-12">  
+            <div class="card shadow-sm">  
+                <div class="card-header bg-white border-bottom">  
+                    <h5 class="card-title mb-0">  
+                        <i class="fas fa-info-circle me-2"></i>Datos Institucionales  
+                    </h5>  
+                </div>  
+                <div class="card-body p-4">  
+                    {% if info_list %}  
+                        <div class="row">  
+                            {% for info in info_list %}  
+                                <div class="col-md-6 mb-3">  
+                                    <div class="info-item">  
+                                        <label class="form-label fw-bold text-muted">{{ info.key|replace('_', ' ')|title }}</label>  
+                                        <div class="info-value p-2 bg-light rounded">{{ info.value }}</div>  
+                                        {% if info.updated_at %}  
+                                            <small class="text-muted d-block mt-1">  
+                                                Actualizado: {{ info.updated_at.strftime('%d/%m/%Y %H:%M') }}  
+                                            </small>  
+                                        {% endif %}  
+                                        <button class="btn btn-sm btn-outline-primary mt-2"   
+                                                onclick="editInfo('{{ info.key }}', '{{ info.value|e }}')">  
+                                            <i class="fas fa-edit me-1"></i>Editar  
+                                        </button>  
+                                    </div>  
+                                </div>  
+                            {% endfor %}  
+                        </div>  
+                    {% else %}  
+                        <div class="text-center py-5">  
+                            <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>  
+                            <h4 class="text-muted">No hay información institucional configurada</h4>  
+                            <p>Haz clic en "Editar Información" para agregar datos institucionales.</p>  
+                        </div>  
+                    {% endif %}  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- Formulario de edición -->  
+    <div class="row mt-4">  
+        <div class="col-12">  
+            <div class="card shadow-sm">  
+                <div class="card-header bg-white border-bottom">  
+                    <h5 class="card-title mb-0">  
+                        <i class="fas fa-plus me-2"></i>Agregar/Actualizar Información  
+                    </h5>  
+                </div>  
+                <div class="card-body p-4">  
+                    <form id="infoForm" method="POST">  
+                        <div class="row">  
+                            <div class="col-md-6 mb-3">  
+                                <label for="key" class="form-label">Campo *</label>  
+                                <input type="text" class="form-control" id="key" name="key" required  
+                                    placeholder="Ej: Nombre del Colegio, Dirección, etc.">  
                             </div>  
-                              
-                            <div class="mb-3">  
+                            <div class="col-md-6 mb-3">  
                                 <label for="value" class="form-label">Valor *</label>  
-                                <textarea class="form-control" id="value" name="value" rows="4"   
-                                          required minlength="3" maxlength="1000"></textarea>  
-                                <div class="form-text">Máximo 1000 caracteres.</div>  
+                                <input type="text" class="form-control" id="value" name="value" required  
+                                    placeholder="Ingresa el valor para este campo">  
                             </div>  
-                              
+                        </div>  
+                        <div class="d-flex justify-content-end">  
                             <button type="submit" class="btn btn-primary">  
                                 <i class="fas fa-save me-1"></i>Guardar  
                             </button>  
-                        </form>  
-                    </div>  
-                </div>  
-            </div>  
-              
-            <!-- Lista de información actual -->  
-            <div class="col-lg-6">  
-                <div class="card">  
-                    <div class="card-header custom-header">  
-                        <h5 class="mb-0">Información Actual</h5>  
-                    </div>  
-                    <div class="card-body">  
-                        {% if info_list %}  
-                            <div class="list-group list-group-flush custom-list-group">  
-                                {% for info in info_list %}  
-                                    <div class="list-group-item d-flex justify-content-between align-items-start">  
-                                        <div class="ms-2 me-auto">  
-                                            <div class="fw-bold">{{ info.key|replace('_', ' ')|title }}</div>  
-                                            <p class="mb-1 text-muted small">  
-                                                {{ info.value[:100] }}{% if info.value|length > 100 %}...{% endif %}  
-                                            </p>  
-                                            {% if info.updated_at %}  
-                                                <small class="text-muted">  
-                                                    Actualizado: {{ info.updated_at.strftime('%d/%m/%Y %H:%M') }}  
-                                                </small>  
-                                            {% endif %}  
-                                        </div>  
-                                        <button class="btn btn-sm btn-outline-primary"   
-                                                onclick="editInfo('{{ info.key }}', '{{ info.value|e }}')">  
-                                            <i class="fas fa-edit"></i>  
-                                        </button>  
-                                    </div>  
-                                {% endfor %}  
-                            </div>  
-                        {% else %}  
-                            <div class="text-center text-muted">  
-                                <i class="fas fa-info-circle fa-3x mb-3"></i>  
-                                <p>No hay información institucional registrada.</p>  
-                            </div>  
-                        {% endif %}  
-                    </div>  
+                        </div>  
+                    </form>  
                 </div>  
             </div>  
         </div>  
