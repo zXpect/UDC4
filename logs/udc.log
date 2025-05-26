@@ -1,0 +1,54 @@
+2025-05-25 22:52:27,915 ERROR: Exception on /auth/login [POST] [in C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\flask\app.py:1744]
+Traceback (most recent call last):
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\flask\app.py", line 2529, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\flask\app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\flask\app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\flask\app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\UDC\routes\auth.py", line 83, in login
+    user = User.verify_password(username, password)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\UDC\models.py", line 205, in verify_password
+    user = User.find_by_username(username)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\UDC\models.py", line 81, in find_by_username
+    return User.collection.find_one({'username': username})
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\collection.py", line 1755, in find_one
+    for result in cursor.limit(-1):
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\cursor.py", line 1284, in __next__
+    return self.next()
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\cursor.py", line 1260, in next
+    if len(self._data) or self._refresh():
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\cursor.py", line 1208, in _refresh
+    self._send_message(q)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\cursor.py", line 1102, in _send_message
+    response = client._run_operation(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\_csot.py", line 119, in csot_wrapper
+    return func(self, *args, **kwargs)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 1917, in _run_operation
+    return self._retryable_read(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 2026, in _retryable_read
+    return self._retry_internal(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\_csot.py", line 119, in csot_wrapper
+    return func(self, *args, **kwargs)
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 1993, in _retry_internal
+    ).run()
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 2730, in run
+    return self._read() if self._is_read else self._write()
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 2875, in _read
+    self._server = self._get_server()
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 2823, in _get_server
+    return self._client._select_server(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\mongo_client.py", line 1812, in _select_server
+    server = topology.select_server(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\topology.py", line 409, in select_server
+    server = self._select_server(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\topology.py", line 387, in _select_server
+    servers = self.select_servers(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\topology.py", line 294, in select_servers
+    server_descriptions = self._select_servers_loop(
+  File "C:\Users\arias\Downloads\Trabajo Electiva\UDC4\.venv\lib\site-packages\pymongo\synchronous\topology.py", line 344, in _select_servers_loop
+    raise ServerSelectionTimeoutError(
+pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 6833e4a0c1091495d7dfcd2e, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-05-25 22:52:27,924 ERROR: Server Error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application. [in C:\Users\arias\Downloads\Trabajo Electiva\UDC4\UDC\app.py:88]

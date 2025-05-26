@@ -3,7 +3,7 @@ click==8.1.8
 colorama==0.4.6
 dnspython==2.3.0
 dominate==2.9.1
-email-validator==2.0.0.post2Ñ
+email-validator==2.0.0.post2
 Flask==2.2.5
 Flask-Bootstrap==3.3.7.1
 Flask-Login==0.6.3

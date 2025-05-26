@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-        {% if events %}
+        {% if events|length > 0 %}
             {% for event in events %}
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 hover-lift">

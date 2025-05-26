@@ -1,16 +1,21 @@
-{% extends 'base.html' %}
-
-{% block title %}Error del servidor - NetSchool UDC{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-        <div class="mt-5 mb-5">
-            <h1 class="display-1">500</h1>
-            <h2 class="mb-4">Error interno del servidor</h2>
-            <p class="lead mb-5">Lo sentimos, ha ocurrido un error en el servidor. Por favor, inténtalo de nuevo más tarde.</p>
-            <a href="{{ url_for('public.index') }}" class="btn btn-primary">Volver al inicio</a>
-        </div>
-    </div>
-</div>
+<!-- UDC/templates/errors/500.html -->  
+{% extends 'base.html' %}  
+  
+{% block title %}Error del servidor - NetSchool UDC{% endblock %}  
+  
+{% block content %}  
+<div class="container py-5">  
+    <div class="row justify-content-center">  
+        <div class="col-md-6 text-center">  
+            <div class="error-page">  
+                <h1 class="display-1 text-danger">500</h1>  
+                <h2 class="mb-4">Error interno del servidor</h2>  
+                <p class="lead mb-4">Ha ocurrido un error inesperado. Nuestro equipo ha sido notificado.</p>  
+                <a href="{{ url_for('public.index') }}" class="btn btn-primary">  
+                    <i class="fas fa-home me-2"></i>Volver al inicio  
+                </a>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
 {% endblock %}

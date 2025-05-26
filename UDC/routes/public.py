@@ -8,8 +8,12 @@ public = Blueprint('public', __name__)
   
 @public.route('/')  
 def index():  
-    events = Event.find_all()  
-    return render_template('index.html', events=events[:3])  
+    try:
+        events = Event.find_all()[:3]  
+    except Exception as e:
+        print("Error al conectar con Mongo:",e)
+        events=[]
+    return render_template('index.html', events=events)  
   
 @public.route('/about')  
 def about():  
@@ -17,7 +21,11 @@ def about():
   
 @public.route('/events')  
 def events():  
-    events = Event.find_all()  
+    try:
+        events = Event.find_all()
+    except Exception as e:
+        print("Error al conectar con Mongo:", e)
+        events = []
     return render_template('public/events.html', events=events)  
   
 @public.route('/contact')  
