@@ -1,0 +1,200 @@
+{% extends 'base_parent.html' %}
+{% block title %}Eventos Escolares{% endblock %}
+{% block page_title %}Eventos Escolares{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<style>
+    /* Additional styles to ensure consistency if needed */
+    .event-date {
+        background-color: var(--purple, #8b5cf6); /* Use theme color from parent base */
+    }
+    .modern-card-footer .btn-link {
+        color: var(--purple, #8b5cf6);
+    }
+    .modern-card-footer .btn-link:hover {
+        color: var(--purple-dark, #7c3aed);
+    }
+    .badge.bg-primary {
+        background-color: var(--bs-primary) !important; /* Ensure BS primary is used for consistency or choose a theme color */
+    }
+    .badge.bg-info {
+        background-color: var(--bs-info) !important; /* Ensure BS info is used or choose a theme color */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-md-4 my-3">  {# Added some margin like public events page #}
+    <!-- Header de página (opcional, puede ser redundante con block page_title) -->
+    {# 
+    <div class="section-header fade-in-up mb-4">
+        <h1 class="section-title">Eventos Institucionales</h1>
+        <p class="section-subtitle">Mantente informado sobre los próximos eventos y actividades</p>
+    </div>
+    #}
+      
+    <!-- Eventos Section -->  
+    <div class="row g-4">  
+        {% if events %}  
+            {% for event in events %}  
+                <div class="col-md-6 col-lg-4">  
+                    <div class="modern-card h-100 fade-in-up delay-{{ loop.index }}">  
+                        <div class="event-date">  
+                            {% if event.date %}
+                                {% if event.date is string %}
+                                    {% set date_obj = event.date | string_to_datetime %}
+                                    {% if date_obj %}
+                                        <span class="day">{{ date_obj.strftime('%d') }}</span>
+                                        <span class="month">{{ date_obj.strftime('%b') | title }}</span>
+                                    {% else %}
+                                        <span class="day">N/A</span>
+                                        <span class="month">Error</span>
+                                    {% endif %}
+                                {% elif event.date.strftime is defined %}
+                                    <span class="day">{{ event.date.strftime('%d') }}</span>
+                                    <span class="month">{{ event.date.strftime('%b') | title }}</span>
+                                {% else %}
+                                    <span class="day">--</span>
+                                    <span class="month">--</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="day">??</span>
+                                <span class="month">???</span>
+                            {% endif %}
+                        </div>  
+                        <div class="modern-card-body">  
+                            <div class="event-meta mb-3">  
+                                <span class="badge bg-primary me-2">  
+                                    <i class="fas fa-clock me-1"></i>  
+                                    {{ event.time if event.time else 'No especificada' }}
+                                </span>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ event.location if event.location else 'No especificado' }}
+                                </span>
+                            </div>
+                            <h3 class="event-title">{{ event.title }}</h3>
+                            <p class="event-description">{{ event.description | truncate(100, true) }}</p> {# Truncate description for brevity #}
+                        </div>
+                        <div class="modern-card-footer">
+                            {# Link can be to a detailed event view if one exists, otherwise, it's decorative #}
+                            <a href="#" class="btn btn-link" onclick="showEventDetailsModal('{{ event._id }}'); return false;">
+                                <span>Ver detalles</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-modern alert-info text-center py-5"> {# Adjusted styling for 'no events' #}
+                    <div class="alert-icon mx-auto mb-3" style="font-size: 2rem;">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Sin Eventos Programados</h4>
+                        <p class="mb-0">No hay eventos próximos programados en este momento. Por favor, revise más tarde.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal for Event Details (optional, needs JavaScript to populate) -->
+<div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventDetailsModalLabel_title">Detalles del Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Fecha:</strong> <span id="eventDetailsModalLabel_date"></span></p>
+                <p><strong>Hora:</strong> <span id="eventDetailsModalLabel_time"></span></p>
+                <p><strong>Lugar:</strong> <span id="eventDetailsModalLabel_location"></span></p>
+                <p><strong>Descripción:</strong></p>
+                <p id="eventDetailsModalLabel_description"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Helper function to convert string date from DB to Date object for consistent formatting
+// This should ideally be a Jinja filter or done in the backend.
+// For now, a simple JS helper if string_to_datetime filter is not available.
+function parseDateString(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return new Date(parts[0], parts[1] - 1, parts[2]); // YYYY, MM-1, DD
+    }
+    return null;
+}
+
+// Function to populate and show event details modal
+function showEventDetailsModal(eventId) {
+    // In a real scenario, you'd fetch event details via AJAX using the eventId
+    // For this example, we'll assume 'events' is available in a global JS scope
+    // or you'd pass all necessary details to the card and retrieve them.
+    // This is a simplified example.
+
+    // Find the event data (this is very basic, assumes 'events' is passed to template and accessible)
+    // It's better to fetch via AJAX or have data attributes on the button.
+    // Let's assume we can make an AJAX call
+    fetch(`/api/events/${eventId}`) // Placeholder for an actual API endpoint
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.event) {
+                const event = data.event;
+                document.getElementById('eventDetailsModalLabel_title').textContent = event.title;
+                
+                let eventDate = 'No especificada';
+                if (event.date) {
+                    if (typeof event.date === 'string') { // If date is string "YYYY-MM-DD"
+                         const d = parseDateString(event.date);
+                         if (d) eventDate = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric'});
+                    } else if (event.date.$date) { // If date is MongoDB ISODate object
+                        const d = new Date(event.date.$date);
+                        eventDate = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric'});
+                    } else { // Fallback for other date object types (less likely from Python)
+                        try {
+                           const d = new Date(event.date);
+                           eventDate = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric'});
+                        } catch (e) { /* ignore */ }
+                    }
+                }
+                
+                document.getElementById('eventDetailsModalLabel_date').textContent = eventDate;
+                document.getElementById('eventDetailsModalLabel_time').textContent = event.time || 'No especificada';
+                document.getElementById('eventDetailsModalLabel_location').textContent = event.location || 'No especificado';
+                document.getElementById('eventDetailsModalLabel_description').textContent = event.description || 'Sin descripción.';
+                
+                var myModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
+                myModal.show();
+            } else {
+                alert('No se pudieron cargar los detalles del evento.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching event details:', error);
+            alert('Error al cargar detalles del evento.');
+        });
+}
+
+// Jinja filter (Python side) or a more robust JS date parsing is needed for 'string_to_datetime'
+// If event.date can be a string 'YYYY-MM-DD' from the backend,
+// we need a reliable way to parse it. Python's datetime.strptime is good.
+// The template code uses a placeholder `string_to_datetime` which needs defining.
+// For the `event.date.strftime is defined` check, this implies event.date is a Python datetime object.
+</script>
+{% endblock %} 
