@@ -1,0 +1,132 @@
+{% extends 'base_parent.html' %}
+{% block title %}Resumen de Notas de Mis Hijos{% endblock %}
+{% block page_title %}{{ page_title|default('Resumen de Notas de Mis Hijos') }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .child-grade-summary-card {
+        border-left: 5px solid var(--purple, #8b5cf6);
+        transition: all 0.3s ease-in-out;
+    }
+    .child-grade-summary-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .avg-grade-badge {
+        font-size: 1rem;
+        padding: 0.5em 0.75em; /* Ensure padding is adequate */
+    }
+    .grade-summary-label {
+        color: var(--text-primary); /* Default text color */
+        font-weight: 500; /* Slightly bolder */
+        margin-right: 0.5rem; /* Space between label and badge */
+    }
+
+    /* Light mode badge text colors are handled by Bootstrap defaults or previous explicit settings */
+
+    [data-theme="dark"] .grade-summary-label,
+    .dark-theme .grade-summary-label {
+        color: var(--text-primary); /* Ensure this is a light color in your dark theme variables */
+    }
+
+    [data-theme="dark"] .btn-purple,
+    .dark-theme .btn-purple {
+        background-color: var(--purple, #9f7aea); /* Using the specific dark theme purple from base_parent */
+        border-color: var(--purple, #9f7aea);
+        color: #ffffff !important; /* Ensure white text for clarity */
+        /* Optionally, add a light border to help it stand out more if needed */
+        /* border: 1px solid rgba(255, 255, 255, 0.5); */ 
+    }
+
+    [data-theme="dark"] .btn-purple:hover,
+    .dark-theme .btn-purple:hover {
+        background-color: var(--purple-dark, #805ad5);
+        border-color: var(--purple-dark, #805ad5);
+        color: #ffffff !important;
+    }
+
+    /* Dark mode specific badge colors for high contrast */
+    [data-theme="dark"] .avg-grade-badge.bg-success,
+    .dark-theme .avg-grade-badge.bg-success {
+        background-color: #2f855a !important; /* Darker green */
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .avg-grade-badge.bg-warning,
+    .dark-theme .avg-grade-badge.bg-warning {
+        background-color: #c05621 !important; /* Darker orange/yellow */
+        color: #ffffff !important; /* Changed from text-dark to text-white for better contrast on darker warning */
+    }
+
+    [data-theme="dark"] .avg-grade-badge.bg-danger,
+    .dark-theme .avg-grade-badge.bg-danger {
+        background-color: #c53030 !important; /* Darker red */
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .avg-grade-badge.bg-secondary,
+    .dark-theme .avg-grade-badge.bg-secondary {
+        background-color: #4a5568 !important; /* Darker gray */
+        color: #ffffff !important;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Resumen de Notas por Hijo</h6>
+        </div>
+        <div class="card-body">
+            {% if children %}
+                <div class="row">
+                    {% for child_stat in children %} {# Assuming the route passes children_with_stats as 'children' #}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card child-grade-summary-card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-circle me-3" style="background-color: var(--purple); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title mb-0">{{ child_stat.first_name }} {{ child_stat.last_name }}</h5>
+                                            <small class="text-muted">{{ child_stat.username }}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-auto"> {# Pushes button to the bottom if card heights vary #}
+                                        <p class="text-center mb-3">
+                                            <strong class="grade-summary-label">Promedio General:</strong>
+                                            {# The classes for badges will now be primarily for semantic meaning in light mode #}
+                                            {# Dark mode styling is handled by the CSS above using these as selectors #}
+                                            <span class="badge avg-grade-badge p-2 {{ 
+                                                'bg-success text-white' if child_stat.avg_grade != 'N/A' and child_stat.avg_grade|float >= 7 
+                                                else 'bg-warning text-dark' if child_stat.avg_grade != 'N/A' and child_stat.avg_grade|float >= 4 
+                                                else 'bg-danger text-white' if child_stat.avg_grade != 'N/A' 
+                                                else 'bg-secondary text-white' 
+                                            }}">
+                                                {{ child_stat.avg_grade if child_stat.avg_grade else 'N/A' }}
+                                            </span>
+                                        </p>
+                                        <a href="{{ url_for('parent.child_grades', child_id=child_stat._id) }}" class="btn btn-purple d-block">
+                                            <i class="fas fa-star me-1"></i> Ver Notas Detalladas
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay hijos registrados en el sistema.</h5>
+                    <p class="text-muted">Contacte al administrador para vincular a sus hijos.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

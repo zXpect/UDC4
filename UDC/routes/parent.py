@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, session, redirect, url_for, flash, current_app, send_file, jsonify
 from bson import ObjectId
-from models import Event, StudentParentRelation, Grade, InstitutionalFile, User, UserNotification
+from models import Event, StudentParentRelation, Grade, InstitutionalFile, User, UserNotification, Course
 
 from routes.auth import login_required, role_required
 import datetime
@@ -152,27 +152,45 @@ def children_grades_overview():
         'total_grades': total_grades,  
         'upcoming_events': len(processed_events) 
     }  
-    return render_template('parent/child_grades.html',   
-                         children=children_with_stats,  
+    return render_template('parent/children_grades_overview.html',   
+                         children=children_with_stats,  # Pass children_with_stats as 'children' for the template
                          stats=stats,  
                          upcoming_events=processed_events,
-                         page_title="Notas de Mis Hijos")
+                         page_title="Resumen de Notas de Mis Hijos") # Differentiate page title
 
 @parent.route('/child/<child_id>/grades')
 @login_required
 @role_required('parent')
 def child_grades(child_id):
-    # Verificar que el padre tiene acceso a este estudiante
     parent_id = session.get('user_id')
-    children = StudentParentRelation.find_children_by_parent(parent_id)
-    child_ids = [str(child['_id']) for child in children]
-
-    if child_id not in child_ids:
-        flash('Acceso denegado', 'error')
+    
+    # Verify parent-child relationship first
+    if not StudentParentRelation.verify_parent_child_relationship(parent_id, child_id):
+        flash('Acceso denegado a las notas de este estudiante.', 'error')
         return redirect(url_for('parent.dashboard'))
 
-    grades = Grade.find_by_student(child_id)
-    return render_template('parent/child_grades.html', grades=grades, child_id=child_id)
+    # Fetch child details
+    child = User.find_by_id(child_id)
+    if not child:
+        flash('Estudiante no encontrado.', 'error')
+        return redirect(url_for('parent.dashboard'))
+
+    # Fetch grades for the child
+    grades_cursor = Grade.collection.find({'student_id': ObjectId(child_id)}).sort('created_at', -1)
+    
+    grades_with_course_info = []
+    for grade in grades_cursor:
+        course = Course.collection.find_one({'_id': grade['course_id']})
+        teacher = User.find_by_id(grade['teacher_id'])
+        
+        grade_info = dict(grade)
+        grade_info['course_name'] = course['name'] if course else 'Curso Desconocido'
+        grade_info['teacher_name'] = f"{teacher.get('first_name', '')} {teacher.get('last_name', '')}".strip() if teacher else 'Profesor Desconocido'
+        grades_with_course_info.append(grade_info)
+
+    return render_template('parent/child_grades.html', 
+                         child=child, 
+                         grades=grades_with_course_info)
 
 @parent.route('/academic-files')
 @login_required
