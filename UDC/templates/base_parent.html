@@ -46,8 +46,8 @@
             <div class="offcanvas-body p-0">  
                 <div class="sidebar-profile">  
                     <div class="profile-avatar">  
-                        <img src="{{ session.get('avatar_url', url_for('static', filename='img/default-avatar.png')) }}"  
-                            alt="Avatar">  
+                        <img src="{% if current_user.avatar %}{{ url_for('static', filename='img/' ~ current_user.avatar) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
+                            alt="Avatar" class="img-fluid rounded-circle" /> 
                         <span class="status-badge online"></span>  
                     </div>  
                     <div class="profile-info">  

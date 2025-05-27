@@ -2140,5 +2140,15 @@
     .timeline-content p {
         color: #7f8c8d;
     }
+    /* Modo claro (por defecto) */
+.form-check.form-switch .form-check-label {
+  color: #2c3e50; /* gris oscuro para light mode */
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .form-check.form-switch .form-check-label {
+  color: #a0c4ff; /* azul claro para dark mode */
+}
+
 
     
