@@ -1,0 +1,258 @@
+{% extends 'base_teacher.html' %}
+{% block title %}Mis Estudiantes{% endblock %}
+{% block page_title %}Mis Estudiantes{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Tarjeta de resumen -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title mb-0">Resumen de Estudiantes</h4>
+                            <p class="text-muted">Vista general de tus estudiantes por curso</p>
+                        </div>
+                        <a href="{{ url_for('teacher.download_students_pdf') }}" class="btn btn-primary">
+                            <i class="fas fa-file-pdf me-2"></i>Descargar Lista PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not students_by_course %}
+    <!-- Mensaje cuando no hay cursos o estudiantes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-user-graduate fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay estudiantes asignados</h5>
+                    <p class="text-muted mb-0">Actualmente no tienes cursos o estudiantes asignados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Lista de cursos y estudiantes -->
+    {% for course_data in students_by_course %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-light py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-book me-2"></i>{{ course_data.course_info.name }}
+                        </h5>
+                        <span class="badge bg-primary">{{ course_data.students|length }} Estudiantes</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if course_data.students %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Email</th>
+                                    <th>Calificaciones</th>
+                                    <th>Promedio</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in course_data.students %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle me-3">
+                                                {{ student.info.first_name[0]|upper }}{{ student.info.last_name[0]|upper }}
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ student.info.first_name }} {{ student.info.last_name }}</h6>
+                                                <small class="text-muted">@{{ student.info.username }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-envelope text-muted me-2"></i>
+                                            {{ student.info.email }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-clipboard-list text-muted me-2"></i>
+                                            {{ student.grades_count }} calificaciones
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge fs-6 bg-{{ 'success' if student.average_grade >= 7 else 'warning' if student.average_grade >= 5 else 'danger' }}">
+                                            {{ "%.1f"|format(student.average_grade) }}/10
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-star me-1"></i>Calificar
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-info" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#studentDetailsModal"
+                                                    data-student-name="{{ student.info.first_name }} {{ student.info.last_name }}"
+                                                    data-student-email="{{ student.info.email }}"
+                                                    data-student-username="{{ student.info.username }}"
+                                                    data-student-grades="{{ student.grades_count }}"
+                                                    data-student-average="{{ student.average_grade }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay estudiantes en este curso</h5>
+                        <p class="text-muted mb-0">Este curso aún no tiene estudiantes matriculados.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!-- Modal de Detalles del Estudiante -->
+<div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles del Estudiante</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="avatar-circle-large mx-auto mb-3">
+                        <span id="modalStudentInitials"></span>
+                    </div>
+                    <h4 id="modalStudentName" class="mb-1"></h4>
+                    <p id="modalStudentUsername" class="text-muted"></p>
+                </div>
+                <div class="student-details">
+                    <div class="detail-item">
+                        <i class="fas fa-envelope"></i>
+                        <span id="modalStudentEmail"></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span id="modalStudentGrades"></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-star"></i>
+                        <span id="modalStudentAverage"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.avatar-circle-large {
+    width: 80px;
+    height: 80px;
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.student-details {
+    background-color: var(--bs-light);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--bs-gray-200);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item i {
+    width: 24px;
+    margin-right: 1rem;
+    color: var(--bs-primary);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .student-details {
+    background-color: var(--bs-dark);
+}
+
+[data-theme="dark"] .detail-item {
+    border-bottom-color: var(--bs-gray-700);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const studentDetailsModal = document.getElementById('studentDetailsModal');
+    if (studentDetailsModal) {
+        studentDetailsModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const name = button.getAttribute('data-student-name');
+            const email = button.getAttribute('data-student-email');
+            const username = button.getAttribute('data-student-username');
+            const grades = button.getAttribute('data-student-grades');
+            const average = button.getAttribute('data-student-average');
+
+            // Set modal content
+            document.getElementById('modalStudentName').textContent = name;
+            document.getElementById('modalStudentEmail').textContent = email;
+            document.getElementById('modalStudentUsername').textContent = '@' + username;
+            document.getElementById('modalStudentGrades').textContent = grades + ' calificaciones registradas';
+            document.getElementById('modalStudentAverage').textContent = 'Promedio: ' + average + '/10';
+
+            // Set initials in avatar
+            const initials = name.split(' ').map(n => n[0]).join('');
+            document.getElementById('modalStudentInitials').textContent = initials;
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,108 +1,94 @@
 {% extends 'base_teacher.html' %}
 
-{% block title %}Perfil del Docente - {{ super() }}{% endblock %}
+{% block title %}Mi Perfil Docente - {{ super() }}{% endblock %}
+{% block page_title %}Mi Perfil Docente{% endblock %}
 
 {% block content %}
 <div class="profile-section">
-    <div class="container">
-        {% include 'partials/_profile_header.html' %}
+    <div class="container-fluid">
+        {% include 'partials/_profile_header.html' %} {# Assumes user and user_settings are available globally or passed to this partial if needed by it #}
 
-        <div class="row">
+        <div class="row mt-3"> {# Reduced top margin here #}
             <div class="col-lg-3">
                 {% include 'partials/_profile_sidebar_teacher.html' %}
             </div>
 
             <div class="col-lg-9">
-                <div class="profile-content">
-                    <!-- Overview Tab -->
-                    <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                <div id="tabContent" class="profile-content tab-content">
+
+                    <!-- Overview Tab (Resumen General) -->
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
                         <h4 class="mb-4">Resumen General</h4>
                         <div class="row">
-                            <!-- Statistics Cards -->
-                            {% if stats %}
-                                {% for stat in stats %}
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-{{ stat.color }}">
-                                            <i class="fas fa-{{ stat.icon }}"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <div class="stat-number">{{ stat.value }}</div>
-                                            <div class="stat-label">{{ stat.label }}</div>
-                                        </div>
+                            {% if stats_overview %}
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-primary"><i class="fas fa-chalkboard-teacher"></i></div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">{{ stats_overview.total_courses }}</div>
+                                        <div class="stat-label">Cursos Asignados</div>
                                     </div>
                                 </div>
-                                {% endfor %}
+                            </div>
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-success"><i class="fas fa-users"></i></div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">{{ stats_overview.total_students }}</div>
+                                        <div class="stat-label">Estudiantes Totales</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-info"><i class="fas fa-tasks"></i></div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">{{ stats_overview.pending_tasks }}</div>
+                                        <div class="stat-label">Tareas Pendientes</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-warning"><i class="fas fa-calendar-alt"></i></div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">{{ stats_overview.upcoming_events }}</div>
+                                        <div class="stat-label">Eventos Próximos</div>
+                                    </div>
+                                </div>
+                            </div>
                             {% else %}
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-primary"><i class="fas fa-chalkboard-teacher"></i></div>
-                                        <div class="stat-info"><div class="stat-number">4</div><div class="stat-label">Cursos Asignados</div></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-success"><i class="fas fa-users"></i></div>
-                                        <div class="stat-info"><div class="stat-number">112</div><div class="stat-label">Estudiantes Totales</div></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-info"><i class="fas fa-file-alt"></i></div>
-                                        <div class="stat-info"><div class="stat-number">88%</div><div class="stat-label">Tareas Calificadas</div></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-warning"><i class="fas fa-bullhorn"></i></div>
-                                        <div class="stat-info"><div class="stat-number">2</div><div class="stat-label">Anuncios Recientes</div></div>
-                                    </div>
-                                </div>
+                            <p class="text-muted">Estadísticas de resumen no disponibles.</p>
                             {% endif %}
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="card mb-4">
+                        <div class="row mt-2">
+                            <div class="col-lg-7 mb-4">
+                                <div class="card shadow-sm h-100">
                                     <div class="card-header">
-                                        <h5 class="card-title mb-0"><i class="fas fa-tasks me-2"></i>Próximas Actividades y Eventos</h5>
+                                        <h5 class="card-title mb-0"><i class="fas fa-bullhorn me-2"></i>Anuncios Recientes</h5>
                                     </div>
                                     <div class="card-body">
+                                        <!-- Placeholder for announcements - fetch from a notifications model or similar -->
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-0">Calificar Examen Parcial - Matemáticas 3A</h6>
-                                                    <small class="text-muted">Fecha Límite: 27 de Mayo</small>
-                                                </div>
-                                                <span class="badge bg-danger">Urgente</span>
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-0">Reunión de Departamento</h6>
-                                                    <small class="text-muted">Sala de Juntas - 29 de Mayo, 09:00 AM</small>
-                                                </div>
-                                                <span class="badge bg-warning">Próximo</span>
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-0">Preparar Clase de Repaso - Álgebra 5B</h6>
-                                                    <small class="text-muted">Para el 03 de Junio</small>
-                                                </div>
-                                                <span class="badge bg-info">Pendiente</span>
-                                            </li>
+                                            <li class="list-group-item">Reunión de departamento el Viernes.</li>
+                                            <li class="list-group-item">Entrega de planificaciones la próxima semana.</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="card mb-4">
+                            <div class="col-lg-5 mb-4">
+                                <div class="card shadow-sm h-100">
                                     <div class="card-header">
-                                        <h5 class="card-title mb-0"><i class="fas fa-chart-pie me-2"></i>Distribución de Estudiantes</h5>
+                                        <h5 class="card-title mb-0"><i class="fas fa-link me-2"></i>Enlaces Rápidos</h5>
                                     </div>
                                     <div class="card-body">
-                                        <!-- Placeholder para gráfica, ej: Chart.js -->
-                                        <canvas id="studentDistributionChart" height="150"></canvas>
-                                        <p class="text-center text-muted mt-2">Gráfica de distribución de estudiantes por curso.</p>
+                                        <div class="list-group">
+                                            <a href="{{ url_for('teacher.manage_tasks') }}" class="list-group-item list-group-item-action">Gestionar Tareas</a>
+                                            <a href="{{ url_for('teacher.manage_grades') }}" class="list-group-item list-group-item-action">Registrar Calificaciones</a>
+                                            <a href="{{ url_for('teacher.my_students') }}" class="list-group-item list-group-item-action">Ver Mis Estudiantes</a>
+                                            <a href="{{ url_for('teacher.manage_attendance') }}" class="list-group-item list-group-item-action">Control de Asistencia</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -110,12 +96,13 @@
                     </div>
 
                     <!-- Mis Cursos Tab -->
-                    <div class="tab-pane fade" id="my-courses" role="tabpanel">
+                    <div class="tab-pane fade" id="my-courses" role="tabpanel" aria-labelledby="my-courses-tab">
                         <h4 class="mb-4">Mis Cursos Asignados</h4>
+                        {% if teacher_courses %}
                         <div class="row">
-                            {% for course in teacher_courses|default([]) %}
+                            {% for course in teacher_courses %}
                             <div class="col-md-6 mb-4">
-                                <div class="card course-card-teacher h-100">
+                                <div class="card course-card-teacher h-100 shadow-sm">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-3">
                                             <div class="course-icon-teacher bg-{{ ['primary', 'success', 'info', 'warning']|random }} me-3">
@@ -123,100 +110,195 @@
                                             </div>
                                             <div>
                                                 <h5 class="card-title mb-0">{{ course.name|default('Nombre del Curso') }}</h5>
-                                                <p class="card-text text-muted mb-0">{{ course.grade_level|default('Nivel') }} - {{ course.students_count|default(0) }} Estudiantes</p>
+                                                <p class="card-text text-muted mb-0 small">{{ course.grade_level|default('Nivel') }} - {{ course.students_count|default(0) }} Estudiantes</p>
                                             </div>
                                         </div>
-                                        <p class="card-text">{{ course.description|default('Descripción breve del curso.')|truncate(100) }}</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">Próxima clase: {{ course.next_class_date|default('Por definir') }}</small>
-                                            <a href="#" class="btn btn-sm btn-outline-primary">Gestionar Curso</a>
-                                        </div>
+                                        <p class="card-text small">{{ course.description|default('Descripción breve del curso.')|truncate(100) }}</p>
+                                        <ul class="list-unstyled small text-muted mt-2">
+                                            <li>Promedio del curso: <span class="fw-bold">{{ course.average_grade }}/10</span></li>
+                                            <li>Próxima clase: <span class="text-info">{{ course.next_class_date }}</span></li>
+                                        </ul>
+                                        <a href="{{ url_for('teacher.my_courses') }}#course-{{course._id}}" class="btn btn-sm btn-outline-primary mt-2">Gestionar Curso</a>
                                     </div>
                                 </div>
                             </div>
-                            {% else %}
-                            <div class="col-12">
-                                <p class="text-muted">Aún no tienes cursos asignados.</p>
-                            </div>
                             {% endfor %}
                         </div>
+                        {% else %}
+                        <div class="alert alert-info">No tienes cursos asignados actualmente.</div>
+                        {% endif %}
                     </div>
 
-                    <!-- Horario Tab -->
-                    <div class="tab-pane fade" id="teacher-schedule" role="tabpanel">
+                    <!-- Mi Horario Tab -->
+                    <div class="tab-pane fade" id="teacher-schedule" role="tabpanel" aria-labelledby="teacher-schedule-tab">
                         <h4 class="mb-4">Mi Horario de Clases</h4>
-                        <div class="card">
+                        <div class="card shadow-sm">
                             <div class="card-body">
-                                <!-- Aquí iría el componente de horario, ej: FullCalendar o una tabla personalizada -->
                                 <div class="table-responsive">
                                     <table class="table table-bordered text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>Hora</th>
-                                                <th>Lunes</th>
-                                                <th>Martes</th>
-                                                <th>Miércoles</th>
-                                                <th>Jueves</th>
-                                                <th>Viernes</th>
-                                            </tr>
+                                        <thead class="table-light">
+                                            <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>08:00 - 09:30</td><td class="table-primary">Matemáticas 3A</td><td></td><td class="table-primary">Matemáticas 3A</td><td></td><td class="table-primary">Matemáticas 3A</td></tr>
-                                            <tr><td>09:45 - 11:15</td><td class="table-info">Álgebra 5B</td><td class="table-primary">Matemáticas 3A</td><td class="table-info">Álgebra 5B</td><td class="table-primary">Matemáticas 3A</td><td class="table-info">Álgebra 5B</td></tr>
-                                            <tr><td>11:30 - 13:00</td><td></td><td class="table-info">Álgebra 5B</td><td></td><td class="table-info">Álgebra 5B</td><td></td></tr>
+                                            {% set hours_slots = ["08:00 - 09:30", "09:45 - 11:15", "11:30 - 13:00", "14:00 - 15:30"] %}
+                                            {% set days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] %}
+                                            {% for hour_slot in hours_slots %}
+                                            <tr>
+                                                <td class="align-middle fw-bold">{{ hour_slot }}</td>
+                                                {% for day_name in days_of_week %}
+                                                    {% set entry = schedule_data.get(day_name, []) | selectattr('time', 'equalto', hour_slot) | first %}
+                                                    <td class="{{ entry.color_class if entry else '' }} align-middle">
+                                                        {% if entry %}
+                                                            <strong>{{ entry.course_name }}</strong><br>
+                                                            <small class="text-muted">Aula: {{ entry.room }}</small>
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
+                                <button class="btn btn-sm btn-outline-secondary mt-3 no-print" onclick="window.print()"><i class="fas fa-print me-1"></i> Imprimir Horario</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tareas y Calificaciones Tab -->
+                    <div class="tab-pane fade" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
+                        <h4 class="mb-4">Tareas y Calificaciones</h4>
+                        <div class="row">
+                            <div class="col-lg-7 mb-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title mb-0"><i class="fas fa-tasks me-2"></i>Tareas Asignadas Recientemente</h5>
+                                        <a href="{{ url_for('teacher.manage_tasks') }}" class="btn btn-sm btn-primary">Gestionar Todas las Tareas</a>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if tasks %}
+                                        <ul class="list-group list-group-flush">
+                                            {% for task in tasks[:5] %} {# Show recent 5 tasks #}
+                                            <li class="list-group-item">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1">{{ task.title }}</h6>
+                                                    <small class="text-muted">{{ task.due_date.strftime('%d/%m/%Y %H:%M') if task.due_date else 'N/A' }}</small>
+                                                </div>
+                                                <p class="mb-1 small">{{ task.description|truncate(80) }}</p>
+                                                <small class="text-muted">Curso: {{ task.course_name|default('No asignado') }}</small>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <div class="alert alert-light text-center">No hay tareas asignadas recientemente.</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 mb-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title mb-0"><i class="fas fa-star me-2"></i>Últimas Calificaciones Registradas</h5>
+                                        <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-sm btn-primary">Gestionar Notas</a>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if recent_grades %}
+                                        <ul class="list-group list-group-flush">
+                                            {% for grade in recent_grades %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    {# Placeholder for getting student and course names, requires context processors or direct passing #}
+                                                    <h6 class="mb-0">Estudiante ID: {{ grade.student_id|string|truncate(8, True, '...') }}</h6>
+                                                    <small class="text-muted">Curso ID: {{ grade.course_id|string|truncate(8, True, '...') }} - {{ grade.grade_type }}</small>
+                                                </div>
+                                                <span class="badge bg-{{ 'success' if grade.grade_value|float >= 7 else ('warning' if grade.grade_value|float >= 5 else 'danger') }} rounded-pill fs-6">
+                                                    {{ "%.1f"|format(grade.grade_value|float) }}
+                                                </span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <div class="alert alert-light text-center">No hay calificaciones registradas recientemente.</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comunicación Tab -->
+                    <div class="tab-pane fade" id="communication" role="tabpanel" aria-labelledby="communication-tab">
+                        <h4 class="mb-4">Comunicación</h4>
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-envelope me-2"></i>Mensajes Recientes (Ejemplo)</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if recent_messages %}
+                                <ul class="list-group list-group-flush">
+                                    {% for message in recent_messages %}
+                                    <li class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">De: {{ message.sender }}</h6>
+                                            <small>{{ message.date }}</small>
+                                        </div>
+                                        <p class="mb-0">{{ message.subject }}</p>
+                                        <a href="#" class="small stretched-link">Leer mensaje</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <div class="alert alert-light text-center">No hay mensajes recientes.</div>
+                                {% endif %}
+                                <a href="#" class="btn btn-primary mt-3 disabled">Ver todos los mensajes (Próximamente)</a>
                             </div>
                         </div>
                     </div>
 
                     <!-- Personal Information Tab -->
-                    <div class="tab-pane fade" id="personal-info" role="tabpanel">
+                    <div class="tab-pane fade" id="personal-info" role="tabpanel" aria-labelledby="personal-info-tab">
                         <h4 class="mb-4">Información Personal y Profesional</h4>
-                        <div class="card">
+                        <div class="card shadow-sm">
                             <div class="card-body">
                                 <form>
-                                     <div class="row">
+                                    <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" value="{{ user.first_name }}" readonly>
+                                            <label class="form-label fw-semibold">Nombre</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ user.first_name }}" readonly>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Apellido</label>
-                                            <input type="text" class="form-control" value="{{ user.last_name }}" readonly>
+                                            <label class="form-label fw-semibold">Apellido</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ user.last_name }}" readonly>
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Correo Electrónico</label>
-                                        <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                                        <label class="form-label fw-semibold">Correo Electrónico</label>
+                                        <input type="email" class="form-control-plaintext" value="{{ user.email }}" readonly>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Teléfono</label>
-                                            <input type="tel" class="form-control" value="{{ user.phone|default('No especificado') }}" readonly>
+                                            <label class="form-label fw-semibold">Teléfono</label>
+                                            <input type="tel" class="form-control-plaintext" value="{{ user.phone|default('No especificado') }}" readonly>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Departamento</label>
-                                            <input type="text" class="form-control" value="{{ user.get('teacher_details', {}).get('department')|default('No asignado') }}" readonly>
+                                            <label class="form-label fw-semibold">Departamento</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ user.teacher_details.department|default('No asignado') if user.teacher_details else 'No asignado' }}" readonly>
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Especialidades</label>
-                                        <input type="text" class="form-control" value="{{ user.get('teacher_details', {}).get('specialties', [])|join(', ') if user.get('teacher_details', {}).get('specialties') else 'No especificadas' }}" readonly>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Años de Experiencia</label>
-                                        <input type="number" class="form-control" value="{{ user.get('teacher_details', {}).get('experience_years')|default(0) }}" readonly>
+                                        <label class="form-label fw-semibold">Especialidades</label>
+                                        <input type="text" class="form-control-plaintext" value="{{ user.teacher_details.specialties|join(', ') if user.teacher_details and user.teacher_details.specialties else 'No especificadas' }}" readonly>
                                     </div>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                                        <i class="fas fa-edit me-2"></i>Editar Perfil
+                                        <i class="fas fa-edit me-2"></i>Editar Información de Contacto
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                </div>{# end #tabContent #}
             </div>
         </div>
     </div>
@@ -227,57 +309,124 @@
 
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 {{ super() }}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #} {# Chart.js can be loaded if specific tabs need it #}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Tabs
-        var triggerTabList = [].slice.call(document.querySelectorAll('#profileSidebarMenu a'))
+        var triggerTabList = [].slice.call(document.querySelectorAll('#profileSidebarMenu a.nav-link'));
         triggerTabList.forEach(function (triggerEl) {
-            var tabTrigger = new bootstrap.Tab(triggerEl)
+            var tabTrigger = new bootstrap.Tab(triggerEl);
             triggerEl.addEventListener('click', function (event) {
-                event.preventDefault()
-                tabTrigger.show()
-            })
+                event.preventDefault();
+                tabTrigger.show();
+
+                var newHash = triggerEl.getAttribute('href');
+                if (history.pushState) {
+                    history.pushState(null, null, newHash);
+                } else {
+                    location.hash = newHash;
+                }
+                // Ensure content scrolls to top if it's long
+                document.querySelector(newHash).scrollTop = 0; 
+                // Or for the main scrollable area if sidebar is fixed:
+                // document.getElementById('tabContent').parentElement.scrollTop = 0;
+            });
         });
 
-        // Chart.js Example for Student Distribution
-        var ctx = document.getElementById('studentDistributionChart');
-        if (ctx) {
-            new Chart(ctx.getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Matemáticas 3A', 'Álgebra 5B', 'Ciencias 2C', 'Historia 4A'],
-                    datasets: [{
-                        label: 'N° de Estudiantes',
-                        data: [30, 28, 25, 29],
-                        backgroundColor: [
-                            'rgba(54, 162, 235, 0.7)', 
-                            'rgba(75, 192, 192, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                            'rgba(153, 102, 255, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        }
-                    }
-                }
-            });
+        var hash = window.location.hash;
+        if (hash) {
+            var activeTab = document.querySelector('#profileSidebarMenu a.nav-link[href="' + hash + '"]');
+            if (activeTab) {
+                (new bootstrap.Tab(activeTab)).show();
+            } else {
+                 // If hash is invalid, activate the first tab
+                var firstTabLink = document.querySelector('#profileSidebarMenu a.nav-link');
+                if(firstTabLink) (new bootstrap.Tab(firstTabLink)).show();
+            }
+        } else {
+            // Default to first tab if no hash
+            var firstTabLink = document.querySelector('#profileSidebarMenu a.nav-link');
+            if(firstTabLink) (new bootstrap.Tab(firstTabLink)).show();
         }
     });
 </script>
+<style>
+.stat-card { 
+    border-left: 4px solid; /* Thicker border for emphasis */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.stat-card .stat-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 1rem; flex-shrink: 0; }
+.stat-card .stat-icon i { font-size: 1.4rem; }
+
+/* Specific colors for stat cards */
+.stat-card.border-left-primary .stat-icon { background-color: var(--bs-primary); }
+.stat-card.border-left-primary { border-left-color: var(--bs-primary) !important; }
+.stat-card.border-left-success .stat-icon { background-color: var(--bs-success); }
+.stat-card.border-left-success { border-left-color: var(--bs-success) !important; }
+.stat-card.border-left-info .stat-icon { background-color: var(--bs-info); }
+.stat-card.border-left-info { border-left-color: var(--bs-info) !important; }
+.stat-card.border-left-warning .stat-icon { background-color: var(--bs-warning); }
+.stat-card.border-left-warning { border-left-color: var(--bs-warning) !important; }
+
+.stat-card .stat-number { font-size: 1.75rem; font-weight: 700; color: var(--bs-body-color); }
+.stat-card .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--bs-secondary-color); font-weight: 500;}
+
+.course-card-teacher .course-icon-teacher { width: 45px; height: 45px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; }
+.course-card-teacher .course-icon-teacher i { font-size: 1.5rem; }
+
+.profile-content .tab-pane {
+    animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-control-plaintext {
+    padding-left: 0.75rem; /* Align with normal inputs */
+    border-bottom: 1px solid #eee; /* Subtle underline */
+}
+.form-control-plaintext:focus {
+    box-shadow: none;
+    border-color: var(--bs-primary);
+}
+
+/* Print styles */
+.no-print { display: block; }
+@media print {
+    .no-print, 
+    .profile-section .row > .col-lg-3, /* Hide sidebar */
+    #editProfileModal, /* Hide modals */
+    #settingsModal { 
+        display: none !important; 
+    }
+    .profile-section .row > .col-lg-9 { /* Content full width */
+        width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important;
+    }
+    .card {
+        box-shadow: none !important; border: 1px solid #ccc !important; 
+    }
+    .tab-pane { /* Ensure only active tab prints */
+        display: none !important; opacity: 1 !important; animation: none !important;
+    }
+    .tab-pane.active.show {
+        display: block !important;
+    }
+    body {
+        font-size: 10pt; /* Smaller font for print */
+    }
+    .container-fluid {
+        padding: 0 !important;
+    }
+    h4 { font-size: 14pt; }
+    .stat-card .stat-number { font-size: 1.25rem; }
+    .stat-card .stat-label { font-size: 0.7rem; }
+    .table { font-size: 9pt; }
+}
+</style>
 {% endblock %} 
