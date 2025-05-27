@@ -1,0 +1,71 @@
+{% extends 'base_student.html' %}
+
+{% block title %}Mis Materias - UDC{% endblock %}
+
+{% block page_title %}Mis Materias Inscritas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-book-reader me-2"></i>Tareas Pendientes</h6>
+        </div>
+        <div class="card-body">
+            {% if courses %}
+                <div class="row">
+                    {% for course in courses %}
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm course-card">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="course-icon bg-primary text-white me-3"><i class="fas fa-chalkboard-teacher"></i></span>
+                                    <h5 class="card-title mb-0 text-primary">{{ course.name }}</h5>
+                                </div>
+                                <p class="card-text text-muted small flex-grow-1" style="white-space: pre-line;">
+                                    {{ course.description | truncate(120, True) if course.description else 'Sin descripción detallada.' }}
+                                </p>
+                                <ul class="list-unstyled small text-muted mt-auto">
+                                    <li><i class="fas fa-layer-group me-2"></i><strong>Nivel:</strong> {{ course.grade_level }}</li>
+                                    <li><i class="fas fa-user-tie me-2"></i><strong>Profesor:</strong> {{ course.teacher_name if course.teacher_name else 'N/A' }}</li>
+                                    <li><i class="fas fa-calendar-check me-2"></i><strong>Inscrito el:</strong> {{ course.enrolled_at.strftime('%d/%m/%Y') if course.enrolled_at else 'N/A' }}</li>
+                                </ul>
+                                <!-- <a href="#" class="btn btn-sm btn-outline-primary mt-3">Ver Detalles</a> -->
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Estamos trabajando en esta funcionalidad, estara disponible pronto.</h4>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<style>
+.course-card {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    border: 1px solid var(--bs-border-color-translucent);
+}
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15) !important;
+}
+.course-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+ 
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Puedes agregar DataTables JS aquí si lo deseas para paginación/búsqueda -->
+{% endblock %} 

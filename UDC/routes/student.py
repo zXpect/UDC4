@@ -116,6 +116,18 @@ def events():
         processed_events.append(event_dict)
     
     return render_template('student/events.html', events=processed_events)
+@student.route('/tarea')
+@student_required
+def tareas():
+    
+    return render_template('student/tareas.html')
+
+
+@student.route('/horario')
+@student_required
+def horarios():
+    
+    return render_template('student/horarios.html')
 
 @student.route('/view_files')
 @student_required
