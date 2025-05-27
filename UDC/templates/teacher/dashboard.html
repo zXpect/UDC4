@@ -1,24 +1,28 @@
 {% extends 'base.html' %}  
-{% block title %}Dashboard Profesor{% endblock %}  
+{% block title %}Panel de Control - Área del Profesor{% endblock %}  
 {% block content %}  
 <div class="container py-4">  
-    <h2>Dashboard del Profesor</h2>  
+    <h2 class="mb-4">Panel de Control del Profesor</h2>  
     <div class="row">  
         <div class="col-md-6">  
-            <h3>Mis Cursos</h3>  
+            <h3 class="mb-3">Cursos Asignados</h3>  
             {% for course in courses %}  
-                <div class="card mb-2">  
+                <div class="card mb-3 shadow-sm">  
                     <div class="card-body">  
-                        <h5>{{ course.name }}</h5>  
-                        <p>{{ course.description }}</p>  
+                        <h5 class="card-title">{{ course.name }}</h5>  
+                        <p class="card-text text-muted">{{ course.description }}</p>  
                     </div>  
                 </div>  
             {% endfor %}  
         </div>  
         <div class="col-md-6">  
-            <h3>Acciones Rápidas</h3>  
-            <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-primary mb-2 d-block">Registrar Notas</a>  
-            <a href="{{ url_for('teacher.manage_files') }}" class="btn btn-secondary mb-2 d-block">Gestionar Archivos</a>  
+            <h3 class="mb-3">Herramientas del Profesor</h3>  
+            <a href="{{ url_for('teacher.manage_grades') }}" class="btn btn-primary btn-lg mb-3 w-100">
+                <i class="fas fa-graduation-cap me-2"></i>Gestionar Calificaciones
+            </a>  
+            <a href="{{ url_for('teacher.manage_files') }}" class="btn btn-secondary btn-lg mb-3 w-100">
+                <i class="fas fa-file-alt me-2"></i>Administrar Materiales
+            </a>  
         </div>  
     </div>  
 </div>  
