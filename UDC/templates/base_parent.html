@@ -60,7 +60,7 @@
                     <div class="nav-group">  
                         <h6 class="nav-group-title">Principal</h6>  
                         <ul class="nav-list">  
-                            <li class="nav-item {% if request.endpoint == 'parent.dashboard' %}active{% endif %}">  
+                            <li class="nav-item {% if request.endpoint in ['parent.dashboard', 'parent.list_children', 'parent.children_grades_overview'] %}active{% endif %}">  
                                 <a href="{{ url_for('parent.dashboard') }}" class="nav-link">  
                                     <i class="fas fa-tachometer-alt"></i>  
                                     <span>Dashboard</span>  
@@ -78,26 +78,26 @@
                     <div class="nav-group">  
                         <h6 class="nav-group-title">Mis Hijos</h6>  
                         <ul class="nav-list">  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'parent.list_children' %}active{% endif %}">  
+                                <a href="{{ url_for('parent.list_children') }}" class="nav-link">  
                                     <i class="fas fa-child"></i>  
                                     <span>Lista de Hijos</span>  
                                 </a>  
                             </li>  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'parent.children_grades_overview' %}active{% endif %}">  
+                                <a href="{{ url_for('parent.children_grades_overview') }}" class="nav-link">  
                                     <i class="fas fa-star"></i>  
                                     <span>Notas de Hijos</span>  
                                 </a>  
                             </li>  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'parent.school_events' %}active{% endif %}">  
+                                <a href="{{ url_for('parent.school_events') }}" class="nav-link">  
                                     <i class="fas fa-calendar-alt"></i>  
                                     <span>Eventos Escolares</span>  
                                 </a>  
                             </li>  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'parent.communications' %}active{% endif %}">  
+                                <a href="{{ url_for('parent.communications') }}" class="nav-link">  
                                     <i class="fas fa-comments"></i>  
                                     <span>Comunicaciones</span>  
                                 </a>  
