@@ -542,6 +542,75 @@ def edit_student(user_id):
 
     return render_template('admin/user_form.html', user=student, action='edit', role='student')
 
+@admin.route('/users/edit/<user_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_user(user_id):
+    # 1. Carga el documento desde MongoDB
+    user = User.find_by_id(user_id)
+    if not user:
+        flash('Usuario no encontrado.', 'error')
+        return redirect(url_for('admin.users'))
+
+    # 2. Si es POST, procesa el formulario
+    if request.method == 'POST':
+        # Campos editables
+        email         = request.form.get('email')
+        first_name    = request.form.get('first_name')
+        last_name     = request.form.get('last_name')
+        role          = request.form.get('role')
+        active        = True if request.form.get('active') == 'on' else False
+
+        # Opcional: cambio de contraseña
+        password      = request.form.get('password')
+        confirm_pass  = request.form.get('confirm_password')
+
+        update_data = {
+            'email':      email,
+            'first_name': first_name,
+            'last_name':  last_name,
+            'role':       role,
+            'active':     active
+        }
+
+        if password:
+            if password != confirm_pass:
+                flash('Las contraseñas no coinciden.', 'error')
+                user.update({'email': email, 'first_name': first_name, 'last_name': last_name})
+                return render_template('admin/user_form.html',
+                                       user=user,
+                                       action='edit',
+                                       role=user.get('role'))
+
+            is_valid, pwd_err = User.validate_password(password)
+            if not is_valid:
+                flash(pwd_err, 'error')
+                user.update({'email': email, 'first_name': first_name, 'last_name': last_name})
+                return render_template('admin/user_form.html',
+                                       user=user,
+                                       action='edit',
+                                       role=user.get('role'))
+
+            hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            update_data['password'] = hashed
+
+        # 3. Guarda los cambios en MongoDB
+        try:
+            User.update_user(user_id, update_data)
+            flash('Usuario actualizado correctamente.', 'success')
+            return redirect(url_for('admin.users'))
+        except Exception as e:
+            flash(f'Error al actualizar usuario: {e}', 'error')
+            return render_template('admin/user_form.html',
+                                   user=user,
+                                   action='edit',
+                                   role=user.get('role'))
+
+    # 4. GET: muestra el formulario con datos actuales
+    return render_template('admin/edit_user.html',
+                           user=user,
+                           action='edit',
+                           role=user.get('role'))
+
 @admin.route('/students/view/<user_id>')
 @admin_required
 def view_student(user_id):

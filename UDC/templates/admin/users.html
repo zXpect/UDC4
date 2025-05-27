@@ -22,41 +22,44 @@
                 </div>  
                 <div class="card-body">  
                     <div class="table-responsive">  
-                        <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">  
-                            <thead>  
-                                <tr>  
-                                    <th>Nombre de Usuario</th>  
-                                    <th>Nombre</th>  
-                                    <th>Apellido</th>  
-                                    <th>Email</th>  
-                                    <th>Rol</th>  
-                                    <th>Estado</th>  
-                                    <th>Acciones</th>  
-                                </tr>  
-                            </thead>  
-                            <tbody>  
-                                {% for user in users %}  
-                                <tr>  
-                                    <td>{{ user.username }}</td>  
-                                    <td>{{ user.first_name }}</td>  
-                                    <td>{{ user.last_name }}</td>  
-                                    <td>{{ user.email }}</td>  
-                                    <td>{{ user.role }}</td>  
-                                    <td>  
-                                        {% if user.active %}  
-                                        <span class="badge bg-success">Activo</span>  
-                                        {% else %}  
-                                        <span class="badge bg-danger">Inactivo</span>  
-                                        {% endif %}  
-                                    </td>  
-                                    <td>  
-                                        <!-- Aquí puedes agregar botones de editar/eliminar si los tienes -->  
-                                        <button class="btn btn-sm btn-info">Ver</button>  
-                                    </td>  
-                                </tr>  
-                                {% endfor %}  
-                            </tbody>  
-                        </table>  
+                        <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Nombre de Usuario</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Email</th>
+      <th>Rol</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.first_name }}</td>
+      <td>{{ user.last_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.role }}</td>
+      <td>
+        {% if user.active %}
+          <span class="badge bg-success">Activo</span>
+        {% else %}
+          <span class="badge bg-danger">Inactivo</span>
+        {% endif %}
+      </td>
+      <td>
+        <a href="{{ url_for('admin.edit_user', user_id=user._id) }}"
+           class="btn btn-sm btn-warning" title="Editar">
+          <i class="fas fa-edit"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
                     </div>  
                 </div>  
             </div>  
