@@ -134,6 +134,88 @@
         font-weight: 600;
     }
 
+    /* Estilos para validación - SIN TRANSFORMACIONES */
+    .form-control {
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        border: 2px solid #e9ecef;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: 0;
+    }
+
+    .form-control.is-valid {
+        border-color: #28a745;
+        background-image: none;
+        padding-right: 2.25rem;
+    }
+
+    .form-control.is-valid:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        background-image: none;
+        padding-right: 2.25rem;
+    }
+
+    .form-control.is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    /* Iconos de validación */
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper .validation-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1rem;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .input-wrapper .validation-icon.valid {
+        color: #28a745;
+    }
+
+    .input-wrapper .validation-icon.invalid {
+        color: #dc3545;
+    }
+
+    /* Para inputs con botón de toggle password */
+    .password-input .form-control.is-valid,
+    .password-input .form-control.is-invalid {
+        padding-right: 4rem;
+    }
+
+    .password-input .validation-icon {
+        right: 45px;
+    }
+
+    /* Feedback messages */
+    .input-feedback {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        min-height: 1.2rem;
+    }
+
+    .input-feedback.valid {
+        color: #28a745;
+    }
+
+    .input-feedback.invalid {
+        color: #dc3545;
+    }
+
     /* Ajustes para tema oscuro */
     .dark-theme .step-title {
         color: var(--text-primary, #fff);
@@ -267,6 +349,7 @@
                                             <div class="input-wrapper">
                                                 <input type="text" class="form-control" id="firstName" name="firstName"
                                                     placeholder="Tu nombre" required>
+                                                <div class="validation-icon"></div>
                                                 <div class="input-feedback"></div>
                                             </div>
                                         </div>
@@ -280,6 +363,7 @@
                                             <div class="input-wrapper">
                                                 <input type="text" class="form-control" id="lastName" name="lastName"
                                                     placeholder="Tu apellido" required>
+                                                <div class="validation-icon"></div>
                                                 <div class="input-feedback"></div>
                                             </div>
                                         </div>
@@ -301,6 +385,7 @@
                                     <div class="input-wrapper">
                                         <input type="email" class="form-control" id="email" name="email"
                                             placeholder="tu.email@ejemplo.com" required>
+                                        <div class="validation-icon"></div>
                                         <div class="input-feedback"></div>
                                     </div>
                                 </div>
@@ -313,6 +398,7 @@
                                     <div class="input-wrapper">
                                         <input type="text" class="form-control" id="username" name="username"
                                             placeholder="Elige un nombre de usuario único" required>
+                                        <div class="validation-icon"></div>
                                         <div class="input-feedback"></div>
                                     </div>
                                 </div>
@@ -322,13 +408,17 @@
                                         <i class="fas fa-user-tag"></i>
                                         Tipo de Usuario
                                     </label>
-                                    <select class="form-select" id="role" name="role" required>
-                                        <option value="" selected disabled>¿Cuál es tu rol en el colegio?</option>
-                                        <option value="student">👨‍🎓 Estudiante</option>
-                                        <option value="parent">👨‍👩‍👧‍👦 Padre de Familia</option>
-                                        <option value="teacher">👨‍🏫 Profesor</option>
-                                        <option value="admin">👨‍💼 Administrador</option>
-                                    </select>
+                                    <div class="input-wrapper">
+                                        <select class="form-select form-control" id="role" name="role" required>
+                                            <option value="" selected disabled>¿Cuál es tu rol en el colegio?</option>
+                                            <option value="student">👨‍🎓 Estudiante</option>
+                                            <option value="parent">👨‍👩‍👧‍👦 Padre de Familia</option>
+                                            <option value="teacher">👨‍🏫 Profesor</option>
+                                            <option value="admin">👨‍💼 Administrador</option>
+                                        </select>
+                                        <div class="validation-icon"></div>
+                                        <div class="input-feedback"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -352,6 +442,7 @@
                                                     <button type="button" class="password-toggle" data-target="password">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
+                                                    <div class="validation-icon"></div>
                                                 </div>
                                                 <div class="input-feedback"></div>
                                             </div>
@@ -371,6 +462,7 @@
                                                         data-target="confirmPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
+                                                    <div class="validation-icon"></div>
                                                 </div>
                                                 <div class="input-feedback"></div>
                                             </div>
@@ -470,7 +562,7 @@
 
         // Inicializar funcionalidades
         setupPasswordToggle();
-        setupFormValidation();
+        setupRealTimeValidation();
         setupStepNavigation();
 
         // Navegación por pasos
@@ -562,82 +654,244 @@
             document.getElementById('registerAlert').innerHTML = '';
 
             requiredFields.forEach(field => {
-                const wrapper = field.closest('.input-wrapper') || field.parentElement;
-                const feedback = wrapper.querySelector('.input-feedback');
-
-                if (!field.value.trim()) {
+                if (!validateField(field)) {
                     isValid = false;
-                    field.classList.add('is-invalid');
-                    if (feedback) {
-                        feedback.textContent = 'Este campo es obligatorio';
-                        feedback.className = 'input-feedback invalid';
-                    }
-                } else {
-                    field.classList.remove('is-invalid');
-                    field.classList.add('is-valid');
-                    if (feedback) {
-                        feedback.textContent = '';
-                    }
                 }
             });
 
-            // Validaciones específicas por paso
-            if (currentStep === 2) {
-                // Validar email
-                const email = document.getElementById('email');
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (email.value && !emailRegex.test(email.value)) {
-                    isValid = false;
-                    email.classList.add('is-invalid');
-                    const wrapper = email.closest('.input-wrapper');
-                    const feedback = wrapper.querySelector('.input-feedback');
-                    if (feedback) {
-                        feedback.textContent = 'Ingresa un correo electrónico válido';
-                        feedback.className = 'input-feedback invalid';
-                    }
-                }
-            }
-
-            if (currentStep === 3) {
-                // Validar coincidencia de contraseñas
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-
-                if (password && confirmPassword && password !== confirmPassword) {
-                    isValid = false;
-                    const confirmField = document.getElementById('confirmPassword');
-                    confirmField.classList.add('is-invalid');
-                    const wrapper = confirmField.closest('.input-wrapper');
-                    const feedback = wrapper.querySelector('.input-feedback');
-                    if (feedback) {
-                        feedback.textContent = 'Las contraseñas no coinciden';
-                        feedback.className = 'input-feedback invalid';
-                    }
-                }
-            }
-
             if (!isValid) {
-                const alertContainer = document.getElementById('registerAlert');
-                alertContainer.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Por favor, completa todos los campos requeridos correctamente
-                    </div>
-                `;
+                showAlert('Por favor, completa todos los campos requeridos correctamente', 'danger');
             }
 
             return isValid;
         }
 
-        function updateSummary() {
-            document.getElementById('summaryName').textContent = 
-                `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`;
-            document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
-            document.getElementById('summaryUsername').textContent = document.getElementById('username').value;
+        function validateField(field) {
+            const wrapper = field.closest('.input-wrapper');
+            if (!wrapper) return true;
+
+            const feedback = wrapper.querySelector('.input-feedback');
+            const icon = wrapper.querySelector('.validation-icon');
+            let isValid = true;
+            let message = '';
+
+            // Limpiar estados previos
+            field.classList.remove('is-valid', 'is-invalid');
+            if (icon) {
+                icon.innerHTML = '';
+                icon.classList.remove('valid', 'invalid');
+            }
+
+            // Validar campo requerido
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                isValid = false;
+                message = 'Este campo es obligatorio';
+            }
+            // Validaciones específicas
+            else if (field.value.trim()) {
+                switch (field.type) {
+                    case 'email':
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(field.value)) {
+                            isValid = false;
+                            message = 'Ingresa un correo electrónico válido';
+                        } else {
+                            message = 'Correo electrónico válido';
+                        }
+                        break;
+
+                    case 'password':
+                        if (field.id === 'password') {
+                            if (field.value.length < 6) {
+                                isValid = false;
+                                message = 'La contraseña debe tener al menos 6 caracteres';
+                            } else {
+                                message = 'Contraseña válida';
+                                // Validar confirmación si existe
+                                const confirmField = document.getElementById('confirmPassword');
+                                if (confirmField && confirmField.value) {
+                                    validateField(confirmField);
+                                }
+                            }
+                        } else if (field.id === 'confirmPassword') {
+                            const passwordField = document.getElementById('password');
+                            if (field.value !== passwordField.value) {
+                                isValid = false;
+                                message = 'Las contraseñas no coinciden';
+                            } else {
+                                message = 'Las contraseñas coinciden';
+                            }
+                        }
+                        break;
+
+                    case 'text':
+                        if (field.id === 'firstName' || field.id === 'lastName') {
+                            if (field.value.length < 2) {
+                                isValid = false;
+                                message = 'Debe tener al menos 2 caracteres';
+                            } else {
+                                message = 'Válido';
+                            }
+                        } else if (field.id === 'username') {
+                            const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                            if (!usernameRegex.test(field.value)) {
+                                isValid = false;
+                                message = 'Solo letras, números y guiones bajos (3-20 caracteres)';
+                            } else {
+                                message = 'Nombre de usuario válido';
+                            }
+                        }
+                        break;
+
+                    default:
+                        if (field.tagName === 'SELECT') {
+                            if (field.value) {
+                                message = 'Selección válida';
+                            }
+                        }
+                        break;
+                }
+            }
+
+            // Aplicar estilos y mensajes
+            if (field.value.trim()) {
+                if (isValid) {
+                    field.classList.add('is-valid');
+                    if (icon) {
+                        icon.innerHTML = '<i class="fas fa-check"></i>';
+                        icon.classList.add('valid');
+                    }
+                    if (feedback && message) {
+                        feedback.textContent = message;
+                        feedback.className = 'input-feedback valid';
+                    }
+                } else {
+                    field.classList.add('is-invalid');
+                    if (icon) {
+                        icon.innerHTML = '<i class="fas fa-times"></i>';
+                        icon.classList.add('invalid');
+                    }
+                    if (feedback) {
+                        feedback.textContent = message;
+                        feedback.className = 'input-feedback invalid';
+                    }
+                }
+            } else if (feedback) {
+                feedback.textContent = '';
+                feedback.className = 'input-feedback';
+            }
+
+            return isValid;
+        }
+
+        function setupRealTimeValidation() {
+            const form = document.getElementById('registerForm');
             
+            // Validación para todos los inputs
+            form.querySelectorAll('input, select').forEach(field => {
+                // Validación al escribir (con debounce)
+                let timeout;
+                field.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        validateField(this);
+                    }, 300);
+                });
+
+                // Validación inmediata al salir del campo
+                field.addEventListener('blur', function() {
+                    validateField(this);
+                });
+
+                // Validación inmediata para selects
+                if (field.tagName === 'SELECT') {
+                    field.addEventListener('change', function() {
+                        validateField(this);
+                    });
+                }
+            });
+
+            // Validación especial para confirmación de contraseña
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+
+            if (passwordField && confirmPasswordField) {
+                passwordField.addEventListener('input', function() {
+                    if (confirmPasswordField.value) {
+                        setTimeout(() => validateField(confirmPasswordField), 100);
+                    }
+                });
+            }
+
+            // Validación del formulario al enviar
+            form.addEventListener('submit', function(e) {
+                const terms = document.getElementById('terms');
+                if (!terms.checked) {
+                    e.preventDefault();
+                    showAlert('Debes aceptar los términos y condiciones para continuar', 'danger');
+                    return false;
+                }
+
+                // Validar todos los campos una vez más
+                let isFormValid = true;
+                form.querySelectorAll('[required]').forEach(field => {
+                    if (!validateField(field)) {
+                        isFormValid = false;
+                    }
+                });
+
+                if (!isFormValid) {
+                    e.preventDefault();
+                    showAlert('Por favor, corrige los errores en el formulario', 'danger');
+                    return false;
+                }
+
+                // Mostrar estado de carga
+                const registerBtn = document.getElementById('registerBtn');
+                registerBtn.classList.add('loading');
+                registerBtn.disabled = true;
+
+                return true;
+            });
+        }
+
+        function updateSummary() {
+            const firstName = document.getElementById('firstName').value || '';
+            const lastName = document.getElementById('lastName').value || '';
+            const email = document.getElementById('email').value || '';
+            const username = document.getElementById('username').value || '';
             const roleSelect = document.getElementById('role');
+            
+            document.getElementById('summaryName').textContent = `${firstName} ${lastName}`.trim() || '-';
+            document.getElementById('summaryEmail').textContent = email || '-';
+            document.getElementById('summaryUsername').textContent = username || '-';
+            
             const selectedOption = roleSelect.options[roleSelect.selectedIndex];
-            document.getElementById('summaryRole').textContent = selectedOption ? selectedOption.text : '-';
+            document.getElementById('summaryRole').textContent = selectedOption && selectedOption.value ? selectedOption.text : '-';
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('registerAlert');
+            const iconMap = {
+                'success': 'check-circle',
+                'danger': 'exclamation-triangle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+            
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas fa-${iconMap[type] || 'info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+
+            // Auto-hide alert after 5 seconds for non-error messages
+            if (type !== 'danger') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
         }
 
         // Función para alternar visibilidad de contraseña
@@ -662,79 +916,14 @@
             });
         }
 
-        // Validación del formulario final
-        function setupFormValidation() {
-            const registerForm = document.getElementById('registerForm');
-            if (registerForm) {
-                registerForm.addEventListener('submit', function (e) {
-                    // Validar términos
-                    const terms = document.getElementById('terms');
-                    if (!terms.checked) {
-                        e.preventDefault();
-                        const alertContainer = document.getElementById('registerAlert');
-                        alertContainer.innerHTML = `
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                Debes aceptar los términos y condiciones para continuar
-                            </div>
-                        `;
-                        return false;
-                    }
-
-                    // Mostrar estado de carga
-                    const registerBtn = document.getElementById('registerBtn');
-                    registerBtn.classList.add('loading');
-                    registerBtn.disabled = true;
-
-                    return true;
-                });
-
-                // Validación en tiempo real
-                registerForm.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', function () {
-                        if (this.hasAttribute('required') && this.value.trim()) {
-                            this.classList.remove('is-invalid');
-                            this.classList.add('is-valid');
-
-                            const wrapper = this.closest('.input-wrapper');
-                            if (wrapper) {
-                                const feedback = wrapper.querySelector('.input-feedback');
-                                if (feedback) {
-                                    feedback.textContent = '';
-                                }
-                            }
-                        }
-                    });
-                });
-
-                // Validación de coincidencia de contraseñas en tiempo real
-                const passwordInput = document.getElementById('password');
-                const confirmPasswordInput = document.getElementById('confirmPassword');
-
-                confirmPasswordInput.addEventListener('input', function () {
-                    if (passwordInput.value && this.value) {
-                        const wrapper = this.closest('.input-wrapper');
-                        const feedback = wrapper.querySelector('.input-feedback');
-
-                        if (passwordInput.value !== this.value) {
-                            this.classList.remove('is-valid');
-                            this.classList.add('is-invalid');
-                            if (feedback) {
-                                feedback.textContent = 'Las contraseñas no coinciden';
-                                feedback.className = 'input-feedback invalid';
-                            }
-                        } else {
-                            this.classList.remove('is-invalid');
-                            this.classList.add('is-valid');
-                            if (feedback) {
-                                feedback.textContent = 'Las contraseñas coinciden';
-                                feedback.className = 'input-feedback valid';
-                            }
-                        }
-                    }
-                });
-            }
-        }
+        // Inicializar validación en tiempo real para campos ya llenos
+        setTimeout(() => {
+            document.querySelectorAll('input, select').forEach(field => {
+                if (field.value) {
+                    validateField(field);
+                }
+            });
+        }, 100);
     });
 </script>
 {% endblock %}

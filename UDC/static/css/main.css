@@ -1348,7 +1348,6 @@ ul, ol {
     background-position: right var(--space-3) center;
     background-size: 1rem;
     padding-right: var(--space-10);
-    transform: rotate(45deg);
 }
 
 .form-control.is-invalid:focus {
