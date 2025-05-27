@@ -1,149 +1,87 @@
 {% extends 'base_parent.html' %}  
-{% block title %}Calificaciones de {{ child_name }} - Padre{% endblock %}  
-{% block page_title %}Calificaciones de {{ child_name }}{% endblock %}  
+{% block title %}Notas de {{ child.first_name if child else 'Estudiante' }}{% endblock %}  
+{% block page_title %}Calificaciones de {{ child.first_name }} {{ child.last_name }}{% endblock %}  
+  
+{% block extra_css %}  
+<style>  
+    .grade-card {  
+        border-left: 5px solid var(--purple, #8b5cf6);  
+        transition: all 0.3s ease-in-out;  
+    }  
+    .grade-card:hover {  
+        transform: translateY(-3px);  
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);  
+    }  
+    .grade-value {  
+        font-size: 1.8rem;  
+        font-weight: bold;  
+        color: var(--purple, #8b5cf6);  
+    }  
+    .grade-type {  
+        font-weight: 500;  
+        color: var(--text-secondary, #718096);  
+    }  
+    .details-table th {  
+        width: 30%;  
+        font-weight: 600;  
+    }  
+</style>  
+{% endblock %}  
   
 {% block content %}  
 <div class="container-fluid">  
-    <div class="row mb-4">  
-        <div class="col-12">  
+    {% if child %}  
+    <div class="card shadow mb-4">  
+        <div class="card-header py-3">  
             <div class="d-flex justify-content-between align-items-center">  
-                <div>  
-                    <h3 class="mb-1">{{ child_name }}</h3>  
-                    <p class="text-muted">Historial académico completo</p>  
-                </div>  
-                <a href="{{ url_for('parent.dashboard') }}" class="btn btn-secondary">  
-                    <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard  
+                <h5 class="m-0 font-weight-bold text-primary">Notas Detalladas de: {{ child.first_name }} {{ child.last_name }} ({{child.username}})</h5>  
+                <a href="{{ url_for('parent.dashboard') }}" class="btn btn-sm btn-outline-secondary">  
+                    <i class="fas fa-arrow-left me-1"></i> Volver al Panel  
                 </a>  
             </div>  
         </div>  
-    </div>  
-  
-    <div class="row">  
-        <div class="col-12">  
-            <div class="card shadow">  
-                <div class="card-header bg-purple text-white d-flex justify-content-between align-items-center">  
-                    <h5 class="mb-0">  
-                        <i class="fas fa-star me-2"></i>  
-                        Calificaciones  
-                    </h5>  
-                    <span class="badge bg-light text-dark">{{ grades|length }} calificación(es)</span>  
+        <div class="card-body">  
+            {% if grades %}  
+                <div class="row">  
+                    {% for grade in grades %}  
+                        <div class="col-lg-6 col-md-12 mb-4">  
+                            <div class="card grade-card h-100">  
+                                <div class="card-body">  
+                                    <div class="d-flex justify-content-between align-items-start mb-2">  
+                                        <div>  
+                                            <h5 class="card-title text-purple mb-1">{{ grade.course_name }}</h5>  
+                                            <small class="text-muted">Profesor: {{ grade.teacher_name }}</small>  
+                                        </div>  
+                                        <span class="badge bg-{{ 'success' if grade.grade_value|float >= 7 else 'warning' if grade.grade_value|float >= 4 else 'danger' }} p-2">  
+                                            Calificación: {{ "%.1f"|format(grade.grade_value|float) }} / 10  
+                                        </span>  
+                                    </div>  
+                                    <hr>  
+                                    <p class="card-text grade-type mb-1"><strong>Tipo:</strong> {{ grade.grade_type }}</p>  
+                                    {% if grade.description %}  
+                                        <p class="card-text text-muted mb-1"><strong>Descripción:</strong> {{ grade.description }}</p>  
+                                    {% endif %}  
+                                    <p class="card-text text-muted"><small>Registrado: {{ grade.created_at.strftime('%d/%m/%Y %H:%M') if grade.created_at else 'N/A' }}</small></p>  
+                                </div>  
+                            </div>  
+                        </div>  
+                    {% endfor %}  
                 </div>  
-                <div class="card-body">  
-                    {% if grades %}  
-                        <div class="table-responsive">  
-                            <table class="table table-hover">  
-                                <thead class="table-light">  
-                                    <tr>  
-                                        <th>Materia</th>  
-                                        <th>Tipo de Evaluación</th>  
-                                        <th>Calificación</th>  
-                                        <th>Fecha</th>  
-                                        <th>Observaciones</th>  
-                                    </tr>  
-                                </thead>  
-                                <tbody>  
-                                    {% for grade in grades %}  
-                                        <tr>  
-                                            <td>  
-                                                <div class="d-flex align-items-center">  
-                                                    <i class="fas fa-book text-purple me-2"></i>  
-                                                    <span class="fw-medium">{{ grade.course_name if grade.course_name else 'Materia no encontrada' }}</span>  
-                                                </div>  
-                                            </td>  
-                                            <td>  
-                                                {% set type_info = {  
-                                                    'parcial': {'name': 'Examen Parcial', 'icon': 'fas fa-file-alt', 'color': 'primary'},  
-                                                    'quiz': {'name': 'Quiz', 'icon': 'fas fa-question-circle', 'color': 'info'},  
-                                                    'tarea': {'name': 'Tarea', 'icon': 'fas fa-tasks', 'color': 'success'},  
-                                                    'proyecto': {'name': 'Proyecto', 'icon': 'fas fa-project-diagram', 'color': 'warning'},  
-                                                    'participacion': {'name': 'Participación', 'icon': 'fas fa-hand-paper', 'color': 'secondary'},  
-                                                    'laboratorio': {'name': 'Laboratorio', 'icon': 'fas fa-flask', 'color': 'danger'}  
-                                                } %}  
-                                                {% set grade_type_info = type_info.get(grade.grade_type, {'name': grade.grade_type|title, 'icon': 'fas fa-clipboard', 'color': 'secondary'}) %}  
-                                                <div class="d-flex align-items-center">  
-                                                    <i class="{{ grade_type_info.icon }} text-{{ grade_type_info.color }} me-2"></i>  
-                                                    <span>{{ grade_type_info.name }}</span>  
-                                                </div>  
-                                            </td>  
-                                            <td>  
-                                                {% set grade_value = grade.grade_value|float %}  
-                                                <span class="badge fs-6 bg-{{ 'success' if grade_value >= 7 else 'warning' if grade_value >= 5 else 'danger' }}">  
-                                                    {{ "%.1f"|format(grade_value) }}/10  
-                                                </span>  
-                                                {% if grade_value >= 7 %}  
-                                                    <small class="text-success d-block">Excelente</small>  
-                                                {% elif grade_value >= 5 %}  
-                                                    <small class="text-warning d-block">Aceptable</small>  
-                                                {% else %}  
-                                                    <small class="text-danger d-block">Necesita mejorar</small>  
-                                                {% endif %}  
-                                            </td>  
-                                            <td>  
-                                                <div class="text-sm">  
-                                                    {{ grade.created_at.strftime('%d/%m/%Y') if grade.created_at else 'N/A' }}  
-                                                    <br>  
-                                                    <small class="text-muted">{{ grade.created_at.strftime('%H:%M') if grade.created_at else '' }}</small>  
-                                                </div>  
-                                            </td>  
-                                            <td>  
-                                                {% if grade.description %}  
-                                                    <span class="text-muted">{{ grade.description[:50] }}{% if grade.description|length > 50 %}...{% endif %}</span>  
-                                                {% else %}  
-                                                    <span class="text-muted fst-italic">Sin observaciones</span>  
-                                                {% endif %}  
-                                            </td>  
-                                        </tr>  
-                                    {% endfor %}  
-                                </tbody>  
-                            </table>  
-                        </div>  
-                          
-                        <!-- Resumen estadístico -->  
-                        <div class="row mt-4">  
-                            <div class="col-md-4">  
-                                <div class="card bg-purple text-white">  
-                                    <div class="card-body text-center">  
-                                        <h5>Promedio General</h5>  
-                                        <h2>{{ "%.1f"|format(avg_grade) if avg_grade else 'N/A' }}</h2>  
-                                    </div>  
-                                </div>  
-                            </div>  
-                            <div class="col-md-4">  
-                                <div class="card bg-info text-white">  
-                                    <div class="card-body text-center">  
-                                        <h5>Total Evaluaciones</h5>  
-                                        <h2>{{ grades|length }}</h2>  
-                                    </div>  
-                                </div>  
-                            </div>  
-                            <div class="col-md-4">  
-                                <div class="card bg-warning text-white">  
-                                    <div class="card-body text-center">  
-                                        <h5>Última Calificación</h5>  
-                                        <h2>{{ "%.1f"|format(grades[0].grade_value|float) if grades else 'N/A' }}</h2>  
-                                    </div>  
-                                </div>  
-                            </div>  
-                        </div>  
-                    {% else %}  
-                        <div class="text-center py-5">  
-                            <i class="fas fa-star fa-4x text-muted mb-4"></i>  
-                            <h4 class="text-muted">No hay calificaciones disponibles</h4>  
-                            <p class="text-muted">Las calificaciones aparecerán aquí cuando los profesores las registren</p>  
-                        </div>  
-                    {% endif %}  
+            {% else %}  
+                <div class="text-center py-5">  
+                    <div class="avatar-circle mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem; background-color: var(--light-gray);">  
+                        <i class="fas fa-folder-open text-muted"></i>  
+                    </div>  
+                    <h5 class="text-muted">No hay calificaciones registradas para {{ child.first_name }}.</h5>  
+                    <p class="text-muted">Las notas aparecerán aquí una vez que sean ingresadas por los profesores.</p>  
                 </div>  
-            </div>  
+            {% endif %}  
         </div>  
     </div>  
+    {% else %}  
+        <div class="alert alert-danger text-center">  
+            No se pudo cargar la información del estudiante.  
+        </div>  
+    {% endif %}  
 </div>  
-  
-<style>  
-    .bg-purple {  
-        background-color: #8b5cf6 !important;  
-    }  
-    .text-purple {  
-        color: #8b5cf6 !important;  
-    }  
-</style>  
 {% endblock %}
