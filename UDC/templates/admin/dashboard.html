@@ -87,6 +87,7 @@
                             <tr>
                                 <th>Título</th>
                                 <th>Fecha</th>
+                                <th>Hora</th>
                                 <th>Ubicación</th>
                                 <th>Acciones</th>
                             </tr>
@@ -102,16 +103,15 @@
                                         <span>{{ event.title }}</span>
                                     </div>
                                 </td>
-                                <td>{{ event.date }}</td>
+                                <td>{{ event.date.strftime('%Y-%m-%d') if event.date }}</td>
+                                <td>{{ event.time }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>
                                     <div class="table-actions">
                                         <button type="button" class="btn btn-sm btn-outline-primary edit-event-btn"
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#editEventModal"
+                                            data-bs-toggle="modal" data-bs-target="#editEventModal"
                                             onclick="setupEditModal('{{ event._id }}', this)"
-                                            data-event-title="{{ event.title }}"
-                                            data-event-date="{{ event.date }}"
+                                            data-event-title="{{ event.title }}" data-event-date="{{ event.date }}"
                                             data-event-time="{{ event.time|default('') }}"
                                             data-event-location="{{ event.location }}"
                                             data-event-description="{{ event.description|default('') }}">
@@ -125,8 +125,7 @@
                                         </a>
                                         <button type="button" class="btn btn-sm btn-outline-info view-event-btn"
                                             data-bs-toggle="tooltip" title="Ver Detalles"
-                                            data-event-title="{{ event.title }}"
-                                            data-event-date="{{ event.date }}"
+                                            data-event-title="{{ event.title }}" data-event-date="{{ event.date }}"
                                             data-event-time="{{ event.time|default('') }}"
                                             data-event-location="{{ event.location }}"
                                             data-event-description="{{ event.description|default('') }}">
@@ -225,36 +224,46 @@
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-3 col-sm-6">
-                        <a href="#" class="quick-access-item">
+                        <button type="button" class="quick-access-item w-100"
+                            data-url="{{ url_for('admin.add_event') }}"
+                            onclick="window.location.href=this.dataset.url;">
                             <div class="quick-access-icon bg-primary">
                                 <i class="fas fa-calendar-plus"></i>
                             </div>
                             <span>Crear Evento</span>
-                        </a>
+                        </button>
                     </div>
+
+
                     <div class="col-md-3 col-sm-6">
-                        <a href="#" class="quick-access-item">
+                        <button type="button" class="quick-access-item w-100"
+                            data-url="{{ url_for('admin.add_student') }}"
+                            onclick="window.location.href=this.dataset.url;">
                             <div class="quick-access-icon bg-success">
                                 <i class="fas fa-user-plus"></i>
                             </div>
-                            <span>Añadir Usuario</span>
-                        </a>
+                            <span>Agregar Estudiantes</span>
+                        </button>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <a href="#" class="quick-access-item">
+                        <button type="button" class="quick-access-item w-100"
+                            data-url="{{ url_for('admin.add_file') }}"
+                            onclick="window.location.href=this.dataset.url;">
                             <div class="quick-access-icon bg-info">
                                 <i class="fas fa-file-upload"></i>
                             </div>
                             <span>Subir Archivo</span>
-                        </a>
+                        </button>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <a href="#" class="quick-access-item">
+                        <button type="button" class="quick-access-item w-100"
+                            data-url="{{ url_for('auth.profile') }}"
+                            onclick="window.location.href=this.dataset.url;">
                             <div class="quick-access-icon bg-warning">
                                 <i class="fas fa-bell"></i>
                             </div>
-                            <span>Enviar Notificación</span>
-                        </a>
+                            <span>Notificaciones</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -317,9 +326,9 @@
             </div>
             <div class="modal-body">
                 <form id="editEventForm" method="POST" action="{{ url_for('admin.edit_event_from_dashboard') }}">
-        
+
                     <input type="hidden" id="editEventId" name="eventId" value="">
-                    
+
                     <div class="mb-3">
                         <label for="editEventTitle" class="form-label">Título del Evento</label>
                         <input type="text" class="form-control" id="editEventTitle" name="title"
@@ -398,6 +407,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}

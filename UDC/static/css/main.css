@@ -686,9 +686,23 @@ ul, ol {
 
 /* Hero Section Adjustment */
 .hero-section {
-    margin-top: 0;
-    padding-top: calc(var(--navbar-height, 70px) + 3rem);
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
 }
+
+.hero-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('../img/school-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+
 
 /* ========================================    DROPDOWN STYLES    ======================================== */
 .dropdown {
@@ -3920,4 +3934,16 @@ a:focus {
     .modern-card-body {
         padding: var(--space-4);
     }
+
+    /* Todas las tab-panes, por defecto, ocultas */
+.tab-content > .tab-pane {
+  display: none;
+}
+
+/* Sólo la tab-pane activa (o con show) se muestra */
+.tab-content > .tab-pane.show,
+.tab-content > .tab-pane.active {
+  display: block;
+}
+
 }

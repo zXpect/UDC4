@@ -23,3 +23,8 @@ class TestingConfig(Config):
     TESTING = True
     # Usar puerto por defecto de MongoDB para pruebas también
     MONGODB_URI = 'mongodb://localhost:27017/test_myapp'
+
+ # Configuración de archivos  
+    UPLOAD_FOLDER = 'uploads'  
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB máximo  
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx'}
