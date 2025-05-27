@@ -272,31 +272,41 @@ def edit_event_modal(event_id):
 @admin.route('/events/delete/<event_id>')  
 @admin_required  
 def delete_event(event_id):  
-    current_app.logger.info(f"--- Admin: Attempting to delete event with ID: {event_id} ---") # DIAGNOSTIC LOGGING
+    print(f"=== ROUTE: delete_event called with event_id: {event_id} (type: {type(event_id)}) ===")
     
     # Validar que el ID sea válido
     if not ObjectId.is_valid(event_id):
-        current_app.logger.error(f"Invalid event ID format: {event_id}")
+        print(f"=== ROUTE: Invalid event ID format: {event_id} ===")
         flash('ID de evento inválido.', 'error')
         return redirect(url_for('admin.dashboard'))
         
     try:
         # Intentar encontrar el evento primero
+        print(f"=== ROUTE: Checking if event exists with ID: {event_id} ===")
         event = Event.find_by_id(event_id)
         if not event:
-            current_app.logger.error(f"Event not found with ID: {event_id}")
+            print(f"=== ROUTE: Event not found with ID: {event_id} ===")
             flash('Evento no encontrado en la base de datos.', 'error')
             return redirect(url_for('admin.dashboard'))
+        
+        print(f"=== ROUTE: Event found: {event.get('title', 'No title')} ===")
             
         # Intentar eliminar el evento
-        if Event.delete(event_id):  
-            current_app.logger.info(f"Successfully deleted event with ID: {event_id}")
+        print(f"=== ROUTE: Calling Event.delete with ID: {event_id} ===")
+        delete_result = Event.delete(event_id)
+        print(f"=== ROUTE: Event.delete returned: {delete_result} ===")
+        
+        if delete_result:  
+            print(f"=== ROUTE: Successfully deleted event with ID: {event_id} ===")
             flash('Evento eliminado exitosamente', 'success')  
         else:  
-            current_app.logger.error(f"Failed to delete event with ID: {event_id}")
+            print(f"=== ROUTE: Failed to delete event with ID: {event_id} ===")
             flash('Error al eliminar el evento.', 'error') 
+            
     except Exception as e:
-        current_app.logger.error(f"Exception during event deletion {event_id}: {str(e)}")
+        print(f"=== ROUTE: Exception during event deletion {event_id}: {str(e)} ===")
+        import traceback
+        print(f"=== ROUTE: Full traceback: {traceback.format_exc()} ===")
         flash(f'Error al procesar la eliminación: {str(e)}', 'error')
       
     return redirect(url_for('admin.dashboard'))
@@ -342,7 +352,7 @@ def add_file():
                   
                 # Generar nombre seguro  
                 filename = secure_filename(file.filename)  
-                timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_')  
                 filename = timestamp + filename  
                   
                 file_path = os.path.join(upload_path, filename)  
@@ -375,12 +385,56 @@ def add_file():
 @admin_required  
 def delete_file(file_id):  
     try:  
-        if InstitutionalFile.delete(file_id):  
-            flash('Archivo eliminado exitosamente', 'success')  
-        else:  
-            flash('Error al eliminar el archivo', 'error')  
+        current_app.logger.info(f"=== Attempting to delete file with ID: {file_id} ===")
+        
+        # Validar que el ID sea válido
+        if not ObjectId.is_valid(file_id):
+            current_app.logger.error(f"=== Invalid file ID format: {file_id} ===")
+            flash('ID de archivo inválido.', 'error')
+            return redirect(url_for('admin.files'))
+        
+        # Buscar el archivo antes de eliminarlo
+        file_doc = InstitutionalFile.collection.find_one({'_id': ObjectId(file_id)})
+        if not file_doc:
+            current_app.logger.error(f"=== File not found in database: {file_id} ===")
+            flash('Archivo no encontrado en la base de datos.', 'error')
+            return redirect(url_for('admin.files'))
+        
+        current_app.logger.info(f"=== Found file: {file_doc.get('title', 'No title')} ===")
+        
+        # Obtener la ruta del archivo físico
+        file_path_relative = file_doc.get('file_path', '')
+        file_path_absolute = os.path.join(current_app.root_path, file_path_relative)
+        
+        current_app.logger.info(f"=== File path: {file_path_absolute} ===")
+        
+        # Intentar eliminar de la base de datos primero
+        delete_result = InstitutionalFile.delete(file_id)
+        current_app.logger.info(f"=== Database deletion result: {delete_result} ===")
+        
+        if delete_result:
+            # Si se eliminó de la DB, intentar eliminar el archivo físico
+            try:
+                if os.path.exists(file_path_absolute):
+                    os.remove(file_path_absolute)
+                    current_app.logger.info(f"=== Physical file deleted successfully: {file_path_absolute} ===")
+                else:
+                    current_app.logger.warning(f"=== Physical file not found: {file_path_absolute} ===")
+                    # No es un error crítico si el archivo físico no existe
+                
+                flash('Archivo eliminado exitosamente', 'success')
+            except OSError as os_error:
+                current_app.logger.error(f"=== Error deleting physical file: {os_error} ===")
+                flash('Archivo eliminado de la base de datos, pero error al eliminar archivo físico', 'warning')
+        else:
+            current_app.logger.error(f"=== Failed to delete file from database: {file_id} ===")
+            flash('Error al eliminar el archivo de la base de datos', 'error')
+            
     except Exception as e:  
-        flash(f'Error: {str(e)}', 'error')  
+        current_app.logger.error(f"=== Unexpected error deleting file {file_id}: {str(e)} ===")
+        import traceback
+        current_app.logger.error(f"=== Full traceback: {traceback.format_exc()} ===")
+        flash(f'Error inesperado al eliminar archivo: {str(e)}', 'error')  
       
     return redirect(url_for('admin.files'))
 

@@ -68,20 +68,48 @@ class Event:
     @staticmethod  
     def delete(event_id):  
         try:  
-            # Primero verificamos que el ID sea válido
-            if not ObjectId.is_valid(event_id):
+            print(f"=== Event.delete called with event_id: {event_id} (type: {type(event_id)}) ===")
+            
+            # Convertir a string si es ObjectId
+            if isinstance(event_id, ObjectId):
+                event_id_str = str(event_id)
+            else:
+                event_id_str = event_id
+                
+            print(f"=== Working with event_id_str: {event_id_str} ===")
+            
+            # Verificar que el ID sea válido
+            if not ObjectId.is_valid(event_id_str):
+                print(f"=== Invalid ObjectId format: {event_id_str} ===")
                 return False
                 
-            # Verificamos que el evento exista antes de intentar eliminarlo
-            event = Event.collection.find_one({'_id': ObjectId(event_id)})
+            # Crear ObjectId para la consulta
+            object_id = ObjectId(event_id_str)
+            print(f"=== Created ObjectId: {object_id} ===")
+            
+            # Verificar que el evento exista antes de intentar eliminarlo
+            event = Event.collection.find_one({'_id': object_id})
+            print(f"=== Found event: {event is not None} ===")
+            if event:
+                print(f"=== Event details: {event.get('title', 'No title')} ===")
+            
             if not event:
+                print(f"=== Event not found in database ===")
                 return False
                 
-            # Intentamos eliminar el evento
-            result = Event.collection.delete_one({'_id': ObjectId(event_id)})  
-            return result.deleted_count > 0  
+            # Intentar eliminar el evento
+            print(f"=== Attempting to delete event with ObjectId: {object_id} ===")
+            result = Event.collection.delete_one({'_id': object_id})  
+            print(f"=== Delete result - deleted_count: {result.deleted_count} ===")
+            
+            success = result.deleted_count > 0
+            print(f"=== Delete operation success: {success} ===")
+            return success
+            
         except Exception as e:
-            print(f"Error deleting event {event_id}: {str(e)}")  
+            print(f"=== ERROR in Event.delete for event_id {event_id}: {str(e)} ===")  
+            import traceback
+            print(f"=== Full traceback: {traceback.format_exc()} ===")
             return False
 
 class User:  
@@ -337,16 +365,56 @@ class InstitutionalFile:
     def find_by_category(category):  
         return list(InstitutionalFile.collection.find({'category': category, 'active': True}))  
       
-    @staticmethod  
-    def delete(file_id):  
-        try:  
-            result = InstitutionalFile.collection.update_one(  
-                {'_id': ObjectId(file_id)},  
-                {'$set': {'active': False}}  
-            )  
-            return result.modified_count > 0  
-        except:  
-            return False  
+
+    @staticmethod
+    def delete(file_id):
+        try:
+            print(f"=== InstitutionalFile.delete called with file_id: {file_id} (type: {type(file_id)}) ===")
+            
+            # Convertir a string si es ObjectId
+            if isinstance(file_id, ObjectId):
+                file_id_str = str(file_id)
+            else:
+                file_id_str = file_id
+            
+            print(f"=== Working with file_id_str: {file_id_str} ===")
+            
+            # Verificar que el ID sea válido
+            if not ObjectId.is_valid(file_id_str):
+                print(f"=== Invalid ObjectId format: {file_id_str} ===")
+                return False
+            
+            # Crear ObjectId para la consulta
+            object_id = ObjectId(file_id_str)
+            print(f"=== Created ObjectId: {object_id} ===")
+            
+            # Verificar que el archivo exista antes de intentar eliminarlo
+            file_doc = InstitutionalFile.collection.find_one({'_id': object_id})
+            print(f"=== Found file: {file_doc is not None} ===")
+            if file_doc:
+                print(f"=== File details: {file_doc.get('title', 'No title')} ===")
+            
+            if not file_doc:
+                print(f"=== File not found in database ===")
+                return False
+            
+            # Intentar eliminar el archivo
+            print(f"=== Attempting to delete file with ObjectId: {object_id} ===")
+            result = InstitutionalFile.collection.delete_one({'_id': object_id})
+            
+            print(f"=== Delete result - deleted_count: {result.deleted_count} ===")
+            print(f"=== Delete result - acknowledged: {result.acknowledged} ===")
+            
+            success = result.deleted_count > 0
+            print(f"=== Delete operation success: {success} ===")
+            return success
+            
+        except Exception as e:
+            print(f"=== ERROR in InstitutionalFile.delete for file_id {file_id}: {str(e)} ===")
+            import traceback
+            print(f"=== Full traceback: {traceback.format_exc()} ===")
+            return False
+
   
 class Grade:  
     collection = db.grades  
