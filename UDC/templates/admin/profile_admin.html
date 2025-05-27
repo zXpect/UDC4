@@ -1,3 +1,4 @@
+
 {% extends 'base_admin.html' %}
 
 {% block title %}Panel de Administración - {{ super() }}{% endblock %}
@@ -13,9 +14,9 @@
             </div>
 
             <div class="col-lg-9">
-                {# --- ENVOLVEMOS TODOS LOS PANES EN UN TAB-CONTENT CON ID --- #}
+
                 <div id="tabContent" class="profile-content tab-content">
-                    
+
                     <!-- Dashboard Tab -->
                     <div class="tab-pane fade show active" id="admin-dashboard" role="tabpanel"
                         aria-labelledby="admin-dashboard-tab">
@@ -23,65 +24,65 @@
                         <div class="row">
                             <!-- Statistics Cards -->
                             {% if stats %}
-                                {% for stat in stats %}
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-{{ stat.color }}">
-                                            <i class="fas fa-{{ stat.icon }}"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <div class="stat-number">{{ stat.value }}</div>
-                                            <div class="stat-label">{{ stat.label }}</div>
-                                        </div>
+                            {% for stat in stats %}
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-{{ stat.color }}">
+                                        <i class="fas fa-{{ stat.icon }}"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">{{ stat.value }}</div>
+                                        <div class="stat-label">{{ stat.label }}</div>
                                     </div>
                                 </div>
-                                {% endfor %}
+                            </div>
+                            {% endfor %}
                             {% else %}
-                                <!-- Default stats -->
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-primary">
-                                            <i class="fas fa-users"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <div class="stat-number">150</div>
-                                            <div class="stat-label">Usuarios Totales</div>
-                                        </div>
+                            <!-- Default stats -->
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">150</div>
+                                        <div class="stat-label">Usuarios Totales</div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-success">
-                                            <i class="fas fa-chalkboard-teacher"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <div class="stat-number">15</div>
-                                            <div class="stat-label">Profesores</div>
-                                        </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-success">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">15</div>
+                                        <div class="stat-label">Profesores</div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-info">
-                                            <i class="fas fa-user-graduate"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <div class="stat-number">120</div>
-                                            <div class="stat-label">Estudiantes</div>
-                                        </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-info">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">120</div>
+                                        <div class="stat-label">Estudiantes</div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-3 mb-4">
-                                    <div class="stat-card h-100">
-                                        <div class="stat-icon bg-warning">
-                                            <i class="fas fa-book"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <div class="stat-number">25</div>
-                                            <div class="stat-label">Cursos Activos</div>
-                                        </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3 mb-4">
+                                <div class="stat-card h-100">
+                                    <div class="stat-icon bg-warning">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">25</div>
+                                        <div class="stat-label">Cursos Activos</div>
                                     </div>
                                 </div>
+                            </div>
                             {% endif %}
                         </div>
 
@@ -111,6 +112,9 @@
                     <div class="tab-pane fade" id="system-activity" role="tabpanel"
                         aria-labelledby="system-activity-tab">
                         <h4 class="mb-4">Actividad Reciente del Sistema</h4>
+                        <advertencia style="color: rgb(88, 90, 90);">Aun estamos trabajando en esta sección, estara
+                            disponible pronto.<p></p>
+                        </advertencia>
                         <div class="card">
                             <div class="card-body">
                                 <div class="timeline">
@@ -169,8 +173,9 @@
                             <div class="card-body">
                                 <p class="text-muted">Funcionalidad de gestión de usuarios (crear, editar, eliminar,
                                     asignar roles) se implementará aquí.</p>
-                                <button class="btn btn-primary"><i class="fas fa-user-plus me-2"></i>Agregar Nuevo
-                                    Usuario</button>
+                                <a href="{{ url_for('admin.add_student') }}" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i>Agregar Nuevo Usuario
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -183,52 +188,24 @@
                             <div class="card-body">
                                 <p class="text-muted">Funcionalidad de gestión de cursos (crear, editar, asignar
                                     profesores, ver inscritos) se implementará aquí.</p>
-                                <button class="btn btn-success"><i class="fas fa-plus-circle me-2"></i>Crear Nuevo
-                                    Curso</button>
+                                <a href="{{ url_for('admin.add_course') }}" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i>Crear Nuevo Curso
+                                </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Admin Personal Information Tab -->
-                    <div class="tab-pane fade" id="admin-personal-info" role="tabpanel"
-                        aria-labelledby="admin-personal-info-tab">
-                        <h4 class="mb-4">Mi Información Personal</h4>
+                    <!-- configuracion institucional -->
+                    <div class="tab-pane fade" id="institutional-settings" role="tabpanel"
+                        aria-labelledby="institutional-settings-tab">
+                        <h4 class="mb-4">Configuracion Institucional</h4>
                         <div class="card">
                             <div class="card-body">
-                                <form>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" value="{{ user.first_name }}"
-                                                readonly>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Apellido</label>
-                                            <input type="text" class="form-control" value="{{ user.last_name }}"
-                                                readonly>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Correo Electrónico</label>
-                                        <input type="email" class="form-control" value="{{ user.email }}" readonly>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Teléfono</label>
-                                            <input type="tel" class="form-control"
-                                                value="{{ user.phone|default('No especificado') }}" readonly>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Rol Principal</label>
-                                            <input type="text" class="form-control" value="{{ user.role|capitalize }}"
-                                                readonly>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#editProfileModal">
-                                        <i class="fas fa-edit me-2"></i>Editar Mi Perfil
-                                    </button>
-                                </form>
+                                <p class="text-muted">Funcionalidad de cambios en la información institucional, presiona
+                                    el boton para acceder.</p>
+                                <a href="{{ url_for('admin.institutional_info') }}" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i>Configuracion Institucional
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -243,54 +220,58 @@
 {% endblock %}
 
 {% block scripts %}
-  {{ super() }}
-  <script>
+{{ super() }}
+<script>
     // Scroll interno del contenedor antes de mostrar cada tab
     document.querySelectorAll('a[data-bs-toggle="pill"]').forEach(tab => {
-      tab.addEventListener('shown.bs.tab', () => {
-        const container = document.getElementById('tabContent');
-        if (container) {
-          container.scrollTop = 0;
-        }
-      });
+        tab.addEventListener('shown.bs.tab', () => {
+            const container = document.getElementById('tabContent');
+            if (container) {
+                container.scrollTop = 0;
+            }
+        });
     });
 
     // Tu lógica existente para activar tabs manualmente
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(btn => {
-      btn.addEventListener('shown.bs.tab', e => {
-        const contenido = document.querySelector('.profile-content');
-        if (contenido) contenido.scrollTop = 0;
-      });
+        btn.addEventListener('shown.bs.tab', e => {
+            const contenido = document.querySelector('.profile-content');
+            if (contenido) contenido.scrollTop = 0;
+        });
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-      var triggerTabList = [].slice.call(document.querySelectorAll('#adminSidebarMenu a.nav-link'))
-      triggerTabList.forEach(function (triggerEl) {
-        var tabTrigger = new bootstrap.Tab(triggerEl);
-        triggerEl.addEventListener('click', function (event) {
-          event.preventDefault();
-          tabTrigger.show();
+        var triggerTabList = [].slice.call(document.querySelectorAll('#adminSidebarMenu a.nav-link'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault();
+                tabTrigger.show();
 
-          // Remove active class from all tabs
-          triggerTabList.forEach(function (el) {
-            el.classList.remove('active');
-          });
-          // Add active class to the clicked tab
-          event.currentTarget.classList.add('active');
+                // Remove active class from all tabs
+                triggerTabList.forEach(function (el) {
+                    el.classList.remove('active');
+                });
+                // Add active class to the clicked tab
+                event.currentTarget.classList.add('active');
+            });
         });
-      });
 
-      // Ensure the first tab's link is active by default
-      var firstTabLink = document.querySelector('#adminSidebarMenu a.nav-link');
-      if (firstTabLink && !firstTabLink.classList.contains('active')) {
-        var firstTabPaneId = firstTabLink.getAttribute('href');
-        var firstTabPane = document.querySelector(firstTabPaneId);
-        if (firstTabPane && firstTabPane.classList.contains('show') && firstTabPane.classList.contains('active')) {
-          firstTabLink.classList.add('active');
-        } else if (firstTabLink.id === 'admin-dashboard-tab') {
-          firstTabLink.classList.add('active');
+        // Ensure the first tab's link is active by default
+        var firstTabLink = document.querySelector('#adminSidebarMenu a.nav-link');
+        if (firstTabLink && !firstTabLink.classList.contains('active')) {
+            var firstTabPaneId = firstTabLink.getAttribute('href');
+            var firstTabPane = document.querySelector(firstTabPaneId);
+            if (firstTabPane && firstTabPane.classList.contains('show') && firstTabPane.classList.contains('active')) {
+                firstTabLink.classList.add('active');
+            } else if (firstTabLink.id === 'admin-dashboard-tab') {
+                firstTabLink.classList.add('active');
+            }
         }
-      }
     });
-  </script>
+
+
+
+
+</script>
 {% endblock %}

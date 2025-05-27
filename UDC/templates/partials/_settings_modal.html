@@ -3,35 +3,43 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="settingsModalLabel"><i class="fas fa-cog me-2"></i>Configuración de la Cuenta</h5>
+                <h5 class="modal-title" id="settingsModalLabel"><i class="fas fa-cog me-2"></i>Configuración de la
+                    Cuenta</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ url_for('auth.profile') }}" method="POST"> 
+            <form action="{{ url_for('auth.profile') }}" method="POST">
                 <div class="modal-body">
                     <div class="mb-3">
+                        <!-- Select de tema -->
                         <label for="themeSelect" class="form-label">Tema de la Interfaz</label>
                         <select class="form-select" id="themeSelect" name="theme">
-                            <option value="light" {% if user_settings.theme == 'light' %}selected{% endif %}>Claro</option>
-                            <option value="dark" {% if user_settings.theme == 'dark' %}selected{% endif %}>Oscuro</option>
-                            <option value="system" {% if user_settings.theme == 'system' %}selected{% endif %}>Preferencias del Sistema</option>
+                            <option value="light">Claro</option>
+                            <option value="dark">Oscuro</option>
+                            <option value="system">Preferencias del Sistema</option>
                         </select>
+
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Preferencias de Notificación</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="emailNotifications" name="email_notifications" {% if user_settings.email_notifications %}checked{% endif %}>
-                            <label class="form-check-label" for="emailNotifications">Recibir notificaciones por correo electrónico</label>
+                            <input class="form-check-input" type="checkbox" id="emailNotifications"
+                                name="email_notifications" {% if user_settings.email_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="emailNotifications">Recibir notificaciones por correo
+                                electrónico</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="inAppNotifications" name="in_app_notifications" {% if user_settings.in_app_notifications %}checked{% endif %}>
-                            <label class="form-check-label" for="inAppNotifications">Mostrar notificaciones en la aplicación</label>
+                            <input class="form-check-input" type="checkbox" id="inAppNotifications"
+                                name="in_app_notifications" {% if user_settings.in_app_notifications %}checked{% endif
+                                %}>
+                            <label class="form-check-label" for="inAppNotifications">Mostrar notificaciones en la
+                                aplicación</label>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="languageSelect" class="form-label">Idioma</label>
                         <select class="form-select" id="languageSelect" name="language">
-                            <option value="es" {% if user_settings.language == 'es' %}selected{% endif %}>Español</option>
-                            <option value="en" {% if user_settings.language == 'en' %}selected{% endif %}>Inglés</option>
+                            <option value="es" {% if user_settings.language=='es' %}selected{% endif %}>Español</option>
+                            <option value="en" {% if user_settings.language=='en' %}selected{% endif %}>Inglés</option>
                         </select>
                     </div>
                     <hr>
@@ -43,9 +51,79 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Guardar Configuración</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Guardar
+                        Configuración</button>
                 </div>
             </form>
         </div>
     </div>
-</div> 
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('themeSelect');
+  const toggleBtn = document.querySelector('.theme-toggle');
+  const htmlEl = document.documentElement;
+  const ICON_SUN = 'fa-sun', ICON_MOON = 'fa-moon';
+
+  // 1. Determina el tema inicial: servidor (user_settings) o localStorage o sistema
+  let currentTheme = '{{ user_settings.theme or "system" }}';  // Flask inyecta esto
+  // Si guardaste en localStorage, podrías priorizarlo:
+  const stored = localStorage.getItem('theme');
+  if (stored) currentTheme = stored;
+
+  // 2. Función para aplicar theme
+  function applyTheme(theme) {
+    if (theme === 'system') {
+      // escucha preferencia del SO
+      const darkMq = window.matchMedia('(prefers-color-scheme: dark)');
+      htmlEl.setAttribute('data-theme', darkMq.matches ? 'dark' : 'light');
+      // vuelve a aplicar si cambia mientras estás en "system"
+      darkMq.addEventListener('change', e => {
+        htmlEl.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      });
+    } else {
+      htmlEl.setAttribute('data-theme', theme);
+    }
+    // actualiza el select y el ícono del botón
+    select.value = theme;
+    toggleBtn.dataset.theme = theme;
+    updateToggleIcon(theme);
+  }
+
+  // 3. Actualiza ícono del botón según theme
+  function updateToggleIcon(theme) {
+    const sun = toggleBtn.querySelector(`.${ICON_SUN}`);
+    const moon = toggleBtn.querySelector(`.${ICON_MOON}`);
+    if (theme === 'dark') {
+      sun.style.display = 'inline-block';
+      moon.style.display = 'none';
+    } else {
+      sun.style.display = 'none';
+      moon.style.display = 'inline-block';
+    }
+  }
+
+  // 4. Listeners:
+  select.addEventListener('change', () => {
+    const theme = select.value;
+    // opcional: guarda en localStorage o envía al servidor
+    localStorage.setItem('theme', theme);
+    applyTheme(theme);
+  });
+
+  toggleBtn.addEventListener('click', () => {
+    // rota entre light ↔ dark ↔ system (si quieres)
+    let next;
+    switch (htmlEl.getAttribute('data-theme')) {
+      case 'light': next = 'dark'; break;
+      case 'dark': next = 'system'; break;
+      default:     next = 'light';
+    }
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
+
+  // 5. Inicialización
+  applyTheme(currentTheme);
+});
+</script>
