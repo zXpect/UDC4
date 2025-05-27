@@ -13,9 +13,12 @@
             </div>
 
             <div class="col-lg-9">
-                <div class="profile-content">
+                {# --- ENVOLVEMOS TODOS LOS PANES EN UN TAB-CONTENT CON ID --- #}
+                <div id="tabContent" class="profile-content tab-content">
+                    
                     <!-- Dashboard Tab -->
-                    <div class="tab-pane fade show active" id="admin-dashboard" role="tabpanel" aria-labelledby="admin-dashboard-tab">
+                    <div class="tab-pane fade show active" id="admin-dashboard" role="tabpanel"
+                        aria-labelledby="admin-dashboard-tab">
                         <h4 class="mb-4">Dashboard Principal</h4>
                         <div class="row">
                             <!-- Statistics Cards -->
@@ -81,18 +84,22 @@
                                 </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5 class="card-title mb-0"><i class="fas fa-bell me-2"></i>Notificaciones del Sistema</h5>
+                                        <h5 class="card-title mb-0"><i class="fas fa-bell me-2"></i>Notificaciones del
+                                            Sistema</h5>
                                     </div>
                                     <div class="card-body">
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">Nueva solicitud de registro pendiente de aprobación.</li>
-                                            <li class="list-group-item">El curso "Introducción a la Programación" ha alcanzado el límite de estudiantes.</li>
-                                            <li class="list-group-item">Mantenimiento programado para el sistema el día Sábado a las 23:00.</li>
+                                            <li class="list-group-item">Nueva solicitud de registro pendiente de
+                                                aprobación.</li>
+                                            <li class="list-group-item">El curso "Introducción a la Programación" ha
+                                                alcanzado el límite de estudiantes.</li>
+                                            <li class="list-group-item">Mantenimiento programado para el sistema el día
+                                                Sábado a las 23:00.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -101,7 +108,8 @@
                     </div>
 
                     <!-- System Activity Tab -->
-                    <div class="tab-pane fade" id="system-activity" role="tabpanel" aria-labelledby="system-activity-tab">
+                    <div class="tab-pane fade" id="system-activity" role="tabpanel"
+                        aria-labelledby="system-activity-tab">
                         <h4 class="mb-4">Actividad Reciente del Sistema</h4>
                         <div class="card">
                             <div class="card-body">
@@ -132,17 +140,19 @@
                                         </div>
                                         <div class="timeline-content">
                                             <h6>Curso Modificado: [Nombre Curso]</h6>
-                                            <p>Se actualizó la descripción del curso por [Nombre Profesor]. Fecha: [Fecha y Hora]</p>
+                                            <p>Se actualizó la descripción del curso por [Nombre Profesor]. Fecha:
+                                                [Fecha y Hora]</p>
                                             <small class="text-muted">Hace 1 día</small>
                                         </div>
                                     </div>
-                                     <div class="timeline-item">
+                                    <div class="timeline-item">
                                         <div class="timeline-icon bg-danger">
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </div>
                                         <div class="timeline-content">
                                             <h6>Intento de Acceso Fallido</h6>
-                                            <p>Usuario: "usuario_invalido" desde IP: [Dirección IP]. Fecha: [Fecha y Hora]</p>
+                                            <p>Usuario: "usuario_invalido" desde IP: [Dirección IP]. Fecha: [Fecha y
+                                                Hora]</p>
                                             <small class="text-muted">Hace 3 días</small>
                                         </div>
                                     </div>
@@ -150,31 +160,38 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- User Management Tab (Placeholder) -->
-                    <div class="tab-pane fade" id="user-management" role="tabpanel" aria-labelledby="user-management-tab">
+                    <div class="tab-pane fade" id="user-management" role="tabpanel"
+                        aria-labelledby="user-management-tab">
                         <h4 class="mb-4">Gestión de Usuarios</h4>
                         <div class="card">
                             <div class="card-body">
-                                <p class="text-muted">Funcionalidad de gestión de usuarios (crear, editar, eliminar, asignar roles) se implementará aquí.</p>
-                                <button class="btn btn-primary"><i class="fas fa-user-plus me-2"></i>Agregar Nuevo Usuario</button>
+                                <p class="text-muted">Funcionalidad de gestión de usuarios (crear, editar, eliminar,
+                                    asignar roles) se implementará aquí.</p>
+                                <button class="btn btn-primary"><i class="fas fa-user-plus me-2"></i>Agregar Nuevo
+                                    Usuario</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Course Management Tab (Placeholder) -->
-                    <div class="tab-pane fade" id="course-management" role="tabpanel" aria-labelledby="course-management-tab">
+                    <div class="tab-pane fade" id="course-management" role="tabpanel"
+                        aria-labelledby="course-management-tab">
                         <h4 class="mb-4">Gestión de Cursos</h4>
                         <div class="card">
                             <div class="card-body">
-                                <p class="text-muted">Funcionalidad de gestión de cursos (crear, editar, asignar profesores, ver inscritos) se implementará aquí.</p>
-                                <button class="btn btn-success"><i class="fas fa-plus-circle me-2"></i>Crear Nuevo Curso</button>
+                                <p class="text-muted">Funcionalidad de gestión de cursos (crear, editar, asignar
+                                    profesores, ver inscritos) se implementará aquí.</p>
+                                <button class="btn btn-success"><i class="fas fa-plus-circle me-2"></i>Crear Nuevo
+                                    Curso</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Admin Personal Information Tab -->
-                    <div class="tab-pane fade" id="admin-personal-info" role="tabpanel" aria-labelledby="admin-personal-info-tab">
+                    <div class="tab-pane fade" id="admin-personal-info" role="tabpanel"
+                        aria-labelledby="admin-personal-info-tab">
                         <h4 class="mb-4">Mi Información Personal</h4>
                         <div class="card">
                             <div class="card-body">
@@ -182,11 +199,13 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" value="{{ user.first_name }}" readonly>
+                                            <input type="text" class="form-control" value="{{ user.first_name }}"
+                                                readonly>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Apellido</label>
-                                            <input type="text" class="form-control" value="{{ user.last_name }}" readonly>
+                                            <input type="text" class="form-control" value="{{ user.last_name }}"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -196,21 +215,24 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Teléfono</label>
-                                            <input type="tel" class="form-control" value="{{ user.phone|default('No especificado') }}" readonly>
+                                            <input type="tel" class="form-control"
+                                                value="{{ user.phone|default('No especificado') }}" readonly>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Rol Principal</label>
-                                            <input type="text" class="form-control" value="{{ user.role|capitalize }}" readonly>
+                                            <input type="text" class="form-control" value="{{ user.role|capitalize }}"
+                                                readonly>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editProfileModal">
                                         <i class="fas fa-edit me-2"></i>Editar Mi Perfil
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> {# end #tabContent #}
             </div>
         </div>
     </div>
@@ -218,41 +240,57 @@
 
 {% include 'partials/_edit_profile_modal.html' %}
 {% include 'partials/_settings_modal.html' %}
-
 {% endblock %}
 
 {% block scripts %}
-{{ super() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var triggerTabList = [].slice.call(document.querySelectorAll('#adminSidebarMenu a.nav-link'))
-        triggerTabList.forEach(function (triggerEl) {
-            var tabTrigger = new bootstrap.Tab(triggerEl);
-            triggerEl.addEventListener('click', function (event) {
-                event.preventDefault();
-                tabTrigger.show();
-
-                // Remove active class from all tabs
-                triggerTabList.forEach(function(el) {
-                    el.classList.remove('active');
-                });
-                // Add active class to the clicked tab
-                event.currentTarget.classList.add('active');
-            });
-        });
-
-        // Ensure the first tab's link is active by default if not handled by Bootstrap automatically
-        var firstTabLink = document.querySelector('#adminSidebarMenu a.nav-link');
-        if (firstTabLink && !firstTabLink.classList.contains('active')) {
-            // Find the target of the first link and check if its pane is active
-            var firstTabPaneId = firstTabLink.getAttribute('href');
-            var firstTabPane = document.querySelector(firstTabPaneId);
-            if (firstTabPane && firstTabPane.classList.contains('show') && firstTabPane.classList.contains('active')) {
-                 firstTabLink.classList.add('active');
-            } else if (firstTabLink.id === 'admin-dashboard-tab'){ // Default to dashboard
-                 firstTabLink.classList.add('active');
-            }
+  {{ super() }}
+  <script>
+    // Scroll interno del contenedor antes de mostrar cada tab
+    document.querySelectorAll('a[data-bs-toggle="pill"]').forEach(tab => {
+      tab.addEventListener('shown.bs.tab', () => {
+        const container = document.getElementById('tabContent');
+        if (container) {
+          container.scrollTop = 0;
         }
+      });
     });
-</script>
+
+    // Tu lógica existente para activar tabs manualmente
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(btn => {
+      btn.addEventListener('shown.bs.tab', e => {
+        const contenido = document.querySelector('.profile-content');
+        if (contenido) contenido.scrollTop = 0;
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var triggerTabList = [].slice.call(document.querySelectorAll('#adminSidebarMenu a.nav-link'))
+      triggerTabList.forEach(function (triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl);
+        triggerEl.addEventListener('click', function (event) {
+          event.preventDefault();
+          tabTrigger.show();
+
+          // Remove active class from all tabs
+          triggerTabList.forEach(function (el) {
+            el.classList.remove('active');
+          });
+          // Add active class to the clicked tab
+          event.currentTarget.classList.add('active');
+        });
+      });
+
+      // Ensure the first tab's link is active by default
+      var firstTabLink = document.querySelector('#adminSidebarMenu a.nav-link');
+      if (firstTabLink && !firstTabLink.classList.contains('active')) {
+        var firstTabPaneId = firstTabLink.getAttribute('href');
+        var firstTabPane = document.querySelector(firstTabPaneId);
+        if (firstTabPane && firstTabPane.classList.contains('show') && firstTabPane.classList.contains('active')) {
+          firstTabLink.classList.add('active');
+        } else if (firstTabLink.id === 'admin-dashboard-tab') {
+          firstTabLink.classList.add('active');
+        }
+      }
+    });
+  </script>
 {% endblock %}

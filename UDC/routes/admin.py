@@ -107,7 +107,7 @@ def add_event():
         except Exception as e:
             flash(f'Error inesperado: {str(e)}', 'error')  
     else:  
-        flash('Todos los campos son obligatorios', 'error')  
+        flash('Ingresaste correctamente, recuerda rellenar todos los campos', 'success')
       
     return render_template('admin/event_form.html')  
   

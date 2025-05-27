@@ -1,7 +1,10 @@
 <div class="profile-header mb-4">
     <div class="profile-info">
         <div class="profile-avatar-wrapper">
-            <img src="{{ url_for('static', filename='assets/img/avatars/' + (user.avatar if user.avatar else 'default_avatar.png')) }}" alt="{{ user.first_name }}" class="profile-avatar">
+            <img src="{{ url_for('static', filename='img/' ~ (user.avatar or 'default-avatar.png')) }}"
+                alt="{{ user.first_name }}" class="profile-avatar avatar-preview" width="80" height="80"
+                style="object-fit: cover; border-radius: 50%;">
+
             <label for="avatarUpload" class="avatar-edit-icon" title="Cambiar avatar">
                 <i class="fas fa-camera"></i>
                 <input type="file" id="avatarUpload" class="d-none" accept="image/*">
@@ -21,4 +24,27 @@
             <i class="fas fa-cog me-2"></i>Configuración
         </button>
     </div>
-</div> 
+    <script>
+  // 1. Obtén el input y todas las vistas previas
+  const inputFile = document.getElementById('avatarUpload');
+  const previews  = document.querySelectorAll('.avatar-preview');
+
+  inputFile.addEventListener('change', function() {
+    if (!this.files || !this.files[0]) return;
+
+    // 2. Crea una URL temporal para el archivo seleccionado
+    const fileURL = URL.createObjectURL(this.files[0]);
+
+    // 3. Actualiza todos los <img> de vista previa
+    previews.forEach(img => {
+      img.src = fileURL;
+    });
+
+    // (Opcional) Revocar la URL cuando ya no sea necesaria
+    this.files[0].addEventListener('loadend', () => {
+      URL.revokeObjectURL(fileURL);
+    });
+  });
+</script>
+
+</div>
