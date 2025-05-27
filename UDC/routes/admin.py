@@ -35,6 +35,8 @@ def dashboard():
     }  
       
     return render_template('admin/dashboard.html', events=events, stats=stats)
+
+
   
 @admin.route('/events')  
 @admin_required  

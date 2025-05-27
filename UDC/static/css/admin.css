@@ -2125,3 +2125,20 @@
 [data-theme="dark"] .card-body dd {
     color: var(--text-primary); /* Or a specific light color like #e0e0e0 */
 }
+.timeline-content h6 {
+  color: #2c3e50; /* p. ej. un gris oscuro para light mode */
+  font-weight: bold;
+}
+
+/* cuando el usuario tenga dark mode */
+/* Cuando esté en dark mode */
+[data-theme="dark"] .timeline-content h6 {
+  color: #a0c4ff;  /* azul claro para modo oscuro */
+}
+
+
+    .timeline-content p {
+        color: #7f8c8d;
+    }
+
+    
