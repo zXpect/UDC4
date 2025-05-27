@@ -3,6 +3,79 @@
 {% block page_title %}Panel de Profesor{% endblock %}
 
 {% block content %}
+<style>
+/* Variables de tema */
+:root {
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --text-muted: #718096;
+    --card-bg: #ffffff;
+    --card-header-bg: #f8f9fa;
+    --border-color: #e2e8f0;
+}
+
+/* Tema oscuro */
+[data-theme="dark"] {
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --text-muted: #a0aec0;
+    --card-bg: #2d3748;
+    --card-header-bg: #1a202c;
+    --border-color: #4a5568;
+}
+
+/* Estilos base para mejor legibilidad */
+.text-gray-800 {
+    color: var(--text-primary) !important;
+}
+
+.text-gray-300 {
+    color: var(--text-secondary) !important;
+}
+
+.card {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.card-body {
+    background-color: var(--card-bg);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Mejoras para los iconos en modo oscuro */
+[data-theme="dark"] .fa-2x {
+    color: var(--text-secondary) !important;
+}
+
+/* Mejoras para los badges y etiquetas */
+.badge {
+    font-weight: 600;
+}
+
+.text-xs {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Mejoras para los botones */
+.btn {
+    font-weight: 500;
+}
+
+.btn-link {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-link {
+    color: var(--text-secondary);
+}
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <!-- Tarjetas de resumen con datos reales -->
@@ -125,8 +198,11 @@
                         <a href="{{ url_for('teacher.manage_files') }}" class="btn btn-info">
                             <i class="fas fa-file-upload me-2"></i>Subir Archivos
                         </a>
-                        <a href="#" class="btn btn-secondary">
+                        <a href="{{ url_for('teacher.my_students') }}" class="btn btn-secondary">
                             <i class="fas fa-users me-2"></i>Ver Estudiantes
+                        </a>
+                        <a href="{{ url_for('teacher.manage_attendance') }}" class="btn btn-warning">
+                            <i class="fas fa-clipboard-check me-2"></i>Control de Asistencia
                         </a>
                     </div>
                 </div>

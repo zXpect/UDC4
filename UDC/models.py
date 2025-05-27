@@ -868,3 +868,61 @@ class Task:
     # @staticmethod
     # def get_submissions(task_id):
     #     pass
+
+class Attendance:
+    collection = db['attendance']
+
+    @staticmethod
+    def create(student_id, course_id, date, is_present, recorded_by):
+        attendance_data = {
+            'student_id': ObjectId(student_id),
+            'course_id': ObjectId(course_id),
+            'date': date,
+            'is_present': is_present,
+            'recorded_by': ObjectId(recorded_by),
+            'created_at': datetime.datetime.utcnow(),
+            'active': True
+        }
+        result = Attendance.collection.insert_one(attendance_data)
+        return str(result.inserted_id)
+
+    @staticmethod
+    def find_by_course_and_date(course_id, date):
+        start_of_day = date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_day = date.replace(hour=23, minute=59, second=59, microsecond=999999)
+        
+        return list(Attendance.collection.find({
+            'course_id': ObjectId(course_id),
+            'date': {'$gte': start_of_day, '$lte': end_of_day},
+            'active': True
+        }))
+
+    @staticmethod
+    def find_by_student(student_id):
+        return list(Attendance.collection.find({
+            'student_id': ObjectId(student_id),
+            'active': True
+        }).sort('date', -1))
+
+    @staticmethod
+    def find_by_course(course_id):
+        return list(Attendance.collection.find({
+            'course_id': ObjectId(course_id),
+            'active': True
+        }).sort('date', -1))
+
+    @staticmethod
+    def update(attendance_id, update_data):
+        result = Attendance.collection.update_one(
+            {'_id': ObjectId(attendance_id), 'active': True},
+            {'$set': update_data}
+        )
+        return result.modified_count > 0
+
+    @staticmethod
+    def delete(attendance_id):
+        result = Attendance.collection.update_one(
+            {'_id': ObjectId(attendance_id)},
+            {'$set': {'active': False}}
+        )
+        return result.modified_count > 0

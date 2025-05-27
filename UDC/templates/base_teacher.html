@@ -72,8 +72,8 @@
                                     <span>Gestión de Notas</span>  
                                 </a>  
                             </li>  
-                            <li class="nav-item {% if request.endpoint == 'teacher.dashboard' %}active{% endif %}">  
-                                <a href="{{ url_for('teacher.dashboard') }}" class="nav-link">  
+                            <li class="nav-item {% if request.endpoint == 'teacher.my_students' %}active{% endif %}">  
+                                <a href="{{ url_for('teacher.my_students') }}" class="nav-link">  
                                     <i class="fas fa-user-graduate"></i>  
                                     <span>Mis Estudiantes</span>  
                                 </a>  
@@ -102,18 +102,18 @@
                                     <span>Asignar Tareas</span>  
                                 </a>  
                             </li>  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
-                                    <i class="fas fa-calendar-check"></i>  
-                                    <span>Horarios</span>  
-                                </a>  
-                            </li>  
-                            <li class="nav-item">  
-                                <a href="#" class="nav-link">  
-                                    <i class="fas fa-chart-bar"></i>  
-                                    <span>Reportes</span>  
-                                </a>  
-                            </li>  
+                            <li class="nav-item {% if request.endpoint == 'teacher.schedule' %}active{% endif %}">
+                                <a href="{{ url_for('teacher.schedule') }}" class="nav-link">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>Horarios</span>
+                                </a>
+                            </li>
+                            <li class="nav-item {% if request.endpoint == 'teacher.reports' %}active{% endif %}">
+                                <a href="{{ url_for('teacher.reports') }}" class="nav-link">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Reportes</span>
+                                </a>
+                            </li>
                         </ul>  
                     </div>  
   

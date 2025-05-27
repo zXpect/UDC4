@@ -1,11 +1,12 @@
 import os
 import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, send_file, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, send_file, jsonify, make_response
 from werkzeug.utils import secure_filename
 from bson import ObjectId
+import pdfkit
 
 from routes.auth import login_required, role_required
-from models import Grade, Course, InstitutionalFile, User, CourseEnrollment, Task
+from models import Grade, Course, InstitutionalFile, User, CourseEnrollment, Task, Attendance
 
 UPLOAD_FOLDER = 'static/uploads'
 UPLOAD_FOLDER_TASKS = os.path.join(UPLOAD_FOLDER, 'tasks')
@@ -61,20 +62,27 @@ def dashboard():
 @role_required('teacher')
 def my_courses():
     teacher_id = session.get('user_id')
-    if not teacher_id:
-        flash('No se pudo identificar al profesor.', 'error')
-        return redirect(url_for('teacher.dashboard'))
-
-    courses_data = Course.find_by_teacher_id(teacher_id)
+    courses = Course.find_by_teacher_id(teacher_id)
     
-    courses_with_student_count = []
-    for course in courses_data:
-        course_dict = dict(course) # Make it mutable
-        students_in_course = CourseEnrollment.get_students_by_course(str(course['_id']))
-        course_dict['student_count'] = len(students_in_course)
-        courses_with_student_count.append(course_dict)
-
-    return render_template('teacher/my_courses.html', courses=courses_with_student_count)
+    # Obtener estadísticas de cada curso
+    courses_with_stats = []
+    for course in courses:
+        course_dict = dict(course)
+        enrolled_students = CourseEnrollment.get_students_by_course(str(course['_id']))
+        grades = Grade.collection.find({'course_id': course['_id']})
+        
+        # Calcular promedio del curso
+        grade_values = [float(g['grade_value']) for g in grades if 'grade_value' in g]
+        avg_grade = sum(grade_values) / len(grade_values) if grade_values else 0
+        
+        course_dict.update({
+            'student_count': len(enrolled_students),
+            'average_grade': round(avg_grade, 2),
+            'next_class_date': 'Próxima clase pendiente'  # Esto se podría obtener de un sistema de horarios
+        })
+        courses_with_stats.append(course_dict)
+    
+    return render_template('teacher/my_courses.html', courses=courses_with_stats)
 
 @teacher.route('/tasks')
 @login_required
@@ -541,3 +549,223 @@ def get_file_details_json(file_id_str):
 
 
     return jsonify({'success': True, 'file': file_details})
+
+@teacher.route('/my-students')
+@login_required
+@role_required('teacher')
+def my_students():
+    teacher_id = session.get('user_id')
+    
+    # Obtener los cursos del profesor
+    courses = Course.find_by_teacher_id(teacher_id)
+    
+    # Estructura para almacenar estudiantes por curso
+    students_by_course = []
+    
+    for course in courses:
+        course_data = {
+            'course_info': course,
+            'students': []
+        }
+        
+        # Obtener estudiantes matriculados en este curso
+        enrolled_students = CourseEnrollment.get_students_by_course(str(course['_id']))
+        
+        # Para cada estudiante, obtener información adicional
+        for student in enrolled_students:
+            # Obtener las calificaciones del estudiante en este curso
+            grades = list(Grade.collection.find({
+                'student_id': student['_id'],
+                'course_id': course['_id']
+            }))
+            
+            # Calcular promedio
+            grade_values = [float(g['grade_value']) for g in grades if 'grade_value' in g]
+            avg_grade = sum(grade_values) / len(grade_values) if grade_values else 0
+            
+            student_data = {
+                'info': student,
+                'grades_count': len(grades),
+                'average_grade': round(avg_grade, 2)
+            }
+            course_data['students'].append(student_data)
+        
+        students_by_course.append(course_data)
+    
+    return render_template('teacher/my_students.html', students_by_course=students_by_course)
+
+@teacher.route('/my-students/download-list')
+@login_required
+@role_required('teacher')
+def download_students_list():
+    teacher_id = session.get('user_id')
+    teacher = User.find_by_id(teacher_id)
+    courses = Course.find_by_teacher_id(teacher_id)
+    
+    # Generar HTML para la lista
+    students_data = []
+    for course in courses:
+        enrolled_students = CourseEnrollment.get_students_by_course(str(course['_id']))
+        students_data.append({
+            'course': course,
+            'students': enrolled_students
+        })
+    
+    # Renderizar el HTML
+    html = render_template(
+        'teacher/students_list.html',
+        teacher=teacher,
+        students_data=students_data,
+        generation_date=datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+    )
+    
+    # Crear respuesta con el HTML
+    response = make_response(html)
+    response.headers['Content-Type'] = 'text/html'
+    response.headers['Content-Disposition'] = 'attachment; filename=lista_estudiantes.html'
+    
+    return response
+
+@teacher.route('/attendance', methods=['GET', 'POST'])
+@login_required
+@role_required('teacher')
+def manage_attendance():
+    teacher_id = session.get('user_id')
+    courses = Course.find_by_teacher_id(teacher_id)
+    
+    if request.method == 'POST':
+        course_id = request.form.get('course_id')
+        date = request.form.get('date')
+        attendance_data = request.form.getlist('attendance[]')
+        student_ids = request.form.getlist('student_ids[]')
+        
+        if all([course_id, date, attendance_data, student_ids]):
+            # Guardar la asistencia para cada estudiante
+            for student_id, is_present in zip(student_ids, attendance_data):
+                Attendance.create(
+                    student_id=student_id,
+                    course_id=course_id,
+                    date=datetime.datetime.strptime(date, '%Y-%m-%d'),
+                    is_present=(is_present == 'true'),
+                    recorded_by=teacher_id
+                )
+            flash('Asistencia registrada exitosamente', 'success')
+        else:
+            flash('Por favor complete todos los campos requeridos', 'error')
+    
+    # Obtener los estudiantes por curso
+    students_by_course = []
+    for course in courses:
+        enrolled_students = CourseEnrollment.get_students_by_course(str(course['_id']))
+        students_by_course.append({
+            'course': course,
+            'students': enrolled_students
+        })
+    
+    return render_template('teacher/attendance.html', 
+                         students_by_course=students_by_course,
+                         today=datetime.datetime.now().strftime('%Y-%m-%d'))
+
+@teacher.route('/attendance/export/<course_id>/<date>')
+@login_required
+@role_required('teacher')
+def export_attendance(course_id, date):
+    teacher_id = session.get('user_id')
+    course = Course.find_by_id(course_id)
+    
+    if not course:
+        flash('Curso no encontrado', 'error')
+        return redirect(url_for('teacher.manage_attendance'))
+    
+    # Obtener la asistencia del día especificado
+    attendance_date = datetime.datetime.strptime(date, '%Y-%m-%d')
+    attendance_records = Attendance.find_by_course_and_date(course_id, attendance_date)
+    
+    # Obtener todos los estudiantes del curso
+    enrolled_students = CourseEnrollment.get_students_by_course(course_id)
+    
+    # Crear un diccionario de asistencia por estudiante
+    attendance_by_student = {str(record['student_id']): record['is_present'] 
+                           for record in attendance_records}
+    
+    # Renderizar el template HTML
+    html = render_template(
+        'teacher/attendance_report.html',
+        course=course,
+        students=enrolled_students,
+        attendance=attendance_by_student,
+        date=attendance_date.strftime('%d/%m/%Y'),
+        teacher_name=f"{session.get('first_name')} {session.get('last_name')}"
+    )
+    
+    # Crear respuesta con el HTML
+    response = make_response(html)
+    response.headers['Content-Type'] = 'text/html'
+    response.headers['Content-Disposition'] = f'attachment; filename=asistencia_{course["name"]}_{date}.html'
+    
+    return response
+
+@teacher.route('/schedule')
+@login_required
+@role_required('teacher')
+def schedule():
+    teacher_id = session.get('user_id')
+    courses = Course.find_by_teacher_id(teacher_id)
+    
+    # Aquí podrías obtener los horarios reales de una colección de horarios
+    # Por ahora usaremos datos de ejemplo
+    schedule_data = {
+        'Monday': [
+            {'time': '08:00 - 09:30', 'course': 'Matemáticas 3A'},
+            {'time': '09:45 - 11:15', 'course': 'Álgebra 5B'}
+        ],
+        'Tuesday': [
+            {'time': '08:00 - 09:30', 'course': 'Matemáticas 3A'},
+            {'time': '09:45 - 11:15', 'course': 'Geometría 4A'}
+        ],
+        # ... más días
+    }
+    
+    return render_template('teacher/schedule.html', schedule=schedule_data, courses=courses)
+
+@teacher.route('/reports')
+@login_required
+@role_required('teacher')
+def reports():
+    teacher_id = session.get('user_id')
+    courses = Course.find_by_teacher_id(teacher_id)
+    
+    # Obtener estadísticas generales
+    total_students = 0
+    total_grades = 0
+    overall_average = 0
+    course_stats = []
+    
+    for course in courses:
+        students = CourseEnrollment.get_students_by_course(str(course['_id']))
+        grades = list(Grade.collection.find({'course_id': course['_id']}))
+        
+        grade_values = [float(g['grade_value']) for g in grades if 'grade_value' in g]
+        avg_grade = sum(grade_values) / len(grade_values) if grade_values else 0
+        
+        total_students += len(students)
+        total_grades += len(grades)
+        
+        course_stats.append({
+            'name': course['name'],
+            'students_count': len(students),
+            'average_grade': round(avg_grade, 2),
+            'attendance_rate': '95%'  # Esto se podría calcular desde la colección de asistencia
+        })
+    
+    if total_grades > 0:
+        overall_average = total_grades / len(courses)
+    
+    stats = {
+        'total_students': total_students,
+        'total_courses': len(courses),
+        'overall_average': round(overall_average, 2),
+        'course_stats': course_stats
+    }
+    
+    return render_template('teacher/reports.html', stats=stats)

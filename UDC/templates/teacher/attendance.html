@@ -1,0 +1,155 @@
+{% extends 'base_teacher.html' %}
+{% block title %}Control de Asistencia{% endblock %}
+{% block page_title %}Control de Asistencia{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Tarjeta de resumen -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title mb-0">Control de Asistencia</h4>
+                            <p class="text-muted">Registra y gestiona la asistencia de tus estudiantes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not students_by_course %}
+    <!-- Mensaje cuando no hay cursos o estudiantes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-user-graduate fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay estudiantes asignados</h5>
+                    <p class="text-muted mb-0">Actualmente no tienes cursos o estudiantes asignados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Lista de cursos y estudiantes -->
+    {% for course_data in students_by_course %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-light py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-book me-2"></i>{{ course_data.course.name }}
+                        </h5>
+                        <div>
+                            <a href="{{ url_for('teacher.export_attendance', course_id=course_data.course._id, date=today) }}" 
+                               class="btn btn-primary" target="_blank">
+                                <i class="fas fa-file-export me-2"></i>Exportar Asistencia
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if course_data.students %}
+                    <form action="{{ url_for('teacher.manage_attendance') }}" method="POST" class="attendance-form">
+                        <input type="hidden" name="course_id" value="{{ course_data.course._id }}">
+                        <input type="hidden" name="date" value="{{ today }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control" value="{{ today }}" readonly>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Estudiante</th>
+                                        <th>Asistencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in course_data.students %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle me-3">
+                                                    {{ student.first_name[0]|upper }}{{ student.last_name[0]|upper }}
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ student.first_name }} {{ student.last_name }}</h6>
+                                                    <small class="text-muted">@{{ student.username }}</small>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="student_ids[]" value="{{ student._id }}">
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="attendance[]" 
+                                                       id="present_{{ student._id }}" value="true" checked>
+                                                <label class="btn btn-outline-success" for="present_{{ student._id }}">
+                                                    <i class="fas fa-check"></i> Presente
+                                                </label>
+                                                
+                                                <input type="radio" class="btn-check" name="attendance[]" 
+                                                       id="absent_{{ student._id }}" value="false">
+                                                <label class="btn btn-outline-danger" for="absent_{{ student._id }}">
+                                                    <i class="fas fa-times"></i> Ausente
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Guardar Asistencia
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay estudiantes en este curso</h5>
+                        <p class="text-muted mb-0">Este curso aún no tiene estudiantes matriculados.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<style>
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.btn-check:checked + .btn-outline-success {
+    background-color: var(--bs-success);
+    color: white;
+}
+
+.btn-check:checked + .btn-outline-danger {
+    background-color: var(--bs-danger);
+    color: white;
+}
+</style>
+{% endblock %} 

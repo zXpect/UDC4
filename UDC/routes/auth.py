@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
-from models import User, UserNotification
+from models import User, UserNotification, Course, CourseEnrollment, Grade, Task, Attendance
 import datetime
 import re
 
@@ -215,7 +215,7 @@ def profile():
     
     if request.method == 'POST':
         # Actualizar configuraciones
-        settings = {
+        settings_data_from_form = { # Renamed to avoid conflict
             'theme': request.form.get('theme', 'light'),
             'email_notifications': request.form.get('email_notifications') == 'on'
         }
@@ -223,7 +223,7 @@ def profile():
         try:
             User.collection.update_one(
                 {'_id': user['_id']},
-                {'$set': {'settings': settings}}
+                {'$set': {'settings': settings_data_from_form}}
             )
             flash('Configuraciones actualizadas exitosamente', 'success')
         except Exception as e:
@@ -248,20 +248,88 @@ def profile():
         'avatar_url': user.get('avatar_url', ''),
         'created_at': user.get('created_at', ''),
         'stats': user.get('stats', {}),
-        'academic_info': user.get('academic_info', {})
+        'settings': user.get('settings', {'theme': 'light', 'email_notifications': True}) # This is user.settings
     }
-    
-    # Preparar configuraciones del usuario
-    user_settings = {
-        'theme': user.get('settings', {}).get('theme', 'light'),
-        'email_notifications': user.get('settings', {}).get('email_notifications', False)
+
+    # Prepare user_settings for the modal, consistent across profiles
+    user_settings_for_modal = {
+        'theme': user_data['settings'].get('theme', 'light'),
+        'email_notifications': user_data['settings'].get('email_notifications', True) # Default to True if not found
     }
-    
-    # Seleccionar la plantilla base según el rol del usuario
-    role = user['role']
-    template = f'admin/profile_{role}.html'
-    
-    return render_template(template, user=user_data, user_settings=user_settings)
+
+    if user['role'] == 'admin':
+        return render_template('admin/profile_admin.html', user=user_data, user_settings=user_settings_for_modal)
+    elif user['role'] == 'student':
+        return render_template('admin/profile_student.html', user=user_data, user_settings=user_settings_for_modal)
+    elif user['role'] == 'parent':
+        return render_template('admin/profile_parent.html', user=user_data, user_settings=user_settings_for_modal)
+    elif user['role'] == 'teacher':
+        teacher_id = session.get('user_id')
+        
+        # Datos para el resumen general
+        courses = Course.find_by_teacher_id(teacher_id)
+        total_students = 0
+        for course_item in courses: # Renamed to avoid conflict with courses variable name
+            total_students += len(CourseEnrollment.get_students_by_course(str(course_item['_id'])))
+        
+        pending_tasks_count = Task.collection.count_documents({
+            'teacher_id': user['_id'], 
+            'due_date': {'$gte': datetime.datetime.utcnow()},
+            'active': True 
+        })
+
+        stats_overview = {
+            'total_courses': len(courses),
+            'total_students': total_students,
+            'pending_tasks': pending_tasks_count, 
+            'upcoming_events': 2 
+        }
+
+        # Datos para "Mis Cursos"
+        teacher_courses_data = []
+        for course_item in courses: # Renamed to avoid conflict
+            course_dict = dict(course_item)
+            students_in_course = CourseEnrollment.get_students_by_course(str(course_item['_id']))
+            grades = list(Grade.collection.find({'course_id': course_item['_id']}))
+            grade_values = [float(g['grade_value']) for g in grades if 'grade_value' in g]
+            avg_grade = sum(grade_values) / len(grade_values) if grade_values else 0
+
+            course_dict.update({
+                'students_count': len(students_in_course),
+                'average_grade': round(avg_grade, 2),
+                'next_class_date': 'Pendiente', 
+                'icon': 'book' 
+            })
+            teacher_courses_data.append(course_dict)
+
+        # Datos para "Mi Horario" (Ejemplo)
+        schedule_data = {
+            'Monday': [{'time': '08:00 - 09:30', 'course_name': 'Matemáticas 3A', 'room': 'A101'}],
+            'Tuesday': [{'time': '10:00 - 11:30', 'course_name': 'Álgebra 5B', 'room': 'B203'}],
+        }
+        
+        # Datos para "Tareas y Calificaciones"
+        tasks = Task.find_by_teacher_id_with_course_info(teacher_id)
+        recent_grades = Grade.find_by_teacher(teacher_id)[:5] 
+        
+        # Datos para "Comunicación" (Ejemplo)
+        recent_messages = [
+            {'sender': 'Admin', 'subject': 'Reunión Importante', 'date': 'Hace 2 horas'},
+            {'sender': 'Juan Pérez (Padre)', 'subject': 'Consulta sobre Matías', 'date': 'Ayer'}
+        ]
+        
+        return render_template('admin/profile_teacher.html', 
+                               user=user_data, 
+                               user_settings=user_settings_for_modal, # Pass the correct settings variable
+                               stats_overview=stats_overview,
+                               teacher_courses=teacher_courses_data,
+                               schedule_data=schedule_data,
+                               tasks=tasks,
+                               recent_grades=recent_grades,
+                               recent_messages=recent_messages
+                               )
+    else:
+        return redirect(url_for('public.index'))
 
 @auth.route('/logout')
 def logout():

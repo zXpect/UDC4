@@ -3,6 +3,116 @@
 {% block page_title %}Panel de Padre de Familia{% endblock %}
 
 {% block content %}
+<style>
+/* Variables de tema */
+:root {
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --text-muted: #718096;
+    --card-bg: #ffffff;
+    --card-header-bg: #f8f9fa;
+    --border-color: #e2e8f0;
+    --purple: #8b5cf6;
+    --purple-dark: #7c3aed;
+}
+
+/* Tema oscuro */
+[data-theme="dark"] {
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --text-muted: #a0aec0;
+    --card-bg: #2d3748;
+    --card-header-bg: #1a202c;
+    --border-color: #4a5568;
+    --purple: #9f7aea;
+    --purple-dark: #805ad5;
+}
+
+/* Estilos base para mejor legibilidad */
+.text-gray-800 {
+    color: var(--text-primary) !important;
+}
+
+.text-gray-300 {
+    color: var(--text-secondary) !important;
+}
+
+.card {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.card-body {
+    background-color: var(--card-bg);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Mejoras para los iconos en modo oscuro */
+[data-theme="dark"] .fa-2x {
+    color: var(--text-secondary) !important;
+}
+
+/* Estilos específicos para el tema púrpura */
+.border-left-purple {
+    border-left: 0.25rem solid var(--purple) !important;
+}
+
+.text-purple {
+    color: var(--purple) !important;
+}
+
+.btn-purple {
+    background-color: var(--purple);
+    border-color: var(--purple);
+    color: white;
+}
+
+.btn-purple:hover {
+    background-color: var(--purple-dark);
+    border-color: var(--purple-dark);
+    color: white;
+}
+
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* Mejoras para los badges y etiquetas */
+.badge {
+    font-weight: 600;
+}
+
+.text-xs {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Lista de eventos */
+.list-group-item {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .list-group-item {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <!-- Tarjetas de resumen con datos reales -->
@@ -180,38 +290,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .border-left-purple {
-        border-left: 0.25rem solid #8b5cf6 !important;
-    }
-
-    .text-purple {
-        color: #8b5cf6 !important;
-    }
-
-    .btn-purple {
-        background-color: #8b5cf6;
-        border-color: #8b5cf6;
-        color: white;
-    }
-
-    .btn-purple:hover {
-        background-color: #7c3aed;
-        border-color: #7c3aed;
-        color: white;
-    }
-
-    .avatar-circle {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #8b5cf6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-    }
-</style>
 {% endblock %}
